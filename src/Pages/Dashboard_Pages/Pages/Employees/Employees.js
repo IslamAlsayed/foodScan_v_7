@@ -15,7 +15,6 @@ import AddRow from "../../Models/AddRow/Employees";
 export default function Employees() {
   const componentRef = useRef();
   const [employees, setEmployee] = useState([]);
-
   const [updated, setUpdated] = useState(false);
   const [editItem, setEditItem] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
@@ -84,7 +83,7 @@ export default function Employees() {
       render: (text, item) => (
         <>
           <Link
-            to={`/admin/dashboard/administrator/show/${item.id}`}
+            to={`/admin/dashboard/employee/show/${item.id}`}
             className="eyeIcon"
             data-tooltip="view"
             style={{ "--c": "#1772FF", "--bg": "#E2EDFB" }}
