@@ -89,25 +89,25 @@ export default function Invoice({ visible, item, modalClose }) {
             </table>
           </div>
 
-          <div class="total">
-            <div class="row">
-              <div class="col">
+          <div className="total">
+            <div className="row">
+              <div className="col">
                 <span>DISCOUNT</span>
                 <span>${"0.0"}</span>
               </div>
 
-              <div class="col">
+              <div className="col">
                 <span>TOTAL TAX</span>
                 <span>${"0.45"}</span>
               </div>
             </div>
-            <div class="row">
-              <div class="col">
+            <div className="row">
+              <div className="col">
                 <span>SUBTOTAL</span>
                 <span>${cartItemTotal}</span>
               </div>
 
-              <div class="col">
+              <div className="col">
                 <span>TOTAL</span>
                 <span>${cartItemTotal}</span>
               </div>

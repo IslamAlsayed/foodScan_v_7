@@ -23,8 +23,7 @@ export default function EditDeliveryOrder({ visible, order, modalClose }) {
         "patch"
       );
 
-      if (response) {
-        console.log("response", response);
+      if (response.status === "success") {
         modalClose();
         Swal.fire("Updated!", response.message, "success");
       }

@@ -61,7 +61,7 @@ export default function Variations() {
         <Col span={16}>
           <button
             type="button"
-            class="btn btn-primary"
+            className="btn btn-primary"
             data-bs-toggle="modal"
             data-bs-target="#addVariations"
           >
@@ -71,7 +71,7 @@ export default function Variations() {
       </Row>
 
       <div
-        class="modal fade"
+        className="modal fade"
         id="addVariations"
         tabIndex="-1"
         aria-hidden="true"
@@ -79,20 +79,20 @@ export default function Variations() {
         data-bs-keyboard="false"
         aria-labelledby="addVariationsLabel"
       >
-        <div class="modal-dialog">
+        <div className="modal-dialog">
           <form className="modal-content" onSubmit={handleSubmit}>
-            <div class="modal-header">
-              <h1 class="modal-title fs-5" id="addVariationsLabel">
+            <div className="modal-header">
+              <h1 className="modal-title fs-5" id="addVariationsLabel">
                 add variations
               </h1>
               <button
                 type="button"
-                class="btn-close"
+                className="btn-close"
                 data-bs-dismiss="modal"
                 aria-label="Close"
               ></button>
             </div>
-            <div class="modal-body">
+            <div className="modal-body">
               <div className="row">
                 <div className="col col-12 col-sm-6">
                   <div className="mb-3">
@@ -152,15 +152,15 @@ export default function Variations() {
               </div>
             </div>
 
-            <div class="modal-footer">
-              <button type="submit" class="btn btn-primary">
+            <div className="modal-footer">
+              <button type="submit" className="btn btn-primary">
                 <FaCheckCircle />
                 <span>save</span>
               </button>
 
               <button
                 type="button"
-                class="btn btn-secondary"
+                className="btn btn-secondary"
                 data-bs-dismiss="modal"
               >
                 <HiXMark />

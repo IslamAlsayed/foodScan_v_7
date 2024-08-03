@@ -1,13 +1,13 @@
 import "../Models.css";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { FaCheckCircle } from "react-icons/fa";
 import { HiXMark } from "react-icons/hi2";
 import Swal from "sweetalert2";
-import axios from "axios";
+import { updateData } from "../../../../axiosConfig/API";
 
 export default function EditAdministrator({ visible, item, modalClose }) {
+  const imageRef = useRef(null);
   const [staticModalVisible, setStaticModalVisible] = useState(false);
-
   const [administrator, setAdministrator] = useState({
     name: "",
     discount_percentage: "",
@@ -17,37 +17,32 @@ export default function EditAdministrator({ visible, item, modalClose }) {
     status: 1,
   });
 
-  const [errors, setErrors] = useState({
-    name: "",
-    discount_percentage: "",
-    start_date: "",
-    end_date: "",
-    image: "",
-    status: "",
-  });
-
   useEffect(() => {
     setStaticModalVisible(visible);
     if (item) setAdministrator(item);
   }, [item]);
 
   const handleChange = (e) => {
-    const { name, value, id } = e.target;
-    if (name === "type") {
-      setAdministrator((prevData) => ({
-        ...prevData,
-        type: id === "veg" ? "vegetarian" : "non-vegetarian",
-      }));
-    } else if (name === "status") {
-      setAdministrator((prevData) => ({
-        ...prevData,
-        status: id === "active" ? 1 : 0,
-      }));
-    } else if (name === "image") {
-      setAdministrator({ ...administrator, image: e.target.files[0] });
-    } else {
-      setAdministrator({ ...administrator, [name]: value });
-    }
+    const { name, value, id, type, files } = e.target;
+
+    setAdministrator((prevData) => {
+      if (name === "status") {
+        return {
+          ...prevData,
+          status: id === "active" ? 1 : 0,
+        };
+      } else if (name === "image" && type === "file") {
+        return {
+          ...prevData,
+          image: files[0],
+        };
+      } else {
+        return {
+          ...prevData,
+          [name]: value,
+        };
+      }
+    });
   };
 
   const handleSubmit = async (e) => {
@@ -58,32 +53,34 @@ export default function EditAdministrator({ visible, item, modalClose }) {
     formData.append("discount_percentage", administrator.discount_percentage);
     formData.append("start_date", administrator.start_date);
     formData.append("end_date", administrator.end_date);
-    formData.append("status", administrator.status);
     if (administrator.image) formData.append("image", administrator.image);
-    formData.append("_method", "PUT");
-
-    const AdminToken = JSON.parse(localStorage.getItem("AdminToken")) || null;
+    formData.append("status", administrator.status);
 
     try {
-      const response = await axios.post(
-        `http://localhost:8000/api/admin/administrators/${item.id}`,
+      const response = await updateData(
+        `admin/administrators/${item.id}`,
         formData,
-        {
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${AdminToken}`,
-          },
-        }
+        "put"
       );
 
-      if (response.data.status === "success") {
+      if (response.status === "success") {
+        setAdministrator({
+          name: "",
+          discount_percentage: "",
+          start_date: "",
+          end_date: "",
+          image: null,
+          status: 1,
+        });
+
         modalClose();
-        Swal.fire("Updated!", "The administrator has been updated.", "success");
+
+        if (imageRef.current) imageRef.current.value = null;
+
+        Swal.fire("Updated!", response.message, "success");
       }
     } catch (error) {
       if (error.response && error.response.status === 422) {
-        setErrors(error.response.data.errors);
         Swal.fire("Error!", "Validation error occurred.", "error");
       } else {
         Swal.fire("Error!", error.response.data.error, "error");
@@ -148,9 +145,7 @@ export default function EditAdministrator({ visible, item, modalClose }) {
                     value={administrator.role}
                     onChange={handleChange}
                     required
-                    className={
-                      errors.role ? "form-control is-invalid" : "form-control"
-                    }
+                    className="form-control"
                   >
                     <option
                       value="chef"

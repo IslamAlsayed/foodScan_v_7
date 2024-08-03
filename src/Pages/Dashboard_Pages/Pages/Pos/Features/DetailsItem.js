@@ -128,7 +128,7 @@ export default function DetailsItem({ visible, cartItem, modalClose }) {
   return (
     <div className={`DetailsItem ${staticModalVisible ? "visible" : ""}`}>
       <form className="modal-content">
-        <i class="fas fa-xmark xmarkModalClose" onClick={modalClose}></i>
+        <i className="fas fa-xmark xmarkModalClose" onClick={modalClose}></i>
         <div className="modal-body">
           <div className="item">
             <div className="item-img">

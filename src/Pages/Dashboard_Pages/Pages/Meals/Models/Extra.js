@@ -150,7 +150,7 @@ export default function Extra({ meal_id, data }) {
         <Col span={12}>
           <button
             type="button"
-            class="btn btn-primary"
+            className="btn btn-primary"
             data-bs-toggle="modal"
             data-bs-target="#addExtra"
           >
@@ -160,7 +160,7 @@ export default function Extra({ meal_id, data }) {
       </Row>
 
       <div
-        class="modal fade"
+        className="modal fade"
         id="addExtra"
         tabIndex="-1"
         aria-hidden="true"
@@ -168,20 +168,20 @@ export default function Extra({ meal_id, data }) {
         data-bs-keyboard="false"
         aria-labelledby="addExtraLabel"
       >
-        <div class="modal-dialog">
-          <form class="modal-content" onSubmit={handleAddExtra}>
-            <div class="modal-header">
-              <h1 class="modal-title fs-5" id="addExtraLabel">
+        <div className="modal-dialog">
+          <form className="modal-content" onSubmit={handleAddExtra}>
+            <div className="modal-header">
+              <h1 className="modal-title fs-5" id="addExtraLabel">
                 add extra
               </h1>
               <button
                 type="button"
-                class="btn-close"
+                className="btn-close"
                 data-bs-dismiss="modal"
                 aria-label="Close"
               ></button>
             </div>
-            <div class="modal-body">
+            <div className="modal-body">
               <div className="row">
                 <div className="col col-12">
                   <div className="mb-3">
@@ -209,14 +209,14 @@ export default function Extra({ meal_id, data }) {
               </div>
             </div>
 
-            <div class="modal-footer">
-              <button type="submit" class="btn btn-primary">
+            <div className="modal-footer">
+              <button type="submit" className="btn btn-primary">
                 <FaCheckCircle />
                 <span>save</span>
               </button>
               <button
                 type="button"
-                class="btn btn-secondary"
+                className="btn btn-secondary"
                 data-bs-dismiss="modal"
               >
                 <HiXMark />

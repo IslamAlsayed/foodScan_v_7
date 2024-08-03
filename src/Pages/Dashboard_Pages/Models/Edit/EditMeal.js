@@ -1,18 +1,14 @@
 import "../Models.css";
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import { FaCheckCircle } from "react-icons/fa";
-import { FaXmark } from "react-icons/fa6";
 import { HiXMark } from "react-icons/hi2";
-import { IoAddCircleSharp } from "react-icons/io5";
-import instance from "../../../../axiosConfig/instance";
 import Swal from "sweetalert2";
-import axios from "axios";
+import { getData, updateData } from "../../../../axiosConfig/API";
 
 export default function EditMeal({ visible, item, modalClose }) {
   const imageRef = useRef(null);
   const [staticModalVisible, setStaticModalVisible] = useState(false);
   const [mealCategories, setMealCategories] = useState(false);
-
   const [meal, setMeal] = useState({
     name: "",
     description: "",
@@ -25,47 +21,54 @@ export default function EditMeal({ visible, item, modalClose }) {
     number: 1,
   });
 
-  const [errors, setErrors] = useState({
-    idError: "",
-    nameError: "",
-    descriptionError: "",
-    typeError: "",
-    category_nameError: "",
-    category_idError: "",
-    imageError: "",
-    statusError: "",
-    meal_size_costsError: [],
-  });
+  const fetchCategories = useCallback(async () => {
+    try {
+      const result = await getData("categories");
+      setMealCategories(result);
+    } catch (error) {
+      console.warn(error.response.data.error);
+    }
+  }, []);
 
   useEffect(() => {
     setStaticModalVisible(visible);
     if (item) {
-      setMeal(item);
-      setMealCategories(item.categories);
+      fetchCategories(item.categories);
     }
   }, [item]);
 
   const handleChange = (e) => {
-    const { name, value, id } = e.target;
-    if (name === "type") {
-      setMeal((prevData) => ({
+    const { name, value, id, type, files } = e.target;
+
+    setMeal((prevData) => {
+      if (name === "type") {
+        return {
+          ...prevData,
+          type: id === "veg" ? "vegetarian" : "non-vegetarian",
+        };
+      }
+      if (name === "status") {
+        return {
+          ...prevData,
+          status: id === "active" ? 1 : 0,
+        };
+      }
+      if (name === "image" && type === "file") {
+        return {
+          ...prevData,
+          image: files[0],
+        };
+      }
+      return {
         ...prevData,
-        type: id === "veg" ? "vegetarian" : "non-vegetarian",
-      }));
-    } else if (name === "status") {
-      setMeal((prevData) => ({
-        ...prevData,
-        status: id === "active" ? 1 : 0,
-      }));
-    } else if (name === "image") {
-      setMeal({ ...meal, image: e.target.files[0] });
-    } else {
-      setMeal({ ...meal, [name]: value });
-    }
+        [name]: value,
+      };
+    });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     const formData = new FormData();
     formData.append("name", meal.name);
     formData.append("description", meal.description);
@@ -82,30 +85,35 @@ export default function EditMeal({ visible, item, modalClose }) {
     formData.append("meal_size_costs[3][cost]", 80);
     formData.append("price", meal.price);
     formData.append("number", meal.number);
-    formData.append("_method", "PUT");
-
-    const AdminToken = JSON.parse(localStorage.getItem("AdminToken")) || null;
 
     try {
-      const response = await axios.post(
-        `http://localhost:8000/api/admin/meals/${item.id}`,
+      const response = await updateData(
+        `admin/meals/${item.id}`,
         formData,
-        {
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${AdminToken}`,
-          },
-        }
+        "put"
       );
 
-      if (response.data.status === "success") {
+      if (response.status === "success") {
+        setMeal({
+          name: "",
+          description: "",
+          type: "vegetarian",
+          category_id: -1,
+          image: null,
+          status: 1,
+          price: "",
+          size: "",
+          number: 1,
+        });
+
         modalClose();
-        Swal.fire("Updated!", "The category has been updated.", "success");
+
+        if (imageRef.current) imageRef.current.value = null;
+
+        Swal.fire("Updated!", response.message, "success");
       }
     } catch (error) {
       if (error.response && error.response.status === 422) {
-        setErrors(error.response.data.errors);
         Swal.fire("Error!", "Validation error occurred.", "error");
       } else {
         Swal.fire("Error!", error.response.data.error, "error");

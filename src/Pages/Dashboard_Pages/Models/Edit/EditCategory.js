@@ -1,27 +1,17 @@
 import "../Models.css";
-import { FaXmark } from "react-icons/fa6";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { FaCheckCircle } from "react-icons/fa";
 import { HiXMark } from "react-icons/hi2";
-import instance from "../../../../axiosConfig/instance";
 import Swal from "sweetalert2";
-import axios from "axios";
+import { updateData } from "../../../../axiosConfig/API";
 
 export default function EditCategories({ visible, item, modalClose }) {
   const imageRef = useRef(null);
   const [staticModalVisible, setStaticModalVisible] = useState(false);
-
   const [category, setCategory] = useState({
     name: "",
     description: "",
     image_file: null,
-  });
-
-  const [errors, setErrors] = useState({
-    name: "",
-    description: "",
-    image: "",
-    status: "",
   });
 
   useEffect(() => {
@@ -31,52 +21,49 @@ export default function EditCategories({ visible, item, modalClose }) {
 
   const handleChange = (e) => {
     const { name, value, type, files } = e.target;
-    setCategory((prevMeal) => ({
-      ...prevMeal,
+
+    setCategory((prevCategory) => ({
+      ...prevCategory,
       [name]: type === "file" ? files[0] : value,
     }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     const formData = new FormData();
     formData.append("name", category.name);
     formData.append("description", category.description);
     if (category.image_file) formData.append("image_file", category.image_file);
-    formData.append("_method", "PUT");
-
-    const AdminToken = JSON.parse(localStorage.getItem("AdminToken")) || null;
 
     try {
-      const response = await axios.post(
-        `http://127.0.0.1:8000/api/categories/${item.id}`,
+      const response = await updateData(
+        `categories/${item.id}`,
         formData,
-        {
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${AdminToken}`,
-          },
-        }
+        "put"
       );
 
-      if (response.data.status === "Ok") {
+      if (response.status === "Ok") {
+        setCategory({
+          name: "",
+          description: "",
+          image_file: null,
+        });
+
         modalClose();
-        Swal.fire("Updated!", "The category has been updated.", "success");
+
+        if (imageRef.current) imageRef.current.value = null;
+
+        Swal.fire("Updated!", response.message, "success");
       }
     } catch (error) {
       if (error.response && error.response.status === 422) {
-        setErrors(error.response.data.errors);
         Swal.fire("Error!", "Validation error occurred.", "error");
       } else {
         Swal.fire("Error!", error.response.data.error, "error");
       }
     }
   };
-
-  if (!category) {
-    return <div>Loading...</div>;
-  }
 
   return (
     <div id="AddTable" className={staticModalVisible ? "visible" : ""}>
@@ -106,9 +93,6 @@ export default function EditCategories({ visible, item, modalClose }) {
                     onChange={handleChange}
                     required
                   />
-                  {errors.name && (
-                    <div className="text-danger">{errors.name}</div>
-                  )}
                 </div>
               </div>
 
@@ -126,9 +110,6 @@ export default function EditCategories({ visible, item, modalClose }) {
                     onChange={handleChange}
                     required
                   />
-                  {errors.description && (
-                    <div className="text-danger">{errors.description}</div>
-                  )}
                 </div>
               </div>
 
@@ -145,9 +126,6 @@ export default function EditCategories({ visible, item, modalClose }) {
                     ref={imageRef}
                     onChange={handleChange}
                   />
-                  {errors.image_file && (
-                    <div className="text-danger">{errors.image_file}</div>
-                  )}
                 </div>
               </div>
             </div>

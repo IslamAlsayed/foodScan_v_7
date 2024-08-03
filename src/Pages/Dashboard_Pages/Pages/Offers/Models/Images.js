@@ -52,7 +52,7 @@ export default function Images() {
 
       <div className="row">
         <form className="col">
-          <label htmlFor="image" class="btn btn-primary">
+          <label htmlFor="image" className="btn btn-primary">
             Upload New Image
           </label>
           <input

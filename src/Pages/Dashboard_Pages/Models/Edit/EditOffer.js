@@ -2,15 +2,12 @@ import "../Models.css";
 import React, { useEffect, useState, useRef } from "react";
 import { FaCheckCircle } from "react-icons/fa";
 import { HiXMark } from "react-icons/hi2";
-import instance from "../../../../axiosConfig/instance";
 import Swal from "sweetalert2";
-import axios from "axios";
-import Employees from "./Employees";
+import { updateData } from "../../../../axiosConfig/API";
 
 export default function EditOffer({ visible, item, modalClose }) {
   const imageRef = useRef(null);
   const [staticModalVisible, setStaticModalVisible] = useState(false);
-
   const [offer, setOffer] = useState({
     name: "",
     discount_percentage: "",
@@ -20,73 +17,70 @@ export default function EditOffer({ visible, item, modalClose }) {
     status: 1,
   });
 
-  const [errors, setErrors] = useState({
-    name: "",
-    discount_percentage: "",
-    start_date: "",
-    end_date: "",
-    image: "",
-    status: "",
-  });
-
   useEffect(() => {
     setStaticModalVisible(visible);
     if (item) setOffer(item);
   }, [item]);
 
   const handleChange = (e) => {
-    const { name, value, id } = e.target;
-    if (name === "type") {
-      setOffer((prevData) => ({
-        ...prevData,
-        type: id === "veg" ? "vegetarian" : "non-vegetarian",
-      }));
-    } else if (name === "status") {
-      setOffer((prevData) => ({
-        ...prevData,
-        status: id === "active" ? 1 : 0,
-      }));
-    } else if (name === "image") {
-      setOffer({ ...offer, image: e.target.files[0] });
-    } else {
-      setOffer({ ...offer, [name]: value });
-    }
+    const { name, value, id, type, files } = e.target;
+
+    setOffer((prevData) => {
+      if (name === "status") {
+        return {
+          ...prevData,
+          status: id === "active" ? 1 : 0,
+        };
+      } else if (name === "image" && type === "file") {
+        return {
+          ...prevData,
+          image: files[0],
+        };
+      } else {
+        return {
+          ...prevData,
+          [name]: value,
+        };
+      }
+    });
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     const formData = new FormData();
-
     formData.append("name", offer.name);
     formData.append("discount_percentage", offer.discount_percentage);
     formData.append("start_date", offer.start_date);
     formData.append("end_date", offer.end_date);
-    formData.append("status", offer.status);
     if (offer.image) formData.append("image", offer.image);
-    formData.append("_method", "PUT");
-
-    const AdminToken = JSON.parse(localStorage.getItem("AdminToken")) || null;
+    formData.append("status", offer.status);
 
     try {
-      const response = await axios.post(
-        `http://localhost:8000/api/admin/offers/${item.id}`,
+      const response = await updateData(
+        `admin/administrators/${item.id}`,
         formData,
-        {
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${AdminToken}`,
-          },
-        }
+        "put"
       );
 
-      if (response.data.status === "success") {
+      if (response.status === "success") {
+        setOffer({
+          name: "",
+          discount_percentage: "",
+          start_date: "",
+          end_date: "",
+          image: null,
+          status: 1,
+        });
+
         modalClose();
-        Swal.fire("Updated!", "The offer has been updated.", "success");
+
+        if (imageRef.current) imageRef.current.value = null;
+
+        Swal.fire("Updated!", response.message, "success");
       }
     } catch (error) {
       if (error.response && error.response.status === 422) {
-        setErrors(error.response.data.errors);
         Swal.fire("Error!", "Validation error occurred.", "error");
       } else {
         Swal.fire("Error!", error.response.data.error, "error");
@@ -125,15 +119,55 @@ export default function EditOffer({ visible, item, modalClose }) {
 
               <div className="col-6">
                 <div className="mb-3">
-                  <label htmlFor="discount_percentage" className="form-label">
-                    discount percentage <span className="star">*</span>
+                  <label htmlFor="email" className="form-label">
+                    email <span className="star">*</span>
+                  </label>
+                  <input
+                    type="email"
+                    className="form-control email"
+                    name="email"
+                    id="email"
+                    value={offer.email}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="col-6">
+                <div className="mb-3">
+                  <label htmlFor="role" className="form-label">
+                    role <span className="star">*</span>
+                  </label>
+                  <select
+                    name="role"
+                    id="role"
+                    value={offer.role}
+                    onChange={handleChange}
+                    required
+                    className="form-control"
+                  >
+                    <option value="chef" selected={offer.role === "chef"}>
+                      Chef
+                    </option>
+                    <option value="cashier" selected={offer.role === "cashier"}>
+                      Cashier
+                    </option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="col-6">
+                <div className="mb-3">
+                  <label htmlFor="phone" className="form-label">
+                    phone <span className="star">*</span>
                   </label>
                   <input
                     type="text"
                     className="form-control"
-                    name="discount_percentage"
-                    id="discount_percentage"
-                    value={offer.discount_percentage}
+                    name="phone"
+                    id="phone"
+                    value={offer.phone}
                     onChange={handleChange}
                     required
                   />
@@ -142,15 +176,15 @@ export default function EditOffer({ visible, item, modalClose }) {
 
               <div className="col-6">
                 <div className="mb-3">
-                  <label htmlFor="start_date" className="form-label">
-                    start date <span className="star">*</span>
+                  <label htmlFor="password" className="form-label">
+                    password <span className="star">*</span>
                   </label>
                   <input
-                    type="data"
+                    type="text"
                     className="form-control"
-                    name="start_date"
-                    id="start_date"
-                    value={offer.start_date}
+                    name="password"
+                    id="password"
+                    value={offer.password}
                     onChange={handleChange}
                     required
                   />
@@ -159,32 +193,15 @@ export default function EditOffer({ visible, item, modalClose }) {
 
               <div className="col-6">
                 <div className="mb-3">
-                  <label htmlFor="end_date" className="form-label">
-                    end date <span className="star">*</span>
+                  <label htmlFor="password_confirmation" className="form-label">
+                    password confirmation <span className="star">*</span>
                   </label>
                   <input
-                    type="data"
+                    type="text"
                     className="form-control"
-                    name="end_date"
-                    id="end_date"
-                    value={offer.end_date}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-              </div>
-
-              <div className="col-6">
-                <div className="mb-3">
-                  <label htmlFor="image" className="form-label">
-                    image (548px,140px) <span className="star">*</span>
-                  </label>
-                  <input
-                    type="file"
-                    className="form-control"
-                    name="image"
-                    id="image"
-                    value={offer.image}
+                    name="password_confirmation"
+                    id="password_confirmation"
+                    value={offer.password_confirmation}
                     onChange={handleChange}
                     required
                   />

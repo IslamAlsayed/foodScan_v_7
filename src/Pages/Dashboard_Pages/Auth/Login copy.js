@@ -158,7 +158,7 @@ export default function Login() {
                   </button>
                 </div>
                 <div className="changeRoute form-class-ext-center text-dark">
-                  <a href="" class="text-dark fw-bold">
+                  <a href="" className="text-dark fw-bold">
                     <Link to="/auth/resetpassword">forget password ?</Link>
                   </a>
                 </div>

@@ -1,15 +1,14 @@
 import "../Models.css";
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import { FaCheckCircle } from "react-icons/fa";
-import { FaXmark } from "react-icons/fa6";
 import { HiXMark } from "react-icons/hi2";
+import { FaXmark } from "react-icons/fa6";
 import Swal from "sweetalert2";
-import axios from "axios";
+import { getData, addData } from "../../../../axiosConfig/API";
 
 export default function Meals() {
-  const [categories, setCategories] = useState([]);
   const imageRef = useRef(null);
-
+  const [categories, setCategories] = useState([]);
   const [meal, setMeal] = useState({
     name: "",
     description: "",
@@ -21,42 +20,46 @@ export default function Meals() {
     number: 1,
   });
 
-  const closeModel = () => {
-    var AddTable = document.getElementById("AddTable");
-    if (AddTable) AddTable.classList.remove("visible");
-  };
-
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const response = await axios.get(
-          "http://127.0.0.1:8000/api/categories"
-        );
-        setCategories(response.data.data);
-      } catch (error) {
-        console.error("Error fetching categories:", error);
-      }
-    };
-    fetchCategories();
+  const fetchCategories = useCallback(async () => {
+    try {
+      const result = await getData("categories");
+      setCategories(result);
+    } catch (error) {
+      console.warn(error.response.data.error);
+    }
   }, []);
 
+  useEffect(() => {
+    fetchCategories();
+  }, [fetchCategories]);
+
   const handleChange = (e) => {
-    const { name, value, id } = e.target;
-    if (name === "type") {
-      setMeal((prevData) => ({
+    const { name, value, id, type, files } = e.target;
+
+    setMeal((prevData) => {
+      if (name === "type") {
+        return {
+          ...prevData,
+          type: id === "veg" ? "vegetarian" : "non-vegetarian",
+        };
+      }
+      if (name === "status") {
+        return {
+          ...prevData,
+          status: id === "active" ? 1 : 0,
+        };
+      }
+      if (name === "image" && type === "file") {
+        return {
+          ...prevData,
+          image: files[0],
+        };
+      }
+      return {
         ...prevData,
-        type: id === "veg" ? "vegetarian" : "non-vegetarian",
-      }));
-    } else if (name === "status") {
-      setMeal((prevData) => ({
-        ...prevData,
-        status: id === "active" ? 1 : 0,
-      }));
-    } else if (name === "image") {
-      setMeal({ ...meal, image: e.target.files[0] });
-    } else {
-      setMeal({ ...meal, [name]: value });
-    }
+        [name]: value,
+      };
+    });
   };
 
   const handleSubmit = async (e) => {
@@ -79,42 +82,51 @@ export default function Meals() {
     formData.append("price", meal.price);
     formData.append("number", meal.number);
 
-    const AdminToken = JSON.parse(localStorage.getItem("AdminToken")) || null;
+    Swal.fire({
+      title: "Are you sure?",
+      text: "Do you want to save the changes?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, save it!",
+      cancelButtonText: "No, cancel",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const response = await addData("admin/meals", formData);
 
-    try {
-      const response = await axios.post(
-        "http://127.0.0.1:8000/api/admin/meals",
-        formData,
-        {
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${AdminToken}`,
-          },
+          if (response.status === "success") {
+            setMeal({
+              name: "",
+              description: "",
+              type: "vegetarian",
+              category_id: -1,
+              image: null,
+              status: 1,
+              price: "",
+              number: 1,
+            });
+
+            if (imageRef.current) imageRef.current.value = null;
+
+            Swal.fire("Saved!", response.message, "success");
+          }
+        } catch (error) {
+          console.log("meals error", error);
+          if (error.response && error.response.status === 422) {
+            Swal.fire("Error!", "Validation error occurred.", "error");
+          } else {
+            Swal.fire("Error!", error.response.data.error, "error");
+          }
         }
-      );
-
-      if (response.data.status === "success") {
-        setMeal({
-          name: "",
-          description: "",
-          type: "vegetarian",
-          category_id: -1,
-          image: null,
-          status: 1,
-          price: "",
-          number: 1,
-        });
-
-        if (imageRef.current) {
-          imageRef.current.value = null;
-        }
-
-        Swal.fire("Saved!", "The meal has been Saved.", "success");
       }
-    } catch (error) {
-      console.error(error);
-    }
+    });
+  };
+
+  const closeModel = () => {
+    var AddTable = document.getElementById("AddTable");
+    if (AddTable) AddTable.classList.remove("visible");
   };
 
   return (

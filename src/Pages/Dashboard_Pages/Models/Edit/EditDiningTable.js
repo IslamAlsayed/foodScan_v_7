@@ -1,22 +1,13 @@
 import "../Models.css";
-import { FaXmark } from "react-icons/fa6";
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { FaCheckCircle } from "react-icons/fa";
 import { HiXMark } from "react-icons/hi2";
-import instance from "../../../../axiosConfig/instance";
 import Swal from "sweetalert2";
+import { updateData } from "../../../../axiosConfig/API";
 
 export default function EditDiningTable({ visible, item, modalClose }) {
   const [staticModalVisible, setStaticModalVisible] = useState(false);
-
   const [diningTable, setDiningTable] = useState({
-    num: "",
-    size: "",
-    floor: "",
-    status: "",
-  });
-
-  const [errors, setErrors] = useState({
     num: "",
     size: "",
     floor: "",
@@ -29,26 +20,16 @@ export default function EditDiningTable({ visible, item, modalClose }) {
   }, [item]);
 
   const handleChange = (e) => {
-    const { name, value, type } = e.target;
+    const { name, value, id } = e.target;
 
-    if (name === "status") {
-      setDiningTable((prevDiningTable) => ({
-        ...prevDiningTable,
-        status: value === "active" ? 1 : 0,
-      }));
-    } else {
-      setDiningTable((prevDiningTable) => ({
-        ...prevDiningTable,
-        [name]: value,
-      }));
-    }
+    setDiningTable((prevDiningTable) => ({
+      ...prevDiningTable,
+      [name]: name === "status" ? (id === "active" ? 1 : 0) : value,
+    }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    let url = "/api/admin/extras";
-    let method = "POST"; // Default to POST for new entries
 
     const formData = new FormData();
     formData.append("num", diningTable.num);
@@ -56,43 +37,33 @@ export default function EditDiningTable({ visible, item, modalClose }) {
     formData.append("floor", diningTable.floor);
     formData.append("status", diningTable.status);
 
-    if (item) {
-      url = `/api/admin/dining-tables/${item.id}`;
-      method = "POST";
-      formData.append("_method", "PUT");
-    }
-
     try {
-      const response = await instance({
-        url,
-        method,
-        data: formData,
+      const response = await updateData(
+        `admin/dining-tables/${item.id}`,
+        formData,
+        "put"
+      );
 
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization:
-            "Bearer " + JSON.parse(localStorage.getItem("AdminToken")), //the token is a variable which holds the token
-        },
-      });
+      if (response.status === "success") {
+        setDiningTable({
+          num: "",
+          size: "",
+          floor: "",
+          status: "",
+        });
 
-      if (item) {
-        Swal.fire("Updated!", "The extra has been updated.", "success");
-      } else {
-        Swal.fire("Saved!", "The extra has been saved.", "success");
+        modalClose();
+
+        Swal.fire("Updated!", response.message, "success");
       }
     } catch (error) {
       if (error.response && error.response.status === 422) {
-        setErrors(error.response.data.errors);
         Swal.fire("Error!", "Validation error occurred.", "error");
       } else {
         Swal.fire("Error!", error.response.data.error, "error");
       }
     }
   };
-
-  if (!diningTable) {
-    return <div>Loading...</div>;
-  }
 
   return (
     <div id="AddTable" className={staticModalVisible ? "visible" : ""}>
@@ -122,9 +93,6 @@ export default function EditDiningTable({ visible, item, modalClose }) {
                     onClick={() => modalClose()}
                     required
                   />
-                  {errors.num && (
-                    <div className="text-danger">{errors.num}</div>
-                  )}
                 </div>
               </div>
 
@@ -142,9 +110,6 @@ export default function EditDiningTable({ visible, item, modalClose }) {
                     onChange={handleChange}
                     required
                   />
-                  {errors.size && (
-                    <div className="text-danger">{errors.size}</div>
-                  )}
                 </div>
               </div>
 
@@ -162,9 +127,6 @@ export default function EditDiningTable({ visible, item, modalClose }) {
                     value={diningTable.floor}
                     required
                   />
-                  {errors.floor && (
-                    <div className="text-danger">{errors.floor}</div>
-                  )}
                 </div>
               </div>
 
@@ -200,9 +162,6 @@ export default function EditDiningTable({ visible, item, modalClose }) {
                     </div>
                   </div>
                 </div>
-                {errors.status && (
-                  <div className="text-danger">{errors.status}</div>
-                )}
               </div>
             </div>
 

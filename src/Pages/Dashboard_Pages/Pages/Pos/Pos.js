@@ -10,33 +10,9 @@ import AddCustomer from "./Features/AddCustomer";
 import CartItems from "./Features/CartItems";
 import DetailsItem from "./Features/DetailsItem";
 import { getData } from "../../../../axiosConfig/API";
-// import { addMonths } from "react-datepicker/dist/date_utils";
 
 export default function Pos() {
   const [cartItemTotal, setCartItemTotal] = useState(1);
-
-  // const fetchMenu = useCallback(async () => {
-  //   try {
-  //     const result = await getData("AllItems");
-  //     console.log("allItems", result);
-  //   } catch (error) {
-  //     console.warn(error.response.data.error);
-  //   }
-  // }, []);
-
-  // const fetchSubMenu = useCallback(async () => {
-  //   try {
-  //     const result = await getData("products");
-  //     console.log("products", result);
-  //   } catch (error) {
-  //     console.warn(error.response.data.error);
-  //   }
-  // }, []);
-
-  // useEffect(() => {
-  //   fetchMenu();
-  //   fetchSubMenu();
-  // }, [fetchMenu, fetchSubMenu]);
 
   useEffect(() => {
     const cartItem = JSON.parse(localStorage.getItem("cartItems")) || null;
@@ -90,8 +66,8 @@ export default function Pos() {
         <div className="posContent">
           <div className="subMenu mb-4">
             <div className="cards">
-              {subMenuItems.map((item) => (
-                <a href="#" className="card">
+              {subMenuItems.map((item, index) => (
+                <a href="#" className="card" key={index} id={item.id}>
                   <img src={item.image} alt={item.title} />
                   <small className="card-title">{item.title}</small>
                 </a>
@@ -101,8 +77,8 @@ export default function Pos() {
 
           <div className="mainMenu">
             <div className="cards">
-              {subMainMenu.map((item) => (
-                <div className="card" id={item.id}>
+              {subMainMenu.map((item, index) => (
+                <div className="card" key={index} id={item.id}>
                   <div className="card-img">
                     <img src={item.image} alt={item.image} />
                   </div>

@@ -1,50 +1,35 @@
 import "../Models.css";
 import React, { useState } from "react";
-
 import { FaCheckCircle } from "react-icons/fa";
 import { FaXmark } from "react-icons/fa6";
 import { HiXMark } from "react-icons/hi2";
-import instance from "../../../../axiosConfig/instance";
 import Swal from "sweetalert2";
-import { useDispatch, useSelector } from "react-redux";
-import { update } from "../../../../Store/action";
+import { addData } from "../../../../axiosConfig/API";
 
 export default function Administrators() {
-  const dispatch = useDispatch();
-  const updated = useSelector((state) => state.updated);
-  const [admin, setAdmin] = useState({
+  const [administrator, setAdministrator] = useState({
     name: "",
     email: "",
     phone: "",
     password: "",
     password_confirmation: "",
-    status: "",
+    status: 1,
     role: "admin",
   });
 
-  const [errors, setErrors] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    password: "",
-    password_confirmation: "",
-    status: "",
-  });
-
-  const closeModel = () => {
-    var AddTable = document.getElementById("AddTable");
-    if (AddTable) AddTable.classList.remove("visible");
-  };
-
   const handleChange = (e) => {
     const { name, value, id } = e.target;
+
     if (name === "status") {
-      setAdmin((prevAdmin) => ({
+      setAdministrator((prevAdmin) => ({
         ...prevAdmin,
         status: id === "active" ? 1 : 0,
       }));
     } else {
-      setAdmin({ ...admin, [name]: value });
+      setAdministrator((prevAdmin) => ({
+        ...prevAdmin,
+        [name]: value,
+      }));
     }
   };
 
@@ -52,13 +37,16 @@ export default function Administrators() {
     e.preventDefault();
 
     const formData = new FormData();
-    formData.append("name", admin.name);
-    formData.append("email", admin.email);
-    formData.append("phone", admin.phone);
-    formData.append("password", admin.password);
-    formData.append("password_confirmation", admin.password_confirmation);
-    formData.append("Role", admin.role);
-    formData.append("status", admin.status);
+    formData.append("name", administrator.name);
+    formData.append("email", administrator.email);
+    formData.append("phone", administrator.phone);
+    formData.append("password", administrator.password);
+    formData.append(
+      "password_confirmation",
+      administrator.password_confirmation
+    );
+    formData.append("Role", administrator.role);
+    formData.append("status", administrator.status);
     formData.append("identity_card", "172001");
 
     Swal.fire({
@@ -70,33 +58,38 @@ export default function Administrators() {
       cancelButtonColor: "#d33",
       confirmButtonText: "Yes, save it!",
       cancelButtonText: "No, cancel",
-    }).then((result) => {
+    }).then(async (result) => {
       if (result.isConfirmed) {
-        instance
-          .post("/api/admin/employees", formData, {
-            headers: {
-              Authorization:
-                "Bearer " + JSON.parse(localStorage.getItem("AdminToken")), //the token is a variable which holds the token
-              "Content-Type": "multipart/form-data",
-            },
-          })
-          .then((response) => {
-            Swal.fire("Saved!", "The admin has been saved.", "success");
-            dispatch(update(!updated));
-            closeModel();
-          })
-          .catch((error) => {
-            if (error.response && error.response.status === 422) {
-              console.log("Validation error:", error.response.data.errors);
-              setErrors(error.response.data.errors);
-              Swal.fire("Error!", "Validation error occurred.", "error");
-            } else {
-              console.error("Error submitting form:", error);
-              Swal.fire("Error!", error.response.data.error, "error");
-            }
-          });
+        try {
+          const response = await addData("admin/employees", formData);
+
+          if (response.status === "success") {
+            setAdministrator({
+              name: "",
+              description: "",
+              type: "vegetarian",
+              category_id: -1,
+              image: null,
+              status: 1,
+              cost: "",
+            });
+
+            Swal.fire("Saved!", response.message, "success");
+          }
+        } catch (error) {
+          if (error.response && error.response.status === 422) {
+            Swal.fire("Error!", "Validation error occurred.", "error");
+          } else {
+            Swal.fire("Error!", error.response.data.error, "error");
+          }
+        }
       }
     });
+  };
+
+  const closeModel = () => {
+    var AddTable = document.getElementById("AddTable");
+    if (AddTable) AddTable.classList.remove("visible");
   };
 
   return (
@@ -122,13 +115,10 @@ export default function Administrators() {
                     className="form-control"
                     name="name"
                     id="name"
-                    value={admin.name}
+                    value={administrator.name}
                     onChange={handleChange}
                     required
                   />
-                  {errors.name && (
-                    <div className="text-danger">{errors.name}</div>
-                  )}
                 </div>
               </div>
 
@@ -142,13 +132,10 @@ export default function Administrators() {
                     className="form-control email"
                     name="email"
                     id="email"
-                    value={admin.email}
+                    value={administrator.email}
                     onChange={handleChange}
                     required
                   />
-                  {errors.email && (
-                    <div className="text-danger">{errors.email}</div>
-                  )}
                 </div>
               </div>
 
@@ -162,13 +149,10 @@ export default function Administrators() {
                     className="form-control"
                     name="phone"
                     id="phone"
-                    value={admin.phone}
+                    value={administrator.phone}
                     onChange={handleChange}
                     required
                   />
-                  {errors.phone && (
-                    <div className="text-danger">{errors.phone}</div>
-                  )}
                 </div>
               </div>
 
@@ -185,7 +169,7 @@ export default function Administrators() {
                         id="active"
                         required
                         value={1}
-                        checked={admin.status === 1}
+                        checked={administrator.status === 1}
                         onChange={handleChange}
                       />
                       <span>active</span>
@@ -197,15 +181,12 @@ export default function Administrators() {
                         id="inactive"
                         required
                         value={0}
-                        checked={admin.status === 0}
+                        checked={administrator.status === 0}
                         onChange={handleChange}
                       />
                       <span>in active</span>
                     </div>
                   </div>
-                  {errors.status && (
-                    <div className="text-danger">{errors.status}</div>
-                  )}
                 </div>
               </div>
 
@@ -219,13 +200,10 @@ export default function Administrators() {
                     className="form-control"
                     name="password"
                     id="password"
-                    value={admin.password}
+                    value={administrator.password}
                     onChange={handleChange}
                     required
                   />
-                  {errors.password && (
-                    <div className="text-danger">{errors.password}</div>
-                  )}
                 </div>
               </div>
 
@@ -239,15 +217,10 @@ export default function Administrators() {
                     className="form-control"
                     name="password_confirmation"
                     id="password_confirm"
-                    value={admin.password_confirm}
+                    value={administrator.password_confirm}
                     onChange={handleChange}
                     required
                   />
-                  {errors.password_confirmation && (
-                    <div className="text-danger">
-                      {errors.password_confirmation}
-                    </div>
-                  )}
                 </div>
               </div>
             </div>

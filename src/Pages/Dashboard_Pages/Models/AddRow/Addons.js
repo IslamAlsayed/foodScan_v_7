@@ -1,18 +1,13 @@
 import "../Models.css";
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import { FaCheckCircle } from "react-icons/fa";
 import { HiXMark } from "react-icons/hi2";
-import instance from "../../../../axiosConfig/instance";
 import Swal from "sweetalert2";
-import { useDispatch, useSelector } from "react-redux";
-import { update } from "../../../../Store/action";
-import axios from "axios";
+import { getData, addData } from "../../../../axiosConfig/API";
 
 export default function Addons() {
   const imageRef = useRef(null);
   const [categories, setCategories] = useState([]);
-  const dispatch = useDispatch();
-  const updated = useSelector((state) => state.updated);
   const [addon, setAddon] = useState({
     name: "",
     description: "",
@@ -23,35 +18,18 @@ export default function Addons() {
     cost: "",
   });
 
-  const [errors, setErrors] = useState({
-    name: "",
-    description: "",
-    type: "",
-    category_id: "",
-    image: "",
-    status: "",
-    cost: "",
-  });
-
-  const closeModel = () => {
-    var AddTable = document.getElementById("AddTable");
-    if (AddTable) AddTable.classList.remove("visible");
-  };
+  const fetchCategories = useCallback(async () => {
+    try {
+      const result = await getData("categories");
+      setCategories(result);
+    } catch (error) {
+      console.warn(error.response.data.error);
+    }
+  }, []);
 
   useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const response = await axios.get(
-          "http://127.0.0.1:8000/api/categories"
-        );
-        console.log(response.data);
-        setCategories(response.data.data);
-      } catch (error) {
-        console.error("Error fetching categories:", error);
-      }
-    };
     fetchCategories();
-  }, []);
+  }, [fetchCategories]);
 
   const handleChange = (e) => {
     const { name, value, id } = e.target;
@@ -84,8 +62,6 @@ export default function Addons() {
     formData.append("status", addon.status);
     if (addon.image) formData.append("image", addon.image);
 
-    const AdminToken = JSON.parse(localStorage.getItem("AdminToken")) || null;
-
     Swal.fire({
       title: "Are you sure?",
       text: "Do you want to save the changes?",
@@ -98,19 +74,9 @@ export default function Addons() {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          const response = await axios.post(
-            "http://127.0.0.1:8000/api/admin/addons",
-            formData,
-            {
-              headers: {
-                Accept: "application/json",
-                "Content-Type": "multipart/form-data",
-                Authorization: `Bearer ${AdminToken}`,
-              },
-            }
-          );
+          const response = await addData("admin/addons", formData);
 
-          if (response.data.status === "success") {
+          if (response.status === "success") {
             setAddon({
               name: "",
               description: "",
@@ -123,13 +89,22 @@ export default function Addons() {
 
             if (imageRef.current) imageRef.current.value = null;
 
-            Swal.fire("Saved!", "The category has been Saved.", "success");
+            Swal.fire("Saved!", response.message, "success");
           }
         } catch (error) {
-          console.error(error);
+          if (error.response && error.response.status === 422) {
+            Swal.fire("Error!", "Validation error occurred.", "error");
+          } else {
+            Swal.fire("Error!", error.response.data.error, "error");
+          }
         }
       }
     });
+  };
+
+  const closeModel = () => {
+    var AddTable = document.getElementById("AddTable");
+    if (AddTable) AddTable.classList.remove("visible");
   };
 
   return (
@@ -158,9 +133,6 @@ export default function Addons() {
                     onChange={handleChange}
                     required
                   />
-                  {errors.name && (
-                    <div className="text-danger">{errors.name}</div>
-                  )}
                 </div>
               </div>
 
@@ -177,26 +149,15 @@ export default function Addons() {
                     value={addon.category_id}
                     required
                   >
-                    <option
-                      value={-1}
-                      disabled
-                      selected={addon.category_id === -1}
-                    >
+                    <option value={-1} disabled>
                       choose
                     </option>
                     {categories.map((category) => (
-                      <option
-                        key={category.id}
-                        value={category.id}
-                        selected={category.id === addon.category_id}
-                      >
+                      <option key={category.id} value={category.id}>
                         {category.name}
                       </option>
                     ))}
                   </select>
-                  {errors.category_id && (
-                    <div className="text-danger">{errors.category_id}</div>
-                  )}
                 </div>
               </div>
 
@@ -214,9 +175,6 @@ export default function Addons() {
                     onChange={handleChange}
                     required
                   />
-                  {errors.cost && (
-                    <div className="text-danger">{errors.cost}</div>
-                  )}
                 </div>
               </div>
 
@@ -285,9 +243,6 @@ export default function Addons() {
                       <label htmlFor="inactive">inactive</label>
                     </div>
                   </div>
-                  {errors.status && (
-                    <div className="text-danger">{errors.status}</div>
-                  )}
                 </div>
               </div>
 
@@ -303,9 +258,6 @@ export default function Addons() {
                     id="image"
                     onChange={handleChange}
                   />
-                  {errors.image && (
-                    <div className="text-danger">{errors.image}</div>
-                  )}
                 </div>
               </div>
 
@@ -322,9 +274,6 @@ export default function Addons() {
                     value={addon.description}
                     required
                   ></textarea>
-                  {errors.description && (
-                    <div className="text-danger">{errors.description}</div>
-                  )}
                 </div>
               </div>
             </div>

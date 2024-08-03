@@ -104,7 +104,11 @@ export function LoginForm(props) {
           </span>
         </div>
 
-        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
+        <button
+          type="button"
+          className="btn btn-danger"
+          data-bs-dismiss="modal"
+        >
           Cancel
         </button>
         {/* ||  errors.passError */}

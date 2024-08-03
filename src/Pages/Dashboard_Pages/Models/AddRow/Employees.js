@@ -3,15 +3,10 @@ import React, { useState } from "react";
 import { FaCheckCircle } from "react-icons/fa";
 import { FaXmark } from "react-icons/fa6";
 import { HiXMark } from "react-icons/hi2";
-import instance from "../../../../axiosConfig/instance";
 import Swal from "sweetalert2";
-import { useDispatch, useSelector } from "react-redux";
-import { update } from "../../../../Store/action";
-import axios from "axios";
+import { addData } from "../../../../axiosConfig/API";
 
 function Employees() {
-  const dispatch = useDispatch();
-  const updated = useSelector((state) => state.updated);
   const [employee, setEmployee] = useState({
     name: "",
     email: "",
@@ -19,18 +14,7 @@ function Employees() {
     password: "",
     password_confirmation: "",
     status: 1,
-    role: "",
-    identity_card: "",
-  });
-
-  const [errors, setErrors] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    password: "",
-    password_confirmation: "",
-    status: "",
-    role: "",
+    role: "employee",
     identity_card: "",
   });
 
@@ -59,22 +43,10 @@ function Employees() {
     formData.append("status", employee.status);
     formData.append("identity_card", employee.identity_card);
 
-    const AdminToken = JSON.parse(localStorage.getItem("AdminToken")) || null;
-
     try {
-      const response = await axios.post(
-        "http://127.0.0.1:8000/api/admin/employees",
-        formData,
-        {
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${AdminToken}`,
-          },
-        }
-      );
+      const response = await addData("admin/employees", formData);
 
-      if (response.data.request_status === "success") {
+      if (response.status === "success") {
         setEmployee({
           name: "",
           email: "",
@@ -86,10 +58,14 @@ function Employees() {
           identity_card: "",
         });
 
-        Swal.fire("Saved!", "The employee has been Saved.", "success");
+        Swal.fire("Saved!", response.message, "success");
       }
     } catch (error) {
-      console.error(error);
+      if (error.response && error.response.status === 422) {
+        Swal.fire("Error!", "Validation error occurred.", "error");
+      } else {
+        Swal.fire("Error!", error.response.data.error, "error");
+      }
     }
   };
 
@@ -136,9 +112,6 @@ function Employees() {
                     onChange={handleChange}
                     required
                   />
-                  {errors.name && (
-                    <div className="text-danger">{errors.name}</div>
-                  )}
                 </div>
               </div>
 
@@ -156,9 +129,6 @@ function Employees() {
                     onChange={handleChange}
                     required
                   />
-                  {errors.email && (
-                    <div className="text-danger">{errors.email}</div>
-                  )}
                 </div>
               </div>
 
@@ -176,9 +146,6 @@ function Employees() {
                     onChange={handleChange}
                     required
                   />
-                  {errors.phone && (
-                    <div className="text-danger">{errors.phone}</div>
-                  )}
                 </div>
               </div>
 
@@ -196,9 +163,6 @@ function Employees() {
                     onChange={handleChange}
                     required
                   />
-                  {errors.identity_card && (
-                    <div className="text-danger">{errors.identity_card}</div>
-                  )}
                 </div>
               </div>
 
@@ -216,9 +180,6 @@ function Employees() {
                     onChange={handleChange}
                     required
                   />
-                  {errors.password && (
-                    <div className="text-danger">{errors.password}</div>
-                  )}
                 </div>
               </div>
 
@@ -236,11 +197,6 @@ function Employees() {
                     onChange={handleChange}
                     required
                   />
-                  {errors.password_confirmation && (
-                    <div className="text-danger">
-                      {errors.password_confirmation}
-                    </div>
-                  )}
                 </div>
               </div>
 
@@ -248,24 +204,19 @@ function Employees() {
                 <div className="mb-3">
                   <label htmlFor="role">Role</label>
                   <select
+                    className="form-control"
                     name="role"
                     id="role"
-                    value={employee.role}
                     onChange={handleChange}
+                    value={employee.role}
                     required
-                    className={
-                      errors.role ? "form-control is-invalid" : "form-control"
-                    }
                   >
-                    <option value="" disabled>
-                      Select Role
+                    <option value={-1} disabled>
+                      choose
                     </option>
                     <option value="chef">Chef</option>
                     <option value="cashier">Cashier</option>
                   </select>
-                  {errors.role && (
-                    <div className="text-danger">{errors.role}</div>
-                  )}
                 </div>
               </div>
 
@@ -300,9 +251,6 @@ function Employees() {
                       <label htmlFor="inactive">inactive</label>
                     </div>
                   </div>
-                  {errors.status && (
-                    <div className="text-danger">{errors.status}</div>
-                  )}
                 </div>
               </div>
             </div>

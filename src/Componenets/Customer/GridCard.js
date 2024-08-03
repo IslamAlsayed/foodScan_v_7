@@ -144,13 +144,13 @@ export function GridCard(pokemon) {
           src={`http://127.0.0.1:8000/storage/${pokemon.image}`}
           width={100}
         />
-        <div class="card-body">
-          <h6 class="card-title">
+        <div className="card-body">
+          <h6 className="card-title">
             {" "}
             <strong>{pokemon.name}</strong>{" "}
           </h6>
-          <p class="card-text description">
-            <small class="text-muted"> {pokemon.description}</small>
+          <p className="card-text description">
+            <small className="text-muted"> {pokemon.description}</small>
           </p>
           <div className="d-flex justify-content-between align-items-center justify-content-center item-card">
             {pokemon.cost ? (
@@ -168,7 +168,7 @@ export function GridCard(pokemon) {
               }}
             >
               {" "}
-              <i class="bi bi-handbag-fill"></i>
+              <i className="bi bi-handbag-fill"></i>
               <span>Add</span>
             </button>
 

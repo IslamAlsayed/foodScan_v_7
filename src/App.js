@@ -19,13 +19,13 @@ function App() {
       <div className="App">
         {window.location.pathname == "" ? (
           <ul>
-            <li>
+            <li key="0">
               <a href="/auth/login">login</a>
             </li>
-            <li>
+            <li key="1">
               <a href="/admin/dashboard">dashboard</a>
             </li>
-            <li>
+            <li key="2">
               <a href="/customer/menu">customer</a>
             </li>
           </ul>

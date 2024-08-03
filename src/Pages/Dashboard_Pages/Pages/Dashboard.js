@@ -15,32 +15,6 @@ import axios from "axios";
 export default function Dashboard() {
   const [startDate, setStartDate] = useState(new Date());
 
-  // const AdminToken = JSON.parse(localStorage.getItem("AdminToken")) || null;
-
-  // const fetchAcceptedOrders = useCallback(async () => {
-  //   try {
-  //     const response = await axios.get(
-  //       `http://127.0.0.1:8000/api/admin/Accepted-Orders?from=4-7-2024&to=6-7-2024`,
-  //       {
-  //         headers: {
-  //           Accept: "application/json",
-  //           Authorization: `Bearer ${AdminToken}`,
-  //         },
-  //       }
-  //     );
-
-  //     if (response) {
-  //       console.log("response", response.data);
-  //     }
-  //   } catch (error) {
-  //     console.error("Error fetching meals:", error);
-  //   }
-  // }, []);
-
-  // useEffect(() => {
-  //   fetchAcceptedOrders();
-  // }, [fetchAcceptedOrders]);
-
   const data = [
     { date: "2024-07-01", sales: 4.5 },
     { date: "2024-07-02", sales: 0.0 },
@@ -218,11 +192,11 @@ export default function Dashboard() {
             </div>
             <div className="section-body">
               <div className="cards">
-                {cards.map((card) => (
+                {cards.map((card, index) => (
                   <Link
                     to={`/admin/dashboard/meals/show/${card.id}`}
                     className="card"
-                    key={card.id}
+                    key={index}
                   >
                     <div className="card-img">
                       <img src={card.image} alt={card.title} />
@@ -242,11 +216,11 @@ export default function Dashboard() {
             </div>
             <div className="section-body">
               <div className="cards popular">
-                {cards.map((card) => (
+                {cards.map((card, index) => (
                   <Link
                     to={`/admin/dashboard/meals/show/${card.id}`}
                     className="card"
-                    key={card.id}
+                    key={index}
                   >
                     <div className="card-img">
                       <img src={card.image} alt={card.title} />

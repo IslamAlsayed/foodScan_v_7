@@ -2,37 +2,20 @@ import "../Models.css";
 import React, { useState, useRef } from "react";
 import { FaCheckCircle } from "react-icons/fa";
 import { HiXMark } from "react-icons/hi2";
-import instance from "../../../../axiosConfig/instance";
 import Swal from "sweetalert2";
-import { useDispatch, useSelector } from "react-redux";
-import { update } from "../../../../Store/action";
-import axios from "axios";
+import { addData } from "../../../../axiosConfig/API";
 
 function Categories() {
   const imageRef = useRef(null);
-  const dispatch = useDispatch();
-  const updated = useSelector((state) => state.updated);
-
   const [category, setCategory] = useState({
     name: "",
     description: "",
     image_file: null,
   });
 
-  const [errors, setErrors] = useState({
-    name: "",
-    description: "",
-    image: "",
-    status: "",
-  });
-
-  const closeModel = () => {
-    var AddTable = document.getElementById("AddTable");
-    if (AddTable) AddTable.classList.remove("visible");
-  };
-
   const handleChange = (e) => {
     const { name, value, type, files } = e.target;
+
     setCategory((prevCategory) => ({
       ...prevCategory,
       [name]: type === "file" ? files[0] : value,
@@ -47,8 +30,6 @@ function Categories() {
     formData.append("description", category.description);
     if (category.image_file) formData.append("image_file", category.image_file);
 
-    const AdminToken = JSON.parse(localStorage.getItem("AdminToken")) || null;
-
     Swal.fire({
       title: "Are you sure?",
       text: "Do you want to save the changes?",
@@ -61,19 +42,9 @@ function Categories() {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          const response = await axios.post(
-            "http://127.0.0.1:8000/api/categories",
-            formData,
-            {
-              headers: {
-                Accept: "application/json",
-                "Content-Type": "multipart/form-data",
-                Authorization: `Bearer ${AdminToken}`,
-              },
-            }
-          );
+          const response = await addData("categories", formData);
 
-          if (response.data.status === "Created") {
+          if (response.status === "Created") {
             setCategory({
               name: "",
               description: "",
@@ -82,13 +53,22 @@ function Categories() {
 
             if (imageRef.current) imageRef.current.value = null;
 
-            Swal.fire("Saved!", "The category has been Saved.", "success");
+            Swal.fire("Saved!", response.message, "success");
           }
         } catch (error) {
-          console.error(error);
+          if (error.response && error.response.status === 422) {
+            Swal.fire("Error!", "Validation error occurred.", "error");
+          } else {
+            Swal.fire("Error!", error.response.data.error, "error");
+          }
         }
       }
     });
+  };
+
+  const closeModel = () => {
+    var AddTable = document.getElementById("AddTable");
+    if (AddTable) AddTable.classList.remove("visible");
   };
 
   return (
@@ -118,9 +98,6 @@ function Categories() {
                     onChange={handleChange}
                     required
                   />
-                  {errors.name && (
-                    <div className="text-danger">{errors.name}</div>
-                  )}
                 </div>
               </div>
 
@@ -138,9 +115,6 @@ function Categories() {
                     onChange={handleChange}
                     required
                   />
-                  {errors.description && (
-                    <div className="text-danger">{errors.description}</div>
-                  )}
                 </div>
               </div>
 
@@ -157,9 +131,6 @@ function Categories() {
                     ref={imageRef}
                     onChange={handleChange}
                   />
-                  {errors.image_file && (
-                    <div className="text-danger">{errors.image_file}</div>
-                  )}
                 </div>
               </div>
             </div>

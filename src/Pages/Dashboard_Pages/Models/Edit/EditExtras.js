@@ -2,15 +2,13 @@ import "../Models.css";
 import React, { useEffect, useState, useRef } from "react";
 import { FaCheckCircle } from "react-icons/fa";
 import { HiXMark } from "react-icons/hi2";
-import instance from "../../../../axiosConfig/instance";
 import Swal from "sweetalert2";
-import axios from "axios";
+import { updateData } from "../../../../axiosConfig/API";
 
-function EditExtra({ visible, item, modalClose }) {
+export default function EditExtra({ visible, item, modalClose }) {
   const imageRef = useRef(null);
   const [staticModalVisible, setStaticModalVisible] = useState(false);
   const [mealCategories, setMealCategories] = useState(false);
-
   const [extra, setExtra] = useState({
     name: "",
     description: "",
@@ -18,16 +16,6 @@ function EditExtra({ visible, item, modalClose }) {
     category_id: -1,
     image: null,
     status: 1,
-    cost: "",
-  });
-
-  const [errors, setErrors] = useState({
-    name: "",
-    description: "",
-    type: "",
-    category_id: "",
-    image: "",
-    status: "",
     cost: "",
   });
 
@@ -40,22 +28,31 @@ function EditExtra({ visible, item, modalClose }) {
   }, [item]);
 
   const handleChange = (e) => {
-    const { name, value, id } = e.target;
-    if (name === "type") {
-      setExtra((prevData) => ({
-        ...prevData,
-        type: id === "veg" ? "vegetarian" : "non-vegetarian",
-      }));
-    } else if (name === "status") {
-      setExtra((prevData) => ({
-        ...prevData,
-        status: id === "active" ? 1 : 0,
-      }));
-    } else if (name === "image") {
-      setExtra({ ...extra, image: e.target.files[0] });
-    } else {
-      setExtra({ ...extra, [name]: value });
-    }
+    const { name, value, id, type, files } = e.target;
+
+    setExtra((prevData) => {
+      if (name === "type") {
+        return {
+          ...prevData,
+          type: id === "veg" ? "vegetarian" : "non-vegetarian",
+        };
+      } else if (name === "status") {
+        return {
+          ...prevData,
+          status: id === "active" ? 1 : 0,
+        };
+      } else if (name === "image" && type === "file") {
+        return {
+          ...prevData,
+          image: files[0],
+        };
+      } else {
+        return {
+          ...prevData,
+          [name]: value,
+        };
+      }
+    });
   };
 
   const handleSubmit = async (e) => {
@@ -65,34 +62,37 @@ function EditExtra({ visible, item, modalClose }) {
     formData.append("name", extra.name);
     formData.append("description", extra.description);
     formData.append("type", extra.type);
-    formData.append("cost", extra.cost);
     formData.append("category_id", extra.category_id);
-    formData.append("status", extra.status);
     if (extra.image) formData.append("image", extra.image);
-    formData.append("_method", "PUT");
-
-    const AdminToken = JSON.parse(localStorage.getItem("AdminToken")) || null;
+    formData.append("status", extra.status);
+    formData.append("cost", extra.cost);
 
     try {
-      const response = await axios.post(
-        `http://localhost:8000/api/admin/extras/${item.id}`,
+      const response = await updateData(
+        `admin/orders/${item.id}`,
         formData,
-        {
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${AdminToken}`,
-          },
-        }
+        "put"
       );
 
-      if (response.data.status === "success") {
+      if (response.status === "success") {
+        setExtra({
+          name: "",
+          description: "",
+          type: "vegetarian",
+          category_id: -1,
+          image: null,
+          status: 1,
+          cost: "",
+        });
+
         modalClose();
-        Swal.fire("Updated!", "The extra has been updated.", "success");
+
+        if (imageRef.current) imageRef.current.value = null;
+
+        Swal.fire("Updated!", response.message, "success");
       }
     } catch (error) {
       if (error.response && error.response.status === 422) {
-        setErrors(error.response.data.errors);
         Swal.fire("Error!", "Validation error occurred.", "error");
       } else {
         Swal.fire("Error!", error.response.data.error, "error");
@@ -126,9 +126,6 @@ function EditExtra({ visible, item, modalClose }) {
                     onChange={handleChange}
                     required
                   />
-                  {errors.name && (
-                    <div className="text-danger">{errors.name}</div>
-                  )}
                 </div>
               </div>
 
@@ -179,9 +176,6 @@ function EditExtra({ visible, item, modalClose }) {
                     onChange={handleChange}
                     required
                   />
-                  {errors.cost && (
-                    <div className="text-danger">{errors.cost}</div>
-                  )}
                 </div>
               </div>
 
@@ -216,9 +210,6 @@ function EditExtra({ visible, item, modalClose }) {
                       <label htmlFor="non-vegetarian">non vegetarian</label>
                     </div>
                   </div>
-                  {errors.type && (
-                    <div className="text-danger">{errors.type}</div>
-                  )}
                 </div>
               </div>
 
@@ -312,5 +303,3 @@ function EditExtra({ visible, item, modalClose }) {
     </div>
   );
 }
-
-export default EditExtra;

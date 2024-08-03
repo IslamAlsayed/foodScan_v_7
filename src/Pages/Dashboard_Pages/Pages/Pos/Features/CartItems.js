@@ -15,9 +15,6 @@ export default function CartItems() {
   const [discountType, setDiscountType] = useState("percentage");
   const [discountValue, setDiscountValue] = useState("");
   const [finalTotal, setFinalTotal] = useState(0);
-  const [activeItem, setActiveItem] = useState(null);
-  const [showModal, setShowModal] = useState(false);
-
   const [invoiceItem, setInvoiceItem] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -72,16 +69,12 @@ export default function CartItems() {
     setFinalTotal(newFinalTotal > 0 ? newFinalTotal : 0);
   };
 
-  const handleItemClick = (item) => {
-    // setActiveItem(item);
-    setShowModal(true);
-    // setInvoiceItem(item);
+  const handleItemClick = () => {
     setModalVisible(true);
     document.body.style.overflow = "hidden";
   };
 
   const handleModalClose = () => {
-    setShowModal(false);
     setModalVisible(false);
     setInvoiceItem(null);
     document.body.style.overflow = "visible";
@@ -167,7 +160,7 @@ export default function CartItems() {
             />
             <button
               type="button"
-              class="btn btn-primary"
+              className="btn btn-primary"
               data-bs-toggle="modal"
               data-bs-target="#addPosCustomer"
               data-bs-backdrop="static"
@@ -211,7 +204,7 @@ export default function CartItems() {
                     <input
                       type="number"
                       name="quantity"
-                      value={item.quantity}
+                      defaultValue={item.quantity}
                     />
                     <AiOutlineMinusCircle
                       className="pl-1"
@@ -225,7 +218,7 @@ export default function CartItems() {
           </table>
         </div>
 
-        <div class="discountType mb-3">
+        <div className="discountType mb-3">
           <select
             value={discountType}
             onChange={(e) => setDiscountType(e.target.value)}
@@ -276,8 +269,6 @@ export default function CartItems() {
           modalClose={handleModalClose}
         />
       )}
-
-      {/* <Invoice show={showModal} onClose={closeModal} item={invoiceItem} /> */}
     </div>
   );
 }

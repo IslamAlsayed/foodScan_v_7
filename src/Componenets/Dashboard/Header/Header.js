@@ -52,7 +52,7 @@ export function Header() {
                   id="branch_id_1"
                   name="branch"
                   value="1"
-                  checked
+                  defaultChecked
                 />
                 <label htmlFor="branch_id_1">{"Mirpur-1 (main)"}</label>
               </li>

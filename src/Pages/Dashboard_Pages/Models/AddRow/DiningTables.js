@@ -1,17 +1,11 @@
 import "../Models.css";
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { FaCheckCircle } from "react-icons/fa";
 import { HiXMark } from "react-icons/hi2";
-import instance from "../../../../axiosConfig/instance";
 import Swal from "sweetalert2";
-import { useDispatch, useSelector } from "react-redux";
-import { update } from "../../../../Store/action";
-import axios from "axios";
+import { addData } from "../../../../axiosConfig/API";
 
 function DiningTables() {
-  const dispatch = useDispatch();
-  const updated = useSelector((state) => state.updated);
-
   const [diningTable, setDiningTable] = useState({
     floor: "",
     size: "",
@@ -19,28 +13,13 @@ function DiningTables() {
     status: 1,
   });
 
-  const [errors, setErrors] = useState({
-    floor: "",
-    size: "",
-    num: "",
-    status: "",
-  });
-
-  const closeModel = () => {
-    var AddTable = document.getElementById("AddTable");
-    if (AddTable) AddTable.classList.remove("visible");
-  };
-
   const handleChange = (e) => {
     const { name, value, id } = e.target;
-    if (name === "status") {
-      setDiningTable((prevDiningTable) => ({
-        ...prevDiningTable,
-        status: id === "active" ? 1 : 0,
-      }));
-    } else {
-      setDiningTable({ ...diningTable, [name]: value });
-    }
+
+    setDiningTable((prevDiningTable) => ({
+      ...prevDiningTable,
+      [name]: name === "status" ? (id === "active" ? 1 : 0) : value,
+    }));
   };
 
   const handleSubmit = async (e) => {
@@ -52,34 +31,44 @@ function DiningTables() {
     formData.append("floor", diningTable.floor);
     formData.append("status", diningTable.status);
 
-    const AdminToken = JSON.parse(localStorage.getItem("AdminToken")) || null;
+    Swal.fire({
+      title: "Are you sure?",
+      text: "Do you want to save the changes?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, save it!",
+      cancelButtonText: "No, cancel",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const response = await addData("admin/dining-tables", formData);
 
-    try {
-      const response = await axios.post(
-        "http://127.0.0.1:8000/api/admin/dining-tables",
-        formData,
-        {
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${AdminToken}`,
-          },
+          if (response.status === "Created") {
+            setDiningTable({
+              floor: "",
+              size: "",
+              num: "",
+              status: 1,
+            });
+
+            Swal.fire("Saved!", response.message, "success");
+          }
+        } catch (error) {
+          if (error.response && error.response.status === 422) {
+            Swal.fire("Error!", "Validation error occurred.", "error");
+          } else {
+            Swal.fire("Error!", error.response.data.error, "error");
+          }
         }
-      );
-
-      if (response.data.status === "Created") {
-        setDiningTable({
-          floor: "",
-          size: "",
-          num: "",
-          status: 1,
-        });
-
-        Swal.fire("Saved!", "The meal has been Saved.", "success");
       }
-    } catch (error) {
-      console.error(error);
-    }
+    });
+  };
+
+  const closeModel = () => {
+    var AddTable = document.getElementById("AddTable");
+    if (AddTable) AddTable.classList.remove("visible");
   };
 
   return (
@@ -110,9 +99,6 @@ function DiningTables() {
                     onChange={handleChange}
                     required
                   />
-                  {errors.num && (
-                    <div className="text-danger">{errors.num}</div>
-                  )}
                 </div>
               </div>
 
@@ -130,9 +116,6 @@ function DiningTables() {
                     onChange={handleChange}
                     required
                   />
-                  {errors.size && (
-                    <div className="text-danger">{errors.size}</div>
-                  )}
                 </div>
               </div>
 
@@ -150,9 +133,6 @@ function DiningTables() {
                     value={diningTable.floor}
                     required
                   />
-                  {errors.floor && (
-                    <div className="text-danger">{errors.floor}</div>
-                  )}
                 </div>
               </div>
 
@@ -188,9 +168,6 @@ function DiningTables() {
                     </div>
                   </div>
                 </div>
-                {errors.status && (
-                  <div className="text-danger">{errors.status}</div>
-                )}
               </div>
             </div>
 

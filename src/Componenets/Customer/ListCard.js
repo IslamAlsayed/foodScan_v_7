@@ -160,7 +160,7 @@ export function ListCard(pokemon) {
                 console.log(pokemon);
               }}
             >
-              <i class="bi bi-handbag-fill"></i>
+              <i className="bi bi-handbag-fill"></i>
               <span>Add</span>
             </button>
             {/* <!-- Modal --> */}

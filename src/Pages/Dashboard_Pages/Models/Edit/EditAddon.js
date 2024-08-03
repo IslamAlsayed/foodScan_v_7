@@ -2,15 +2,13 @@ import "../Models.css";
 import React, { useEffect, useState, useRef } from "react";
 import { FaCheckCircle } from "react-icons/fa";
 import { HiXMark } from "react-icons/hi2";
-import instance from "../../../../axiosConfig/instance";
 import Swal from "sweetalert2";
-import axios from "axios";
+import { updateData } from "../../../../axiosConfig/API";
 
 export default function EditAddon({ visible, item, modalClose }) {
   const imageRef = useRef(null);
   const [staticModalVisible, setStaticModalVisible] = useState(false);
   const [mealCategories, setMealCategories] = useState(false);
-
   const [addon, setAddon] = useState({
     name: "",
     description: "",
@@ -18,16 +16,6 @@ export default function EditAddon({ visible, item, modalClose }) {
     category_id: -1,
     image: null,
     status: 1,
-    cost: "",
-  });
-
-  const [errors, setErrors] = useState({
-    name: "",
-    description: "",
-    type: "",
-    category_id: "",
-    image: "",
-    status: "",
     cost: "",
   });
 
@@ -40,22 +28,31 @@ export default function EditAddon({ visible, item, modalClose }) {
   }, [item]);
 
   const handleChange = (e) => {
-    const { name, value, id } = e.target;
-    if (name === "type") {
-      setAddon((prevData) => ({
-        ...prevData,
-        type: id === "veg" ? "vegetarian" : "non-vegetarian",
-      }));
-    } else if (name === "status") {
-      setAddon((prevData) => ({
-        ...prevData,
-        status: id === "active" ? 1 : 0,
-      }));
-    } else if (name === "image") {
-      setAddon({ ...addon, image: e.target.files[0] });
-    } else {
-      setAddon({ ...addon, [name]: value });
-    }
+    const { name, value, id, type, files } = e.target;
+
+    setAddon((prevData) => {
+      if (name === "type") {
+        return {
+          ...prevData,
+          type: id === "veg" ? "vegetarian" : "non-vegetarian",
+        };
+      } else if (name === "status") {
+        return {
+          ...prevData,
+          status: id === "active" ? 1 : 0,
+        };
+      } else if (name === "image" && type === "file") {
+        return {
+          ...prevData,
+          image: files[0],
+        };
+      } else {
+        return {
+          ...prevData,
+          [name]: value,
+        };
+      }
+    });
   };
 
   const handleSubmit = async (e) => {
@@ -65,34 +62,37 @@ export default function EditAddon({ visible, item, modalClose }) {
     formData.append("name", addon.name);
     formData.append("description", addon.description);
     formData.append("type", addon.type);
-    formData.append("cost", addon.cost);
     formData.append("category_id", addon.category_id);
-    formData.append("status", addon.status);
     if (addon.image) formData.append("image", addon.image);
-    formData.append("_method", "PUT");
-
-    const AdminToken = JSON.parse(localStorage.getItem("AdminToken")) || null;
+    formData.append("status", addon.status);
+    formData.append("cost", addon.cost);
 
     try {
-      const response = await axios.post(
-        `http://localhost:8000/api/admin/addons/${item.id}`,
+      const response = await updateData(
+        `admin/orders/${item.id}`,
         formData,
-        {
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${AdminToken}`,
-          },
-        }
+        "put"
       );
 
-      if (response.data.status === "success") {
+      if (response.status === "success") {
+        setAddon({
+          name: "",
+          description: "",
+          type: "vegetarian",
+          category_id: -1,
+          image: null,
+          status: 1,
+          cost: "",
+        });
+
         modalClose();
-        Swal.fire("Updated!", "The addon has been updated.", "success");
+
+        if (imageRef.current) imageRef.current.value = null;
+
+        Swal.fire("Updated!", response.message, "success");
       }
     } catch (error) {
       if (error.response && error.response.status === 422) {
-        setErrors(error.response.data.errors);
         Swal.fire("Error!", "Validation error occurred.", "error");
       } else {
         Swal.fire("Error!", error.response.data.error, "error");
@@ -126,9 +126,6 @@ export default function EditAddon({ visible, item, modalClose }) {
                     onChange={handleChange}
                     required
                   />
-                  {errors.name && (
-                    <div className="text-danger">{errors.name}</div>
-                  )}
                 </div>
               </div>
 
@@ -179,9 +176,6 @@ export default function EditAddon({ visible, item, modalClose }) {
                     onChange={handleChange}
                     required
                   />
-                  {errors.cost && (
-                    <div className="text-danger">{errors.cost}</div>
-                  )}
                 </div>
               </div>
 
@@ -216,9 +210,6 @@ export default function EditAddon({ visible, item, modalClose }) {
                       <label htmlFor="non-vegetarian">non vegetarian</label>
                     </div>
                   </div>
-                  {errors.type && (
-                    <div className="text-danger">{errors.type}</div>
-                  )}
                 </div>
               </div>
 

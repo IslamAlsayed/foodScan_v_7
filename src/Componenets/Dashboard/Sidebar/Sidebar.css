@@ -59,7 +59,8 @@
   border: none;
 }
 
-.Sidebar * a {
+.Sidebar * a,
+.Sidebar * a:hover {
   width: 100%;
   color: #000;
   background-color: transparent;

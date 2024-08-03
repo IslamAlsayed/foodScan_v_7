@@ -1,18 +1,13 @@
 import "../Models.css";
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import { FaCheckCircle } from "react-icons/fa";
 import { HiXMark } from "react-icons/hi2";
-import instance from "../../../../axiosConfig/instance";
 import Swal from "sweetalert2";
-import { useDispatch, useSelector } from "react-redux";
-import { update } from "../../../../Store/action";
-import axios from "axios";
+import { getData, addData } from "../../../../axiosConfig/API";
 
-function Extras() {
+export default function Extras() {
   const imageRef = useRef(null);
   const [categories, setCategories] = useState([]);
-  const dispatch = useDispatch();
-  const updated = useSelector((state) => state.updated);
   const [extra, setExtra] = useState({
     name: "",
     description: "",
@@ -23,30 +18,18 @@ function Extras() {
     cost: "",
   });
 
-  const [errors, setErrors] = useState({
-    name: "",
-    description: "",
-    type: "",
-    category_id: "",
-    image: "",
-    status: "",
-    cost: "",
-  });
+  const fetchCategories = useCallback(async () => {
+    try {
+      const result = await getData("categories");
+      setCategories(result);
+    } catch (error) {
+      console.warn(error.response.data.error);
+    }
+  }, []);
 
   useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const response = await axios.get(
-          "http://127.0.0.1:8000/api/categories"
-        );
-        console.log(response.data);
-        setCategories(response.data.data);
-      } catch (error) {
-        console.error("Error fetching categories:", error);
-      }
-    };
     fetchCategories();
-  }, []);
+  }, [fetchCategories]);
 
   const handleChange = (e) => {
     const { name, value, id } = e.target;
@@ -79,8 +62,6 @@ function Extras() {
     formData.append("status", extra.status);
     if (extra.image) formData.append("image", extra.image);
 
-    const AdminToken = JSON.parse(localStorage.getItem("AdminToken")) || null;
-
     Swal.fire({
       title: "Are you sure?",
       text: "Do you want to save the changes?",
@@ -93,19 +74,9 @@ function Extras() {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          const response = await axios.post(
-            "http://127.0.0.1:8000/api/admin/extras",
-            formData,
-            {
-              headers: {
-                Accept: "application/json",
-                "Content-Type": "multipart/form-data",
-                Authorization: `Bearer ${AdminToken}`,
-              },
-            }
-          );
+          const response = await addData("admin/extras", formData);
 
-          if (response.data.status === "success") {
+          if (response.status === "success") {
             setExtra({
               name: "",
               description: "",
@@ -118,7 +89,7 @@ function Extras() {
 
             if (imageRef.current) imageRef.current.value = null;
 
-            Swal.fire("Saved!", "The category has been Saved.", "success");
+            Swal.fire("Saved!", response.message, "success");
           }
         } catch (error) {
           if (error.response && error.response.status === 422) {
@@ -162,9 +133,6 @@ function Extras() {
                     onChange={handleChange}
                     required
                   />
-                  {errors.name && (
-                    <div className="text-danger">{errors.name}</div>
-                  )}
                 </div>
               </div>
 
@@ -181,26 +149,15 @@ function Extras() {
                     value={extra.category_id}
                     required
                   >
-                    <option
-                      value={-1}
-                      disabled
-                      selected={extra.category_id === -1}
-                    >
+                    <option value={-1} disabled>
                       choose
                     </option>
                     {categories.map((category) => (
-                      <option
-                        key={category.id}
-                        value={category.id}
-                        selected={category.id === extra.category_id}
-                      >
+                      <option key={category.id} value={category.id}>
                         {category.name}
                       </option>
                     ))}
                   </select>
-                  {errors.category_id && (
-                    <div className="text-danger">{errors.category_id}</div>
-                  )}
                 </div>
               </div>
 
@@ -218,9 +175,6 @@ function Extras() {
                     onChange={handleChange}
                     required
                   />
-                  {errors.cost && (
-                    <div className="text-danger">{errors.cost}</div>
-                  )}
                 </div>
               </div>
 
@@ -274,7 +228,7 @@ function Extras() {
                         checked={extra.status === 1}
                         onChange={handleChange}
                       />
-                      <span>Active</span>
+                      <label htmlFor="active">active</label>
                     </div>
                     <div className="col d-flex gap-2 align-items-center">
                       <input
@@ -286,12 +240,9 @@ function Extras() {
                         checked={extra.status === 0}
                         onChange={handleChange}
                       />
-                      <span>inactive</span>
+                      <label htmlFor="inactive">inactive</label>
                     </div>
                   </div>
-                  {errors.status && (
-                    <div className="text-danger">{errors.status}</div>
-                  )}
                 </div>
               </div>
 
@@ -307,9 +258,6 @@ function Extras() {
                     id="image"
                     onChange={handleChange}
                   />
-                  {errors.image && (
-                    <div className="text-danger">{errors.image}</div>
-                  )}
                 </div>
               </div>
 
@@ -326,9 +274,6 @@ function Extras() {
                     value={extra.description}
                     required
                   ></textarea>
-                  {errors.description && (
-                    <div className="text-danger">{errors.description}</div>
-                  )}
                 </div>
               </div>
             </div>
@@ -354,5 +299,3 @@ function Extras() {
     </div>
   );
 }
-
-export default Extras;
