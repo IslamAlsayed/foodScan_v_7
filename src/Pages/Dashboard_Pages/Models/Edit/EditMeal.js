@@ -288,40 +288,6 @@ export default function EditMeal({ visible, item, modalClose }) {
                 </div>
               </div>
 
-              {/* <div className="col-6">
-                <div className="mb-3">
-                  <label htmlFor="active" className="form-label">
-                    status <span className="star">*</span>
-                  </label>
-                  <div className="row">
-                    <div className="col d-flex gap-2 align-items-center">
-                      <input
-                        type="radio"
-                        name="status"
-                        id="active"
-                        required
-                        checked={meal.status === "1"}
-                        value="1"
-                        onChange={handleChange}
-                      />
-                      <label htmlFor="active">active</label>
-                    </div>
-                    <div className="col d-flex gap-2 align-items-center">
-                      <input
-                        type="radio"
-                        name="status"
-                        id="inactive"
-                        required
-                        checked={meal.status === "0"}
-                        value="0"
-                        onChange={handleChange}
-                      />
-                      <label htmlFor="inactive">in active</label>
-                    </div>
-                  </div>
-                </div>
-              </div> */}
-
               <div className="col-12">
                 <div className="mb-3">
                   <label htmlFor="image" className="form-label">
@@ -332,9 +298,9 @@ export default function EditMeal({ visible, item, modalClose }) {
                     className="form-control"
                     name="image"
                     id="image"
-                    required
                     ref={imageRef}
                     onChange={(e) => handleChange(e)}
+                    required
                   />
                 </div>
               </div>

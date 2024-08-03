@@ -5,17 +5,14 @@ import { Link } from "react-router-dom/cjs/react-router-dom.min";
 import Breadcrumb from "../../../../Components/Dashboard/Features/Breadcrumb";
 import { FiEdit } from "react-icons/fi";
 import { BsEye } from "react-icons/bs";
-import { BiTrash } from "react-icons/bi";
-import Swal from "sweetalert2";
 import EditCategory from "../../Models/Edit/EditCategory";
-import { getData, deleteData } from "../../../../axiosConfig/API";
+import { getData } from "../../../../axiosConfig/API";
 import Filtration from "../../Models/Filtration/Categories";
 import AddRow from "../../Models/AddRow/Categories";
 
 export default function Categories() {
   const componentRef = useRef();
   const [categories, setCategories] = useState([]);
-
   const [updated, setUpdated] = useState(false);
   const [editItem, setEditItem] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
@@ -31,6 +28,9 @@ export default function Categories() {
 
   useEffect(() => {
     fetchCategories();
+  }, [fetchCategories]);
+
+  useEffect(() => {
     if (updated) fetchCategories();
     setUpdated(false);
   }, [updated, fetchCategories]);

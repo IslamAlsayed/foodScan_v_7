@@ -5,7 +5,6 @@ import Breadcrumb from "../../../../Components/Dashboard/Features/Breadcrumb";
 import { Table } from "antd";
 import { FiEdit } from "react-icons/fi";
 import { BsEye } from "react-icons/bs";
-import { BiTrash } from "react-icons/bi";
 import EditAdministrator from "../../Models/Edit/EditAdministrator";
 import { getData } from "../../../../axiosConfig/API";
 import Filtration from "../../Models/Filtration/Administrators";
@@ -29,6 +28,9 @@ export default function Administrators() {
 
   useEffect(() => {
     fetchAdministrators();
+  }, [fetchAdministrators]);
+
+  useEffect(() => {
     if (updated) fetchAdministrators();
     setUpdated(false);
   }, [updated, fetchAdministrators]);
@@ -63,11 +65,6 @@ export default function Administrators() {
       key: "phone",
     },
     {
-      title: "ROLE",
-      dataIndex: "role",
-      key: "role",
-    },
-    {
       title: "STATUS",
       key: "status",
       render: (text, item) => (
@@ -97,14 +94,6 @@ export default function Administrators() {
             style={{ "--c": "#35B263", "--bg": "#DCFCE7" }}
           >
             <FiEdit />
-          </Link>
-          <Link
-            to="#"
-            className="trashIcon"
-            data-tooltip="delete"
-            style={{ "--c": "#F15353", "--bg": "#FECACA" }}
-          >
-            <BiTrash />
           </Link>
         </>
       ),

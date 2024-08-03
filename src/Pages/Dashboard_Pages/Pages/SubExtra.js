@@ -1,4 +1,4 @@
-import "../../SubModels.css";
+import "./SubModels.css";
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import { Link } from "react-router-dom/cjs/react-router-dom.min";
 import { Table, Row, Col } from "antd";
@@ -6,44 +6,43 @@ import { FaCheckCircle } from "react-icons/fa";
 import { HiXMark } from "react-icons/hi2";
 import { BiTrash } from "react-icons/bi";
 import Swal from "sweetalert2";
+import { getData, addData, deleteData } from "../../../axiosConfig/API";
 
-import { getData, addData, deleteData } from "../../../../../axiosConfig/API";
-
-export default function Addon({ meal_id, data }) {
+export default function SubExtra({ meal_id, data }) {
   const componentRef = useRef();
-  const [addons, setAddons] = useState();
-  const [optionsAddons, setOptionsAddons] = useState();
-  const [addon_id, setAddon_id] = useState();
+  const [extras, setExtras] = useState();
+  const [optionsExtras, setOptionsExtras] = useState();
+  const [extra_id, setExtra_id] = useState();
 
-  const fetchOptionsAddons = useCallback(async (id) => {
+  const fetchOptionsExtras = useCallback(async (id) => {
+    if (!id) return;
     try {
-      const result = await getData(`admin/meals/${id}/options-addons`);
-      setOptionsAddons(result);
+      const result = await getData(`admin/meals/${id}/options-extras`);
+      setOptionsExtras(result);
     } catch (error) {
       console.warn(error.response.data.error);
     }
   }, []);
 
   useEffect(() => {
-    fetchOptionsAddons(meal_id);
-    if (data) setAddons(data);
-  }, [meal_id, data]);
+    if (meal_id) fetchOptionsExtras(meal_id);
+  }, [meal_id, fetchOptionsExtras]);
 
-  const handleAddAddon = async (e) => {
+  const handleAddExtra = async (e) => {
     e.preventDefault();
 
     try {
-      const response = await addData("admin/meals/addons", {
-        addon_id: addon_id,
+      const response = await addData("admin/meals/extras", {
+        extra_id: extra_id,
         meal_id: meal_id,
       });
 
       if (response) {
-        setAddon_id("");
-        reloadAddons();
-        fetchOptionsAddons(meal_id);
+        setExtra_id("");
+        reloadExtras();
+        fetchOptionsExtras(meal_id);
 
-        Swal.fire("Addon!", response.message, "success");
+        Swal.fire("Extra!", response.message, "success");
       }
     } catch (error) {
       console.warn(error.response.data.error);
@@ -51,27 +50,27 @@ export default function Addon({ meal_id, data }) {
     }
   };
 
-  const handleDelete = async (addon) => {
+  const handleDelete = async (extra) => {
     Swal.fire({
-      title: "Delete addon",
-      text: "Are you sure you want to delete this addon?",
+      title: "Delete extra",
+      text: "Are you sure you want to delete this extra?",
       icon: "question",
       showCancelButton: true,
       confirmButtonColor: "#28a745",
       cancelButtonColor: "#dc3545",
-      confirmButtonText: "Yes, delete addon",
+      confirmButtonText: "Yes, delete extra",
       cancelButtonText: "No, cancel",
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
           const response = await deleteData(
-            `admin/addons-meals/${addon.addon_id}/${meal_id}`
+            `admin/extras-meals/${extra.extra_id}/${meal_id}`
           );
 
           if (response) {
-            reloadAddons();
-            fetchOptionsAddons(meal_id);
-            Swal.fire("Addon!", response.message, "success");
+            reloadExtras();
+            fetchOptionsExtras(meal_id);
+            Swal.fire("Extra!", response.message, "success");
           }
         } catch (error) {
           console.warn(error.response.data.error);
@@ -81,10 +80,10 @@ export default function Addon({ meal_id, data }) {
     });
   };
 
-  const reloadAddons = useCallback(async () => {
+  const reloadExtras = useCallback(async () => {
     try {
-      const result = await getData(`admin/meals/${meal_id}/addons`);
-      setAddons(result);
+      const result = await getData(`admin/meals/${meal_id}/extras`);
+      setExtras(result);
     } catch (error) {
       console.warn(error.response.data.error);
     }
@@ -93,13 +92,8 @@ export default function Addon({ meal_id, data }) {
   const columns = [
     {
       title: "NAME",
-      dataIndex: "addon_name",
-      key: "addon_name",
-    },
-    {
-      title: "CATEGORY",
-      dataIndex: "category_name",
-      key: "category_name",
+      dataIndex: "extra_name",
+      key: "extra_name",
     },
     {
       title: "STATUS",
@@ -135,27 +129,27 @@ export default function Addon({ meal_id, data }) {
             type="button"
             className="btn btn-primary"
             data-bs-toggle="modal"
-            data-bs-target="#addAddon"
+            data-bs-target="#addExtra"
           >
-            add addon
+            add extra
           </button>
         </Col>
       </Row>
 
       <div
         className="modal fade"
-        id="addAddon"
+        id="addExtra"
         tabIndex="-1"
         aria-hidden="true"
         data-bs-backdrop="static"
         data-bs-keyboard="false"
-        aria-labelledby="addAddonLabel"
+        aria-labelledby="addExtraLabel"
       >
         <div className="modal-dialog">
-          <form className="modal-content" onSubmit={handleAddAddon}>
+          <form className="modal-content" onSubmit={handleAddExtra}>
             <div className="modal-header">
-              <h1 className="modal-title fs-5" id="addAddonLabel">
-                add addon
+              <h1 className="modal-title fs-5" id="addExtraLabel">
+                add extra
               </h1>
               <button
                 type="button"
@@ -168,22 +162,24 @@ export default function Addon({ meal_id, data }) {
               <div className="row">
                 <div className="col col-12">
                   <div className="mb-3">
-                    <label htmlFor="size" className="form-label">
-                      SELECT <span className="star">*</span>
+                    <label htmlFor="extra_id" className="form-label">
+                      Extra <span className="star">*</span>
                     </label>
                     <select
                       className="form-control"
-                      name="size"
-                      id="size"
+                      name="extra_id"
+                      id="extra_id"
                       required
-                      value={addon_id}
-                      onChange={(e) => setAddon_id(e.target.value)}
+                      value={extra_id}
+                      onChange={(e) => setExtra_id(e.target.value)}
                     >
-                      <option value="">--</option>
-                      {optionsAddons &&
-                        optionsAddons.map((addon) => (
-                          <option key={addon.id} value={addon.id}>
-                            {addon.name}
+                      <option value="" selected disabled>
+                        --
+                      </option>
+                      {optionsExtras &&
+                        optionsExtras.map((extra) => (
+                          <option key={extra.id} value={extra.id}>
+                            {extra.name}
                           </option>
                         ))}
                     </select>
@@ -212,7 +208,7 @@ export default function Addon({ meal_id, data }) {
 
       <div className="DataTable mt-3">
         <div className="tableItems" ref={componentRef}>
-          <Table columns={columns} dataSource={addons} pagination={true} />
+          <Table columns={columns} dataSource={extras} pagination={true} />
         </div>
       </div>
     </div>

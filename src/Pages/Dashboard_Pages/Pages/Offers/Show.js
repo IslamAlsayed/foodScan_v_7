@@ -1,14 +1,39 @@
 import "./Offers.css";
+import React, { useEffect, useState, useCallback } from "react";
+import { useParams } from "react-router-dom/cjs/react-router-dom.min";
 import { Tabs } from "antd";
 import { TabPane } from "react-bootstrap";
-import { FaImage, FaInfoCircle } from "react-icons/fa";
-import { FaShoppingBag } from "react-icons/fa";
+import { FaInfoCircle, FaShoppingBag } from "react-icons/fa";
+import Information from "./Information";
+import UploadImage from "../UploadImage";
+import Items from "./Items";
+import { FaImage } from "react-icons/fa6";
+import { getData } from "../../../../axiosConfig/API";
 
-import Information from "./Models/Information";
-import Images from "./Models/Images";
-import Items from "./Models/Items";
+export default function ShowItem() {
+  const { id } = useParams();
+  console.log("id", id);
+  const [offer, setOffer] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-export default function Show() {
+  const fetchOffer = useCallback(async (id) => {
+    if (!id) return;
+    try {
+      const result = await getData(`admin/offers/${id}`);
+      setOffer(result);
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      console.error(error.response.data.error);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchOffer(id);
+  }, [id, fetchOffer]);
+
+  if (loading) return <p>loading...</p>;
+
   return (
     <div className="Show">
       <div className="tabs">
@@ -23,18 +48,18 @@ export default function Show() {
             }
             key="1"
           >
-            <Information />
+            {offer && <Information data={offer} />}
           </TabPane>
           <TabPane
             tab={
               <span>
                 <FaImage />
-                Images
+                Upload Image
               </span>
             }
             key="2"
           >
-            <Images />
+            <UploadImage data={offer} />
           </TabPane>
           <TabPane
             tab={

@@ -287,7 +287,7 @@ export default function Meals() {
                         checked={meal.status === 0}
                         onChange={handleChange}
                       />
-                      <label htmlFor="inactive">in active</label>
+                      <label htmlFor="inactive">inactive</label>
                     </div>
                   </div>
                 </div>

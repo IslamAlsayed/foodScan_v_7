@@ -1,19 +1,19 @@
 import "../Models.css";
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { FaCheckCircle } from "react-icons/fa";
 import { HiXMark } from "react-icons/hi2";
 import Swal from "sweetalert2";
 import { updateData } from "../../../../axiosConfig/API";
 
 export default function EditEmployee({ visible, item, modalClose }) {
-  const imageRef = useRef(null);
   const [staticModalVisible, setStaticModalVisible] = useState(false);
   const [employee, setEmployee] = useState({
     name: "",
-    discount_percentage: "",
-    start_date: "",
-    end_date: "",
-    image: null,
+    email: "",
+    role: "",
+    phone: "",
+    password: "",
+    password_confirmation: "",
     status: 1,
   });
 
@@ -23,18 +23,13 @@ export default function EditEmployee({ visible, item, modalClose }) {
   }, [item]);
 
   const handleChange = (e) => {
-    const { name, value, id, type, files } = e.target;
+    const { name, value, id } = e.target;
 
     setEmployee((prevData) => {
       if (name === "status") {
         return {
           ...prevData,
           status: id === "active" ? 1 : 0,
-        };
-      } else if (name === "image" && type === "file") {
-        return {
-          ...prevData,
-          image: files[0],
         };
       } else {
         return {
@@ -50,15 +45,16 @@ export default function EditEmployee({ visible, item, modalClose }) {
 
     const formData = new FormData();
     formData.append("name", employee.name);
-    formData.append("discount_percentage", employee.discount_percentage);
-    formData.append("start_date", employee.start_date);
-    formData.append("end_date", employee.end_date);
-    if (employee.image) formData.append("image", employee.image);
+    formData.append("email", employee.email);
+    formData.append("role", employee.role);
+    formData.append("phone", employee.phone);
+    formData.append("password", employee.password);
+    formData.append("password_confirmation", employee.password_confirmation);
     formData.append("status", employee.status);
 
     try {
       const response = await updateData(
-        `admin/administrators/${item.id}`,
+        `admin/employees/${item.id}`,
         formData,
         "put"
       );
@@ -66,17 +62,14 @@ export default function EditEmployee({ visible, item, modalClose }) {
       if (response.status === "success") {
         setEmployee({
           name: "",
-          discount_percentage: "",
-          start_date: "",
-          end_date: "",
-          image: null,
+          email: "",
+          role: "",
+          phone: "",
+          password: "",
+          password_confirmation: "",
           status: 1,
         });
-
         modalClose();
-
-        if (imageRef.current) imageRef.current.value = null;
-
         Swal.fire("Updated!", response.message, "success");
       }
     } catch (error) {

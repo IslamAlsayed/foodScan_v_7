@@ -13,24 +13,22 @@ export default function Show() {
   const [loading, setLoading] = useState(true);
   const [status, setStatus] = useState(null);
 
-  const fetchOrder = useCallback(
-    async (id) => {
-      try {
-        const result = await getData(`admin/orders/${id}`);
-        setDeliveryOrder(result);
-        setStatus(result.status);
-        setLoading(false);
-      } catch (error) {
-        setLoading(false);
-        console.warn(error.response.data.error);
-      }
-    },
-    [id]
-  );
+  const fetchOrder = useCallback(async (id) => {
+    if (!id) return;
+    try {
+      const result = await getData(`admin/orders/${id}`);
+      setDeliveryOrder(result);
+      setStatus(result.status);
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      console.warn(error.response.data.error);
+    }
+  }, []);
 
   useEffect(() => {
     fetchOrder(id);
-  }, [id]);
+  }, []);
 
   const handleStatusChange = async (e) => {
     e.preventDefault();

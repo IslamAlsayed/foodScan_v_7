@@ -2,11 +2,9 @@ import "../DataTable.css";
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import { Link } from "react-router-dom/cjs/react-router-dom.min";
 import Breadcrumb from "../../../../Components/Dashboard/Features/Breadcrumb";
-
 import { Table } from "antd";
 import { FiEdit } from "react-icons/fi";
 import { BsEye } from "react-icons/bs";
-import { BiTrash } from "react-icons/bi";
 import EditEmployee from "../../Models/Edit/EditEmployee";
 import { getData } from "../../../../axiosConfig/API";
 import Filtration from "../../Models/Filtration/Employees";
@@ -30,6 +28,9 @@ export default function Employees() {
 
   useEffect(() => {
     fetchEmployees();
+  }, [fetchEmployees]);
+
+  useEffect(() => {
     if (updated) fetchEmployees();
     setUpdated(false);
   }, [updated, fetchEmployees]);
@@ -64,11 +65,6 @@ export default function Employees() {
       key: "phone",
     },
     {
-      title: "ROLE",
-      dataIndex: "role",
-      key: "role",
-    },
-    {
       title: "STATUS",
       key: "status",
       render: (text, item) => (
@@ -98,14 +94,6 @@ export default function Employees() {
             style={{ "--c": "#35B263", "--bg": "#DCFCE7" }}
           >
             <FiEdit />
-          </Link>
-          <Link
-            to="#"
-            className="trashIcon"
-            data-tooltip="delete"
-            style={{ "--c": "#F15353", "--bg": "#FECACA" }}
-          >
-            <BiTrash />
           </Link>
         </>
       ),

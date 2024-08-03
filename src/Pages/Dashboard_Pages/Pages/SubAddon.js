@@ -1,4 +1,4 @@
-import "../../SubModels.css";
+import "./SubModels.css";
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import { Link } from "react-router-dom/cjs/react-router-dom.min";
 import { Table, Row, Col } from "antd";
@@ -6,16 +6,16 @@ import { FaCheckCircle } from "react-icons/fa";
 import { HiXMark } from "react-icons/hi2";
 import { BiTrash } from "react-icons/bi";
 import Swal from "sweetalert2";
+import { getData, addData, deleteData } from "../../../axiosConfig/API";
 
-import { getData, addData, deleteData } from "../../../../../axiosConfig/API";
-
-export default function Addon({ meal_id, data }) {
+export default function SubAddon({ meal_id, data }) {
   const componentRef = useRef();
   const [addons, setAddons] = useState();
   const [optionsAddons, setOptionsAddons] = useState();
   const [addon_id, setAddon_id] = useState();
 
   const fetchOptionsAddons = useCallback(async (id) => {
+    if (!id) return;
     try {
       const result = await getData(`admin/meals/${id}/options-addons`);
       setOptionsAddons(result);
@@ -25,9 +25,8 @@ export default function Addon({ meal_id, data }) {
   }, []);
 
   useEffect(() => {
-    fetchOptionsAddons(meal_id);
-    if (data) setAddons(data);
-  }, [meal_id, data]);
+    if (meal_id) fetchOptionsAddons(meal_id);
+  }, [meal_id, fetchOptionsAddons]);
 
   const handleAddAddon = async (e) => {
     e.preventDefault();
@@ -95,11 +94,6 @@ export default function Addon({ meal_id, data }) {
       title: "NAME",
       dataIndex: "addon_name",
       key: "addon_name",
-    },
-    {
-      title: "CATEGORY",
-      dataIndex: "category_name",
-      key: "category_name",
     },
     {
       title: "STATUS",
@@ -179,7 +173,9 @@ export default function Addon({ meal_id, data }) {
                       value={addon_id}
                       onChange={(e) => setAddon_id(e.target.value)}
                     >
-                      <option value="">--</option>
+                      <option value="" selected disabled>
+                        --
+                      </option>
                       {optionsAddons &&
                         optionsAddons.map((addon) => (
                           <option key={addon.id} value={addon.id}>

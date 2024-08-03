@@ -10,31 +10,34 @@ export default function Offers() {
   const imageRef = useRef(null);
   const [offer, setOffer] = useState({
     name: "",
-    discount_percentage: "",
-    start_date: "",
-    end_date: "",
+    discount: "",
+    startDate: "",
+    endDate: "",
     image: null,
     status: 1,
   });
 
   const handleChange = (e) => {
-    const { name, value, type, files, id } = e.target;
-    if (type === "file") {
-      setOffer((prevData) => ({
-        ...prevData,
-        [name]: files[0],
-      }));
-    } else if (type === "radio") {
-      setOffer((prevData) => ({
-        ...prevData,
-        [name]: id === "active" ? "active" : "inactive",
-      }));
-    } else {
-      setOffer((prevData) => ({
+    const { name, value, id, type, files } = e.target;
+
+    setOffer((prevData) => {
+      if (name === "status") {
+        return {
+          ...prevData,
+          status: id === "active" ? 1 : 0,
+        };
+      }
+      if (name === "image" && type === "file") {
+        return {
+          ...prevData,
+          image: files[0],
+        };
+      }
+      return {
         ...prevData,
         [name]: value,
-      }));
-    }
+      };
+    });
   };
 
   const handleSubmit = async (e) => {
@@ -42,9 +45,9 @@ export default function Offers() {
 
     const formData = new FormData();
     formData.append("name", offer.name);
-    formData.append("discount_percentage", offer.discount_percentage);
-    formData.append("start_date", offer.start_date);
-    formData.append("end_date", offer.end_date);
+    formData.append("discount", offer.discount);
+    formData.append("startDate", offer.startDate);
+    formData.append("endDate", offer.endDate);
     if (offer.image) formData.append("image", offer.image);
     formData.append("status", offer.status);
 
@@ -65,10 +68,10 @@ export default function Offers() {
           if (response.status === "success") {
             setOffer({
               name: "",
-              discount_percentage: "",
-              start_date: "",
-              end_date: "",
-              image_file: null,
+              discount: "",
+              startDate: "",
+              endDate: "",
+              image: null,
               status: 1,
             });
 
@@ -114,7 +117,7 @@ export default function Offers() {
                     className="form-control"
                     name="name"
                     id="name"
-                    onChange={(e) => handleChange(e)}
+                    onChange={handleChange}
                     value={offer.name}
                     required
                   />
@@ -123,16 +126,16 @@ export default function Offers() {
 
               <div className="col-6">
                 <div className="mb-3">
-                  <label htmlFor="discount_percentage" className="form-label">
-                    discount percentage <span className="star">*</span>
+                  <label htmlFor="discount" className="form-label">
+                    discount <span className="star">*</span>
                   </label>
                   <input
                     type="text"
                     className="form-control"
-                    name="discount_percentage"
-                    id="discount_percentage"
-                    onChange={(e) => handleChange(e)}
-                    value={offer.name}
+                    name="discount"
+                    id="discount"
+                    onChange={handleChange}
+                    value={offer.discount}
                     required
                   />
                 </div>
@@ -140,16 +143,16 @@ export default function Offers() {
 
               <div className="col-6">
                 <div className="mb-3">
-                  <label htmlFor="start_date" className="form-label">
+                  <label htmlFor="startDate" className="form-label">
                     start date <span className="star">*</span>
                   </label>
                   <input
-                    type="data"
+                    type="date"
                     className="form-control"
-                    name="start_date"
-                    id="start_date"
-                    onChange={(e) => handleChange(e)}
-                    value={offer.name}
+                    name="startDate"
+                    id="startDate"
+                    onChange={handleChange}
+                    value={offer.startDate}
                     required
                   />
                 </div>
@@ -157,22 +160,22 @@ export default function Offers() {
 
               <div className="col-6">
                 <div className="mb-3">
-                  <label htmlFor="end_date" className="form-label">
+                  <label htmlFor="endDate" className="form-label">
                     end date <span className="star">*</span>
                   </label>
                   <input
-                    type="data"
+                    type="date"
                     className="form-control"
-                    name="end_date"
-                    id="end_date"
-                    onChange={(e) => handleChange(e)}
-                    value={offer.name}
+                    name="endDate"
+                    id="endDate"
+                    onChange={handleChange}
+                    value={offer.endDate}
                     required
                   />
                 </div>
               </div>
 
-              <div className="col-6">
+              <div className="col-12">
                 <div className="mb-3">
                   <label htmlFor="image" className="form-label">
                     image (548px,140px) <span className="star">*</span>
@@ -182,8 +185,8 @@ export default function Offers() {
                     className="form-control"
                     name="image"
                     id="image"
-                    onChange={(e) => handleChange(e)}
-                    value={offer.name}
+                    ref={imageRef}
+                    onChange={handleChange}
                     required
                   />
                 </div>
@@ -217,7 +220,7 @@ export default function Offers() {
                         checked={offer.status === 0}
                         onChange={handleChange}
                       />
-                      <label htmlFor="inactive">in active</label>
+                      <label htmlFor="inactive">inactive</label>
                     </div>
                   </div>
                 </div>

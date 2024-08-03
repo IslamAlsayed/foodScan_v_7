@@ -1,17 +1,15 @@
-import "../../SubModels.css";
+import "./SubModels.css";
 import { useState } from "react";
 import { useParams } from "react-router-dom/cjs/react-router-dom.min";
 import { FaCheckCircle } from "react-icons/fa";
 import { IoMdRefresh } from "react-icons/io";
-import ImageTest from "../../../../../assets/global/profile.png";
+import ImageTest from "../../../assets/global/profile.png";
 import Swal from "sweetalert2";
-
-import { updateData } from "../../../../../axiosConfig/API";
+import { updateData } from "../../../axiosConfig/API";
 
 export default function Image({ data }) {
   const { id } = useParams();
-  const actions = document.querySelectorAll(".displayButton");
-
+  const [actionsVisible, setActionsVisible] = useState(false);
   const [categoryImage, setCategoryImage] = useState({
     id: data.id,
     image: null,
@@ -29,8 +27,7 @@ export default function Image({ data }) {
         image: file,
         imagePreview: imageUrl,
       });
-
-      actions.forEach((btn) => (btn.style.display = "flex"));
+      setActionsVisible(true);
     }
   };
 
@@ -40,13 +37,12 @@ export default function Image({ data }) {
     const formData = new FormData();
     formData.append("id", categoryImage.id);
     if (categoryImage.image) formData.append("image", categoryImage.image);
-    formData.append("_method", "PUT");
 
     try {
       const response = await updateData(`categories/${id}`, formData, "put");
 
       if (response.status === "Ok") {
-        actions.forEach((btn) => (btn.style.display = "none"));
+        setActionsVisible(false);
         Swal.fire("Updated!", response.message, "success");
       }
     } catch (error) {
@@ -70,8 +66,7 @@ export default function Image({ data }) {
         ? `http://localhost:8000/storage/${data.image}`
         : ImageTest,
     });
-
-    actions.forEach((btn) => (btn.style.display = "none"));
+    setActionsVisible(false);
   };
 
   if (!data) return <p>Loading...</p>;
@@ -95,23 +90,27 @@ export default function Image({ data }) {
           />
         </div>
 
-        <div className="col displayButton">
-          <button type="submit" className="btn btn-success">
-            <FaCheckCircle />
-            <span>Save</span>
-          </button>
-        </div>
+        {actionsVisible && (
+          <>
+            <div className="col displayButton">
+              <button type="submit" className="btn btn-success">
+                <FaCheckCircle />
+                <span>Save</span>
+              </button>
+            </div>
 
-        <div className="col displayButton">
-          <button
-            type="button"
-            className="btn btn-danger"
-            onClick={handleRefresh}
-          >
-            <IoMdRefresh />
-            <span>Refresh</span>
-          </button>
-        </div>
+            <div className="col displayButton">
+              <button
+                type="button"
+                className="btn btn-danger"
+                onClick={handleRefresh}
+              >
+                <IoMdRefresh />
+                <span>Refresh</span>
+              </button>
+            </div>
+          </>
+        )}
       </form>
     </div>
   );

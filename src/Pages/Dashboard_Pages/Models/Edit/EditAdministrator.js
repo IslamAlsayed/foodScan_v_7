@@ -1,19 +1,19 @@
 import "../Models.css";
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { FaCheckCircle } from "react-icons/fa";
 import { HiXMark } from "react-icons/hi2";
 import Swal from "sweetalert2";
 import { updateData } from "../../../../axiosConfig/API";
 
 export default function EditAdministrator({ visible, item, modalClose }) {
-  const imageRef = useRef(null);
   const [staticModalVisible, setStaticModalVisible] = useState(false);
   const [administrator, setAdministrator] = useState({
     name: "",
-    discount_percentage: "",
-    start_date: "",
-    end_date: "",
-    image: null,
+    email: "",
+    role: "",
+    phone: "",
+    password: "",
+    password_confirmation: "",
     status: 1,
   });
 
@@ -23,18 +23,13 @@ export default function EditAdministrator({ visible, item, modalClose }) {
   }, [item]);
 
   const handleChange = (e) => {
-    const { name, value, id, type, files } = e.target;
+    const { name, value, id } = e.target;
 
     setAdministrator((prevData) => {
       if (name === "status") {
         return {
           ...prevData,
           status: id === "active" ? 1 : 0,
-        };
-      } else if (name === "image" && type === "file") {
-        return {
-          ...prevData,
-          image: files[0],
         };
       } else {
         return {
@@ -50,15 +45,19 @@ export default function EditAdministrator({ visible, item, modalClose }) {
 
     const formData = new FormData();
     formData.append("name", administrator.name);
-    formData.append("discount_percentage", administrator.discount_percentage);
-    formData.append("start_date", administrator.start_date);
-    formData.append("end_date", administrator.end_date);
-    if (administrator.image) formData.append("image", administrator.image);
+    formData.append("email", administrator.email);
+    formData.append("role", administrator.role);
+    formData.append("phone", administrator.phone);
+    formData.append("password", administrator.password);
+    formData.append(
+      "password_confirmation",
+      administrator.password_confirmation
+    );
     formData.append("status", administrator.status);
 
     try {
       const response = await updateData(
-        `admin/administrators/${item.id}`,
+        `admin/employees/${item.id}`,
         formData,
         "put"
       );
@@ -66,17 +65,14 @@ export default function EditAdministrator({ visible, item, modalClose }) {
       if (response.status === "success") {
         setAdministrator({
           name: "",
-          discount_percentage: "",
-          start_date: "",
-          end_date: "",
-          image: null,
+          email: "",
+          role: "",
+          phone: "",
+          password: "",
+          password_confirmation: "",
           status: 1,
         });
-
         modalClose();
-
-        if (imageRef.current) imageRef.current.value = null;
-
         Swal.fire("Updated!", response.message, "success");
       }
     } catch (error) {

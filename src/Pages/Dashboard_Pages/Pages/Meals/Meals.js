@@ -5,10 +5,8 @@ import { Link } from "react-router-dom/cjs/react-router-dom.min";
 import Breadcrumb from "../../../../Components/Dashboard/Features/Breadcrumb";
 import { FiEdit } from "react-icons/fi";
 import { BsEye } from "react-icons/bs";
-import { BiTrash } from "react-icons/bi";
-import Swal from "sweetalert2";
 import EditMeal from "../../Models/Edit/EditMeal";
-import { getData, deleteData } from "../../../../axiosConfig/API";
+import { getData } from "../../../../axiosConfig/API";
 import Filtration from "../../Models/Filtration/Meals";
 import AddRow from "../../Models/AddRow/Meals";
 
@@ -30,6 +28,9 @@ export default function Meals() {
 
   useEffect(() => {
     fetchMeals();
+  }, [fetchMeals]);
+
+  useEffect(() => {
     if (updated) fetchMeals();
     setUpdated(false);
   }, [updated, fetchMeals]);

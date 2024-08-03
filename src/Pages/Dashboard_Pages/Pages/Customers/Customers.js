@@ -2,11 +2,9 @@ import "../DataTable.css";
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import { Link } from "react-router-dom/cjs/react-router-dom.min";
 import Breadcrumb from "../../../../Components/Dashboard/Features/Breadcrumb";
-
 import { Table } from "antd";
 import { FiEdit } from "react-icons/fi";
 import { BsEye } from "react-icons/bs";
-import { BiTrash } from "react-icons/bi";
 import EditCustomer from "../../Models/Edit/EditCustomer";
 import { getData } from "../../../../axiosConfig/API";
 import Filtration from "../../Models/Filtration/Customers";
@@ -15,7 +13,6 @@ import AddRow from "../../Models/AddRow/Customers";
 export default function Customers() {
   const componentRef = useRef();
   const [customers, setCustomers] = useState([]);
-
   const [updated, setUpdated] = useState(false);
   const [editItem, setEditItem] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
@@ -31,6 +28,9 @@ export default function Customers() {
 
   useEffect(() => {
     fetchCustomers();
+  }, [fetchCustomers]);
+
+  useEffect(() => {
     if (updated) fetchCustomers();
     setUpdated(false);
   }, [updated, fetchCustomers]);
@@ -65,11 +65,6 @@ export default function Customers() {
       key: "phone",
     },
     {
-      title: "ROLE",
-      dataIndex: "role",
-      key: "role",
-    },
-    {
       title: "STATUS",
       key: "status",
       render: (text, item) => (
@@ -99,14 +94,6 @@ export default function Customers() {
             style={{ "--c": "#35B263", "--bg": "#DCFCE7" }}
           >
             <FiEdit />
-          </Link>
-          <Link
-            to="#"
-            className="trashIcon"
-            data-tooltip="delete"
-            style={{ "--c": "#F15353", "--bg": "#FECACA" }}
-          >
-            <BiTrash />
           </Link>
         </>
       ),

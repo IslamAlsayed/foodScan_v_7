@@ -188,10 +188,6 @@ button.btn {
   background-color: #FECACA;
 }
 
-.displayButton {
-  display: none;
-}
-
 .non-print {
   display: none;
 }

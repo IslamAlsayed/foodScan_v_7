@@ -16,7 +16,7 @@ function ProtectedRoute({ component: Component, ...rest }) {
     <Route
       {...rest}
       render={(props) =>
-        isAuth ? <Component {...props} /> : <Redirect to="/auth/login" />
+        isAuth() ? <Component {...props} /> : <Redirect to="/auth/login" />
       }
     />
   );

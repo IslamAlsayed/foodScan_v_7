@@ -1,11 +1,11 @@
-import "../../SubModels.css";
+import "../SubModels.css";
 import React, { useState } from "react";
 import { useParams } from "react-router-dom/cjs/react-router-dom.min";
 import { Row, Col } from "antd";
 import { FaCheckCircle } from "react-icons/fa";
 import { HiXMark } from "react-icons/hi2";
 import Swal from "sweetalert2";
-import { addData } from "../../../../../axiosConfig/API";
+import { addData } from "../../../../axiosConfig/API";
 
 export default function Variations() {
   const id = useParams();
@@ -104,7 +104,9 @@ export default function Variations() {
                       onChange={handleChange}
                       required
                     >
-                      <option value="">--</option>
+                      <option value="" selected disabled>
+                        --
+                      </option>
                       <option value="1">small</option>
                       <option value="2">medium</option>
                       <option value="3">big</option>

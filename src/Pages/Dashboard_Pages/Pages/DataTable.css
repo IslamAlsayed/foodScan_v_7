@@ -9,7 +9,7 @@
 }
 
 .Information>div label {
-    width: 90px;
+    min-width: 90px;
 }
 
 @media (max-width: 768px) {

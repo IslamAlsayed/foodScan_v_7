@@ -9,11 +9,11 @@ import {
   FaPuzzlePiece,
 } from "react-icons/fa";
 import { useParams } from "react-router-dom";
-import Information from "./Models/Information";
-import Image from "./Models/Image";
-import Variations from "./Models/Variations";
-import Extra from "./Models/Extra";
-import Addon from "./Models/Addon";
+import Information from "./Information";
+import UploadImage from "../UploadImage";
+import Variations from "./Variations";
+import SubExtra from "../SubExtra";
+import SubAddon from "../SubAddon";
 import { getData } from "../../../../axiosConfig/API";
 
 export default function ShowItem() {
@@ -22,11 +22,14 @@ export default function ShowItem() {
   const [addons, setAddons] = useState(null);
   const [extras, setExtras] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isMealLoaded, setIsMealLoaded] = useState(false);
 
   const fetchMeal = useCallback(async (id) => {
+    if (!id) return;
     try {
       const result = await getData(`meals/${id}`);
       setMeal(result);
+      setIsMealLoaded(true);
       setLoading(false);
     } catch (error) {
       setLoading(false);
@@ -35,6 +38,7 @@ export default function ShowItem() {
   }, []);
 
   const fetchAddons = useCallback(async (id) => {
+    if (!id) return;
     try {
       const result = await getData(`admin/meals/${id}/addons`);
       setAddons(result);
@@ -44,6 +48,7 @@ export default function ShowItem() {
   }, []);
 
   const fetchExtras = useCallback(async (id) => {
+    if (!id) return;
     try {
       const result = await getData(`admin/meals/${id}/extras`);
       setExtras(result);
@@ -54,11 +59,14 @@ export default function ShowItem() {
 
   useEffect(() => {
     fetchMeal(id);
-    if (meal) {
+  }, [id, fetchMeal]);
+
+  useEffect(() => {
+    if (isMealLoaded && meal) {
       fetchAddons(meal.id);
       fetchExtras(meal.id);
     }
-  }, [meal]);
+  }, [isMealLoaded, meal]);
 
   if (loading) return <p>Loading...</p>;
 
@@ -81,12 +89,12 @@ export default function ShowItem() {
           tab={
             <span>
               <FaImage />
-              Images
+              Upload Image
             </span>
           }
           key="2"
         >
-          <Image />
+          <UploadImage data={meal} />
         </Tabs.TabPane>
         <Tabs.TabPane
           tab={
@@ -108,7 +116,7 @@ export default function ShowItem() {
           }
           key="4"
         >
-          <Extra meal_id={id} data={extras} />
+          <SubExtra meal_id={id} data={extras} />
         </Tabs.TabPane>
         <Tabs.TabPane
           tab={
@@ -119,7 +127,7 @@ export default function ShowItem() {
           }
           key="5"
         >
-          <Addon meal_id={id} data={addons} />
+          <SubAddon meal_id={id} data={addons} />
         </Tabs.TabPane>
       </Tabs>
     </div>

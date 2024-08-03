@@ -257,7 +257,6 @@ export default function EditAddon({ visible, item, modalClose }) {
                     className="form-control"
                     name="image"
                     id="image"
-                    required
                     ref={imageRef}
                     onChange={(e) => handleChange(e)}
                   />

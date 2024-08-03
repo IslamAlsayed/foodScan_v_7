@@ -5,7 +5,6 @@ import { Link } from "react-router-dom/cjs/react-router-dom.min";
 import Breadcrumb from "../../../../Components/Dashboard/Features/Breadcrumb";
 import { FiEdit } from "react-icons/fi";
 import { BsEye } from "react-icons/bs";
-import { BiTrash } from "react-icons/bi";
 import EditOffer from "../../Models/Edit/EditOffer";
 import Filtration from "../../Models/Filtration/Offers";
 import AddRow from "../../Models/AddRow/Offers";
@@ -28,8 +27,11 @@ export default function Offers() {
   }, []);
 
   useEffect(() => {
-    fetchOffers(1);
-    if (updated) fetchOffers(1);
+    fetchOffers();
+  }, [fetchOffers]);
+
+  useEffect(() => {
+    if (updated) fetchOffers();
     setUpdated(false);
   }, [updated, fetchOffers]);
 
@@ -53,33 +55,28 @@ export default function Offers() {
       key: "name",
     },
     {
-      title: "AMOUNT",
-      dataIndex: "amount",
-      key: "amount",
+      title: "DISCOUNT",
+      dataIndex: "discount",
+      key: "discount",
     },
     {
       title: "START DATE",
-      dataIndex: "start_date",
-      key: "start_date",
+      dataIndex: "startDate",
+      key: "startDate",
     },
     {
       title: "END DATE",
-      dataIndex: "end_date",
-      key: "end_date",
+      dataIndex: "endDate",
+      key: "endDate",
     },
     {
       title: "STATUS",
       key: "status",
-      render: (text, item) =>
-        item.status === "active" ? (
-          <span style={{ "--c": "#35B263", "--bg": "#DCFCE7" }}>
-            {item.status}
-          </span>
-        ) : (
-          <span style={{ "--c": "#ff4f20", "--bg": "#ffe8e8" }}>
-            {item.status}
-          </span>
-        ),
+      render: (text, item) => (
+        <span className={item.status === "active" ? "active" : "inactive"}>
+          {item.status}
+        </span>
+      ),
     },
     {
       title: "ACTION",
@@ -87,7 +84,7 @@ export default function Offers() {
       render: (text, item) => (
         <>
           <Link
-            to={`/admin/dashboard/offer/show/${item.key}`}
+            to={`/admin/dashboard/offer/show/${item.id}`}
             className="eyeIcon"
             data-tooltip="view"
             style={{ "--c": "#1772FF", "--bg": "#E2EDFB" }}
@@ -102,14 +99,6 @@ export default function Offers() {
             style={{ "--c": "#35B263", "--bg": "#DCFCE7" }}
           >
             <FiEdit />
-          </Link>
-          <Link
-            to="#"
-            className="trashIcon"
-            data-tooltip="delete"
-            style={{ "--c": "#F15353", "--bg": "#FECACA" }}
-          >
-            <BiTrash />
           </Link>
         </>
       ),
@@ -128,8 +117,6 @@ export default function Offers() {
       <AddRow />
 
       <div className="tableItems" ref={componentRef}>
-        {/* <Table columns={columns} dataSource={data} pagination={true} /> */}
-
         <Table columns={columns} dataSource={offers} pagination={true} />
 
         {modalVisible && (

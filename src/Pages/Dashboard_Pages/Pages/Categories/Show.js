@@ -3,32 +3,30 @@ import React, { useEffect, useState, useCallback } from "react";
 import { Tabs } from "antd";
 import { FaInfoCircle, FaImage } from "react-icons/fa";
 import { useParams } from "react-router-dom";
-import Information from "./Models/Information";
-import Image from "./Models/Image";
+import Information from "./Information";
+import UploadImage from "../UploadImage";
 import { getData } from "../../../../axiosConfig/API";
 
 export default function ShowItem() {
   const { id } = useParams();
-  const [categories, setCategories] = useState(null);
+  const [category, setCategory] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const fetchCategory = useCallback(
-    async (id) => {
-      try {
-        const result = await getData(`categories/${id}`);
-        setCategories(result);
-        setLoading(false);
-      } catch (error) {
-        setLoading(false);
-        console.warn(error.response.data.error);
-      }
-    },
-    [id]
-  );
+  const fetchCategory = useCallback(async (id) => {
+    if (!id) return;
+    try {
+      const result = await getData(`categories/${id}`);
+      setCategory(result);
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      console.warn(error.response.data.error);
+    }
+  }, []);
 
   useEffect(() => {
     fetchCategory(id);
-  }, [id]);
+  }, [id, fetchCategory]);
 
   if (loading) return <p>Loading...</p>;
 
@@ -45,18 +43,18 @@ export default function ShowItem() {
           }
           key="1"
         >
-          <Information data={categories} />
+          <Information data={category} />
         </Tabs.TabPane>
         <Tabs.TabPane
           tab={
             <span>
               <FaImage />
-              Images
+              Upload Image
             </span>
           }
           key="2"
         >
-          <Image data={categories} />
+          <UploadImage data={category} />
         </Tabs.TabPane>
       </Tabs>
     </div>

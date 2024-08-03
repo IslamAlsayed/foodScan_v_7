@@ -2,7 +2,6 @@ import "../DataTable.css";
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import { Link } from "react-router-dom/cjs/react-router-dom.min";
 import Breadcrumb from "../../../../Components/Dashboard/Features/Breadcrumb";
-
 import { Table } from "antd";
 import { FiEdit } from "react-icons/fi";
 import { BsEye } from "react-icons/bs";
@@ -20,7 +19,7 @@ export default function Extra() {
 
   const fetchExtras = useCallback(async () => {
     try {
-      const result = await getData("admin/extra");
+      const result = await getData("admin/extras");
       setExtras(result);
     } catch (error) {
       console.warn(error.response.data.error);
@@ -29,6 +28,9 @@ export default function Extra() {
 
   useEffect(() => {
     fetchExtras();
+  }, [fetchExtras]);
+
+  useEffect(() => {
     if (updated) fetchExtras();
     setUpdated(false);
   }, [updated, fetchExtras]);

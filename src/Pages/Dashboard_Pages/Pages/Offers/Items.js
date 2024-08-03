@@ -1,10 +1,7 @@
-import "../Models.css";
+import "./Models.css";
 import { Table } from "antd";
-
 import { Link } from "react-router-dom/cjs/react-router-dom.min";
 import { PlusCircleFilled } from "@ant-design/icons";
-import { FiEdit } from "react-icons/fi";
-import { BsEye } from "react-icons/bs";
 import { BiTrash } from "react-icons/bi";
 import { CheckCircleFilled } from "@ant-design/icons";
 import { FaXmark } from "react-icons/fa6";
@@ -128,7 +125,9 @@ export default function Address() {
                       items <span className="star">*</span>
                     </label>
                     <select className="form-control" name="items" id="items">
-                      <option value="">--</option>
+                      <option value="" selected disabled>
+                        --
+                      </option>
                       <option value="1">option 1</option>
                       <option value="2">option 2</option>
                       <option value="3">option 3</option>

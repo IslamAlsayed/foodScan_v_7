@@ -10,9 +10,9 @@ export default function EditOffer({ visible, item, modalClose }) {
   const [staticModalVisible, setStaticModalVisible] = useState(false);
   const [offer, setOffer] = useState({
     name: "",
-    discount_percentage: "",
-    start_date: "",
-    end_date: "",
+    discount: "",
+    startDate: "",
+    endDate: "",
     image: null,
     status: 1,
   });
@@ -31,17 +31,17 @@ export default function EditOffer({ visible, item, modalClose }) {
           ...prevData,
           status: id === "active" ? 1 : 0,
         };
-      } else if (name === "image" && type === "file") {
+      }
+      if (name === "image" && type === "file") {
         return {
           ...prevData,
           image: files[0],
         };
-      } else {
-        return {
-          ...prevData,
-          [name]: value,
-        };
       }
+      return {
+        ...prevData,
+        [name]: value,
+      };
     });
   };
 
@@ -50,15 +50,15 @@ export default function EditOffer({ visible, item, modalClose }) {
 
     const formData = new FormData();
     formData.append("name", offer.name);
-    formData.append("discount_percentage", offer.discount_percentage);
-    formData.append("start_date", offer.start_date);
-    formData.append("end_date", offer.end_date);
+    formData.append("discount", offer.discount);
+    formData.append("startDate", offer.startDate);
+    formData.append("endDate", offer.endDate);
     if (offer.image) formData.append("image", offer.image);
     formData.append("status", offer.status);
 
     try {
       const response = await updateData(
-        `admin/administrators/${item.id}`,
+        `admin/offers/${item.id}`,
         formData,
         "put"
       );
@@ -66,10 +66,10 @@ export default function EditOffer({ visible, item, modalClose }) {
       if (response.status === "success") {
         setOffer({
           name: "",
-          discount_percentage: "",
-          start_date: "",
-          end_date: "",
-          image: null,
+          discount: "",
+          startDate: "",
+          endDate: "",
+          image_file: null,
           status: 1,
         });
 
@@ -110,8 +110,8 @@ export default function EditOffer({ visible, item, modalClose }) {
                     className="form-control"
                     name="name"
                     id="name"
+                    onChange={handleChange}
                     value={offer.name}
-                    onChange={handleChange}
                     required
                   />
                 </div>
@@ -119,56 +119,16 @@ export default function EditOffer({ visible, item, modalClose }) {
 
               <div className="col-6">
                 <div className="mb-3">
-                  <label htmlFor="email" className="form-label">
-                    email <span className="star">*</span>
-                  </label>
-                  <input
-                    type="email"
-                    className="form-control email"
-                    name="email"
-                    id="email"
-                    value={offer.email}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-              </div>
-
-              <div className="col-6">
-                <div className="mb-3">
-                  <label htmlFor="role" className="form-label">
-                    role <span className="star">*</span>
-                  </label>
-                  <select
-                    name="role"
-                    id="role"
-                    value={offer.role}
-                    onChange={handleChange}
-                    required
-                    className="form-control"
-                  >
-                    <option value="chef" selected={offer.role === "chef"}>
-                      Chef
-                    </option>
-                    <option value="cashier" selected={offer.role === "cashier"}>
-                      Cashier
-                    </option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="col-6">
-                <div className="mb-3">
-                  <label htmlFor="phone" className="form-label">
-                    phone <span className="star">*</span>
+                  <label htmlFor="discount" className="form-label">
+                    discount <span className="star">*</span>
                   </label>
                   <input
                     type="text"
                     className="form-control"
-                    name="phone"
-                    id="phone"
-                    value={offer.phone}
+                    name="discount"
+                    id="discount"
                     onChange={handleChange}
+                    value={offer.discount}
                     required
                   />
                 </div>
@@ -176,16 +136,16 @@ export default function EditOffer({ visible, item, modalClose }) {
 
               <div className="col-6">
                 <div className="mb-3">
-                  <label htmlFor="password" className="form-label">
-                    password <span className="star">*</span>
+                  <label htmlFor="startDate" className="form-label">
+                    start date <span className="star">*</span>
                   </label>
                   <input
-                    type="text"
+                    type="date"
                     className="form-control"
-                    name="password"
-                    id="password"
-                    value={offer.password}
+                    name="startDate"
+                    id="startDate"
                     onChange={handleChange}
+                    value={offer.startDate}
                     required
                   />
                 </div>
@@ -193,15 +153,32 @@ export default function EditOffer({ visible, item, modalClose }) {
 
               <div className="col-6">
                 <div className="mb-3">
-                  <label htmlFor="password_confirmation" className="form-label">
-                    password confirmation <span className="star">*</span>
+                  <label htmlFor="endDate" className="form-label">
+                    end date <span className="star">*</span>
                   </label>
                   <input
-                    type="text"
+                    type="date"
                     className="form-control"
-                    name="password_confirmation"
-                    id="password_confirmation"
-                    value={offer.password_confirmation}
+                    name="endDate"
+                    id="endDate"
+                    onChange={handleChange}
+                    value={offer.endDate}
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="col-12">
+                <div className="mb-3">
+                  <label htmlFor="image" className="form-label">
+                    image (548px,140px) <span className="star">*</span>
+                  </label>
+                  <input
+                    type="file"
+                    className="form-control"
+                    name="image"
+                    id="image"
+                    ref={imageRef}
                     onChange={handleChange}
                     required
                   />
@@ -210,8 +187,8 @@ export default function EditOffer({ visible, item, modalClose }) {
 
               <div className="col-6">
                 <div className="mb-3">
-                  <label htmlFor="active" className="form-label">
-                    status <span className="star">*</span>
+                  <label htmlFor="status" className="form-label">
+                    status
                   </label>
                   <div className="row">
                     <div className="col d-flex gap-2 align-items-center">
@@ -220,7 +197,7 @@ export default function EditOffer({ visible, item, modalClose }) {
                         name="status"
                         id="active"
                         required
-                        value={1}
+                        value="1"
                         checked={offer.status === 1}
                         onChange={handleChange}
                       />
@@ -232,11 +209,11 @@ export default function EditOffer({ visible, item, modalClose }) {
                         name="status"
                         id="inactive"
                         required
-                        value={0}
+                        value="0"
                         checked={offer.status === 0}
                         onChange={handleChange}
                       />
-                      <label htmlFor="inactive">in active</label>
+                      <label htmlFor="inactive">inactive</label>
                     </div>
                   </div>
                 </div>

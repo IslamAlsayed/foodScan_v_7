@@ -13,7 +13,6 @@ import AddRow from "../../Models/AddRow/Addons";
 export default function Addon() {
   const componentRef = useRef();
   const [addons, setAddons] = useState([]);
-
   const [updated, setUpdated] = useState(false);
   const [editItem, setEditItem] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
@@ -29,6 +28,9 @@ export default function Addon() {
 
   useEffect(() => {
     fetchAddons();
+  }, [fetchAddons]);
+
+  useEffect(() => {
     if (updated) fetchAddons();
     setUpdated(false);
   }, [updated, fetchAddons]);

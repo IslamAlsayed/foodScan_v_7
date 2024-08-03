@@ -2,7 +2,6 @@ import axios from "axios";
 import Cookies from "js-cookie";
 
 const basicURL = "http://127.0.0.1:8000/api/";
-const AdminToken = Cookies.get("token_foodScan") || null;
 
 // const retryRequest = async (requestFunction, retries, delay) => {
 //   for (let i = 0; i < retries; i++) {
@@ -23,7 +22,7 @@ const AdminToken = Cookies.get("token_foodScan") || null;
 //     const response = await axios.get(basicURL + url, {
 //       headers: {
 //         Accept: "application/json",
-//         Authorization: `Bearer ${AdminToken}`,
+//         Authorization: `Bearer ${Cookies.get("token_foodScan") || null}`,
 //       },
 //     });
 //     return response.data.data;
@@ -41,12 +40,23 @@ const AdminToken = Cookies.get("token_foodScan") || null;
 //   }
 // };
 
+// axiosRetry(axios, {
+//   retries: 3,
+//   retryCondition: (error) => {
+//     return error.response.status === 429;
+//   },
+//   retryDelay: (retryCount) => {
+//     console.log("try again");
+//     return retryCount * 3000;
+//   },
+// });
+
 export const getData = async (url) => {
   try {
     const response = await axios.get(basicURL + url, {
       headers: {
         Accept: "application/json",
-        Authorization: `Bearer ${AdminToken}`,
+        Authorization: `Bearer ${Cookies.get("token_foodScan") || null}`,
       },
     });
     return response.data.data;
@@ -66,7 +76,7 @@ export const addData = async (url, data) => {
       headers: {
         Accept: "application/json",
         "Content-Type": "multipart/form-data",
-        Authorization: `Bearer ${AdminToken}`,
+        Authorization: `Bearer ${Cookies.get("token_foodScan") || null}`,
       },
     });
     return response.data;
@@ -85,7 +95,7 @@ export const deleteData = async (url) => {
     const response = await axios.delete(basicURL + url, {
       headers: {
         Accept: "application/json",
-        Authorization: `Bearer ${AdminToken}`,
+        Authorization: `Bearer ${Cookies.get("token_foodScan") || null}`,
       },
     });
     return response.data;
@@ -107,7 +117,8 @@ export const updateData = async (url, data, method) => {
       data: data,
       headers: {
         Accept: "application/json",
-        Authorization: `Bearer ${AdminToken}`,
+        "Content-Type": "multipart/form-data",
+        Authorization: `Bearer ${Cookies.get("token_foodScan") || null}`,
       },
     });
     return response.data;

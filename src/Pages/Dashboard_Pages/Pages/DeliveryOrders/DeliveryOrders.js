@@ -3,7 +3,6 @@ import React, { useEffect, useRef, useState, useCallback } from "react";
 import { Table } from "antd";
 import { Link } from "react-router-dom/cjs/react-router-dom.min";
 import Breadcrumb from "../../../../Components/Dashboard/Features/Breadcrumb";
-
 import { FiEdit } from "react-icons/fi";
 import { BsEye } from "react-icons/bs";
 import EditDeliveryOrder from "../../Models/Edit/EditDeliveryOrder";
@@ -13,7 +12,6 @@ import Filtration from "../../Models/Filtration/DeliveryOrders";
 export default function DeliveryOrders() {
   const componentRef = useRef();
   const [deliveryOrders, setDeliveryOrders] = useState([]);
-
   const [updated, setUpdated] = useState(false);
   const [editOrder, setEditOrder] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
@@ -29,6 +27,9 @@ export default function DeliveryOrders() {
 
   useEffect(() => {
     fetchDeliveryOrders();
+  }, [fetchDeliveryOrders]);
+
+  useEffect(() => {
     if (updated) fetchDeliveryOrders();
     setUpdated(false);
   }, [updated, fetchDeliveryOrders]);

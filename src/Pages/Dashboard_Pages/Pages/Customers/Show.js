@@ -18,6 +18,7 @@ export default function Show() {
   const [loading, setLoading] = useState(true);
 
   const fetchCustomers = useCallback(async (id) => {
+    if (!id) return;
     try {
       const result = await getData(`admin/customers/${id}`);
       setCustomer(result);
@@ -29,6 +30,7 @@ export default function Show() {
   }, []);
 
   const fetchCustomerOrders = useCallback(async (id) => {
+    if (!id) return;
     try {
       const result = await getData(`admin/customers/${id}/orders`);
       setCustomerOrders(result);

@@ -4,19 +4,18 @@ import { useParams } from "react-router-dom/cjs/react-router-dom.min";
 import { Tabs } from "antd";
 import { TabPane } from "react-bootstrap";
 import { FaInfoCircle } from "react-icons/fa";
-import Information from "./Models/Information";
-import Image from "./Models/Image";
+import Information from "./Information";
+import UploadImage from "../UploadImage";
 import { FaImage } from "react-icons/fa6";
-
 import { getData } from "../../../../axiosConfig/API";
 
 export default function ShowItem() {
   const { id } = useParams();
-
   const [extra, setExtra] = useState(null);
   const [loading, setLoading] = useState(true);
 
   const fetchExtra = useCallback(async (id) => {
+    if (!id) return;
     try {
       const result = await getData(`extras/${id}`);
       setExtra(result);
@@ -29,7 +28,7 @@ export default function ShowItem() {
 
   useEffect(() => {
     fetchExtra(id);
-  }, [fetchExtra]);
+  }, [id, fetchExtra]);
 
   if (loading) return <p>loading...</p>;
 
@@ -52,12 +51,12 @@ export default function ShowItem() {
           tab={
             <span>
               <FaImage />
-              Images
+              Upload Image
             </span>
           }
           key="2"
         >
-          <Image data={extra} />
+          <UploadImage data={extra} />
         </TabPane>
       </Tabs>
     </div>

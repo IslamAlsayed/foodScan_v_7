@@ -30,6 +30,9 @@ export default function TableOrders() {
 
   useEffect(() => {
     fetchTableOrders();
+  }, [fetchTableOrders]);
+
+  useEffect(() => {
     if (updated) fetchTableOrders();
     setUpdated(false);
   }, [updated, fetchTableOrders]);

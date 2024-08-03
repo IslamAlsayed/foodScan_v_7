@@ -9,7 +9,6 @@ import { IoMdNotifications } from "react-icons/io";
 import Profile from "./Models/Profile";
 import Security from "./Models/Security";
 import MyOrders from "./Models/MyOrders";
-
 import { getData } from "../../../../axiosConfig/API";
 
 export default function Show() {
@@ -19,6 +18,7 @@ export default function Show() {
   const [loading, setLoading] = useState(true);
 
   const fetchEmployee = useCallback(async (id) => {
+    if (!id) return;
     try {
       const result = await getData(`admin/employees/${id}`);
       setEmployee(result);
@@ -30,6 +30,7 @@ export default function Show() {
   }, []);
 
   const fetchEmployeeOrders = useCallback(async (id) => {
+    if (!id) return;
     try {
       const result = await getData(`admin/employees/${id}/orders`);
       setEmployeeOrders(result);

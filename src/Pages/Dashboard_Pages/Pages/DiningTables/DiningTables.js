@@ -3,7 +3,6 @@ import React, { useEffect, useRef, useState, useCallback } from "react";
 import { Table } from "antd";
 import { Link } from "react-router-dom/cjs/react-router-dom.min";
 import Breadcrumb from "../../../../Components/Dashboard/Features/Breadcrumb";
-
 import { FiEdit } from "react-icons/fi";
 import { BsEye } from "react-icons/bs";
 import { MdQrCode2 } from "react-icons/md";
@@ -30,13 +29,12 @@ export default function DiningTables() {
 
   useEffect(() => {
     fetchDiningTables();
+  }, [fetchDiningTables]);
+
+  useEffect(() => {
     if (updated) fetchDiningTables();
     setUpdated(false);
   }, [updated, fetchDiningTables]);
-
-  useEffect(() => {
-    fetchDiningTables(1);
-  }, [fetchDiningTables]);
 
   const handleModalClose = () => {
     setModalVisible(false);
