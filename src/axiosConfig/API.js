@@ -49,7 +49,6 @@ export const getData = async (url) => {
         Authorization: `Bearer ${AdminToken}`,
       },
     });
-    console.log("getData", response.data);
     return response.data.data;
   } catch (error) {
     if (error.response) {

@@ -2,29 +2,25 @@ import "../DataTable.css";
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import { Link } from "react-router-dom/cjs/react-router-dom.min";
 import Breadcrumb from "../../../../Components/Dashboard/Features/Breadcrumb";
-
 import { Table } from "antd";
 import { FiEdit } from "react-icons/fi";
 import { BsEye } from "react-icons/bs";
 import { BiTrash } from "react-icons/bi";
 import EditAdministrator from "../../Models/Edit/EditAdministrator";
-
 import { getData } from "../../../../axiosConfig/API";
-
 import Filtration from "../../Models/Filtration/Administrators";
 import AddRow from "../../Models/AddRow/Administrators";
 
 export default function Administrators() {
   const componentRef = useRef();
   const [administrators, setAdministrators] = useState([]);
-
   const [updated, setUpdated] = useState(false);
   const [editItem, setEditItem] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
 
   const fetchAdministrators = useCallback(async () => {
     try {
-      const result = await getData("admin/administrators");
+      const result = await getData("admin/employees");
       setAdministrators(result);
     } catch (error) {
       console.warn(error.response.data.error);

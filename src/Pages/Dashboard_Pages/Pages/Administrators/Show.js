@@ -20,7 +20,7 @@ export default function Show() {
 
   const fetchAdministrator = useCallback(async (id) => {
     try {
-      const result = await getData(`admin/administrators/${id}`);
+      const result = await getData(`admin/employees/${id}`);
       setAdministrator(result);
       setLoading(false);
     } catch (error) {
@@ -55,8 +55,8 @@ export default function Show() {
         </div>
 
         <div className="details">
-          <h3>admin</h3>
-          <p className="typeRole">{administrator.Role}</p>
+          <h3>{administrator.name}</h3>
+          <p className="typeRole">admin</p>
         </div>
       </div>
 
