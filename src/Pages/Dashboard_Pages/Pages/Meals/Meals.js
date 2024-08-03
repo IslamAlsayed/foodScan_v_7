@@ -2,7 +2,7 @@ import "../DataTable.css";
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import { Table } from "antd";
 import { Link } from "react-router-dom/cjs/react-router-dom.min";
-import Breadcrumb from "../../../../Componenets/Dashboard/Features/Breadcrumb";
+import Breadcrumb from "../../../../Components/Dashboard/Features/Breadcrumb";
 import { FiEdit } from "react-icons/fi";
 import { BsEye } from "react-icons/bs";
 import { BiTrash } from "react-icons/bi";
@@ -50,34 +50,6 @@ export default function Meals() {
     setEditItem(null);
     setUpdated(true);
     document.body.style.overflow = "visible";
-  };
-
-  const handleDelete = async (id) => {
-    Swal.fire({
-      title: "Delete meal",
-      text: "Are you sure you want to delete this meal?",
-      icon: "question",
-      showCancelButton: true,
-      confirmButtonColor: "#28a745",
-      cancelButtonColor: "#dc3545",
-      confirmButtonText: "Yes, delete meal",
-      cancelButtonText: "No, cancel",
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        try {
-          const response = await deleteData(`admin/meals/${id}`);
-
-          if (response) {
-            Swal.fire("Meal!", response.message, "success");
-
-            setMeals((prevData) => prevData.filter((meal) => meal.id !== id));
-          }
-        } catch (error) {
-          console.warn(error.response.data.error);
-          Swal.fire("Error!", error.response.data.error, "error");
-        }
-      }
-    });
   };
 
   const columns = [
@@ -138,15 +110,6 @@ export default function Meals() {
             style={{ "--c": "#35B263", "--bg": "#DCFCE7" }}
           >
             <FiEdit />
-          </Link>
-          <Link
-            to="#"
-            className="trashIcon"
-            data-tooltip="delete"
-            onClick={() => handleDelete(item.id)}
-            style={{ "--c": "#F15353", "--bg": "#FECACA" }}
-          >
-            <BiTrash />
           </Link>
         </>
       ),

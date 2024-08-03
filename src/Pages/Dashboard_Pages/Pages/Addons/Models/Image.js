@@ -42,15 +42,8 @@ export default function Image({ data }) {
     if (categoryImage.image) formData.append("image", categoryImage.image);
     formData.append("_method", "PUT");
 
-    const handleResponse = (responseData) => responseData;
-
     try {
-      const response = await updateData(
-        `categories/${id}`,
-        formData,
-        "put",
-        handleResponse
-      );
+      const response = await updateData(`categories/${id}`, formData, "put");
 
       if (response.status === "Ok") {
         actions.forEach((btn) => (btn.style.display = "none"));

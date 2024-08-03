@@ -31,10 +31,7 @@ export default function Show() {
 
   const fetchEmployeeOrders = useCallback(async (id) => {
     try {
-      const result = await getData(
-        `admin/employees/${id}/orders`,
-        handleResponse
-      );
+      const result = await getData(`admin/employees/${id}/orders`);
       setEmployeeOrders(result);
     } catch (error) {
       console.error(error.response.data.error);

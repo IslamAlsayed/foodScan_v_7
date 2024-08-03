@@ -2,7 +2,7 @@ import "./Profile.css";
 import Swal from "sweetalert2";
 import { useEffect, useState } from "react";
 import { FaCheckCircle } from "react-icons/fa";
-import Breadcrumb from "../../../../Componenets/Dashboard/Features/Breadcrumb";
+import Breadcrumb from "../../../../Components/Dashboard/Features/Breadcrumb";
 import { updateData } from "../../../../axiosConfig/API";
 
 export function ChangePassword() {
@@ -21,7 +21,7 @@ export function ChangePassword() {
       setNew_password("");
       setNew_password_confirmation("");
     }
-  }, []);
+  }, [adminData]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -38,8 +38,6 @@ export function ChangePassword() {
       return;
     }
 
-    const handleResponse = (responseData) => responseData;
-
     try {
       const response = await updateData(
         "admin/employees/change-password",
@@ -48,8 +46,7 @@ export function ChangePassword() {
           new_password: new_password,
           new_password_confirmation: new_password_confirmation,
         },
-        "patch",
-        handleResponse
+        "patch"
       );
 
       if (response.status === "Ok") {

@@ -16,10 +16,7 @@ export default function Extra({ meal_id, data }) {
 
   const fetchOptionsExtras = useCallback(async (id) => {
     try {
-      const result = await getData(
-        `admin/meals/${id}/options-extras`,
-        handleResponse
-      );
+      const result = await getData(`admin/meals/${id}/options-extras`);
       setOptionsExtras(result);
     } catch (error) {
       console.warn(error.response.data.error);
@@ -38,16 +35,11 @@ export default function Extra({ meal_id, data }) {
   const handleAddExtra = async (e) => {
     e.preventDefault();
 
-    const handleResponse = (responseData) => {
-      return responseData;
-    };
-
     try {
-      const response = await addData(
-        "admin/meals/extras",
-        { extra_id: extra_id, meal_id: meal_id },
-        handleResponse
-      );
+      const response = await addData("admin/meals/extras", {
+        extra_id: extra_id,
+        meal_id: meal_id,
+      });
 
       if (response) {
         setExtra_id("");
@@ -74,12 +66,9 @@ export default function Extra({ meal_id, data }) {
       cancelButtonText: "No, cancel",
     }).then(async (result) => {
       if (result.isConfirmed) {
-        const handleResponse = (responseData) => responseData;
-
         try {
           const response = await deleteData(
-            `admin/extras-meals/${extra.extra_id}/${meal_id}`,
-            handleResponse
+            `admin/extras-meals/${extra.extra_id}/${meal_id}`
           );
 
           if (response) {
@@ -97,10 +86,7 @@ export default function Extra({ meal_id, data }) {
 
   const reloadExtras = useCallback(async () => {
     try {
-      const result = await getData(
-        `admin/meals/${meal_id}/extras`,
-        handleResponse
-      );
+      const result = await getData(`admin/meals/${meal_id}/extras`);
       setExtras(result);
     } catch (error) {
       console.warn(error.response.data.error);

@@ -1,7 +1,7 @@
 import "./DataTable.css";
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import { Table } from "antd";
-import Breadcrumb from "../../../Componenets/Dashboard/Features/Breadcrumb";
+import Breadcrumb from "../../../Components/Dashboard/Features/Breadcrumb";
 
 import { getData } from "../../../axiosConfig/API";
 import Filtration from "../Models/Filtration/Transactions";

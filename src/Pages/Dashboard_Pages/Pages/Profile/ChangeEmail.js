@@ -2,7 +2,7 @@ import "./Profile.css";
 import Swal from "sweetalert2";
 import React, { useState, useEffect } from "react";
 import { FaCheckCircle } from "react-icons/fa";
-import Breadcrumb from "../../../../Componenets/Dashboard/Features/Breadcrumb";
+import Breadcrumb from "../../../../Components/Dashboard/Features/Breadcrumb";
 import { updateData } from "../../../../axiosConfig/API";
 
 export function ChangeEmail() {
@@ -20,7 +20,7 @@ export function ChangeEmail() {
       setEmail("");
       setPassword("");
     }
-  }, []);
+  }, [adminData]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -35,8 +35,6 @@ export function ChangeEmail() {
       return;
     }
 
-    const handleResponse = (responseData) => responseData;
-
     try {
       const response = await updateData(
         "admin/employees/change-email",
@@ -45,8 +43,7 @@ export function ChangeEmail() {
           email: email,
           password: password,
         },
-        "patch",
-        handleResponse
+        "patch"
       );
 
       if (response.status === "Ok") {

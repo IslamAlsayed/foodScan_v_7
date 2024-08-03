@@ -13,8 +13,8 @@ export default function Login() {
     }
   }, []);
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("islam@gmail.com");
+  const [password, setPassword] = useState("test1234");
   const [error, setError] = useState("");
 
   const handleSubmit = async (e) => {
@@ -23,6 +23,7 @@ export default function Login() {
 
     if (!email || !password) {
       setError("Both email and password are required");
+      setTimeout(() => setError(""), 3000);
       return;
     }
 

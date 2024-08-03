@@ -17,10 +17,7 @@ export default function Addon({ meal_id, data }) {
 
   const fetchOptionsAddons = useCallback(async (id) => {
     try {
-      const result = await getData(
-        `admin/meals/${id}/options-addons`,
-        handleResponse
-      );
+      const result = await getData(`admin/meals/${id}/options-addons`);
       setOptionsAddons(result);
     } catch (error) {
       console.warn(error.response.data.error);
@@ -35,16 +32,11 @@ export default function Addon({ meal_id, data }) {
   const handleAddAddon = async (e) => {
     e.preventDefault();
 
-    const handleResponse = (responseData) => {
-      return responseData;
-    };
-
     try {
-      const response = await addData(
-        "admin/meals/addons",
-        { addon_id: addon_id, meal_id: meal_id },
-        handleResponse
-      );
+      const response = await addData("admin/meals/addons", {
+        addon_id: addon_id,
+        meal_id: meal_id,
+      });
 
       if (response) {
         setAddon_id("");
@@ -71,12 +63,9 @@ export default function Addon({ meal_id, data }) {
       cancelButtonText: "No, cancel",
     }).then(async (result) => {
       if (result.isConfirmed) {
-        const handleResponse = (responseData) => responseData;
-
         try {
           const response = await deleteData(
-            `admin/addons-meals/${addon.addon_id}/${meal_id}`,
-            handleResponse
+            `admin/addons-meals/${addon.addon_id}/${meal_id}`
           );
 
           if (response) {
@@ -94,10 +83,7 @@ export default function Addon({ meal_id, data }) {
 
   const reloadAddons = useCallback(async () => {
     try {
-      const result = await getData(
-        `admin/meals/${meal_id}/addons`,
-        handleResponse
-      );
+      const result = await getData(`admin/meals/${meal_id}/addons`);
       setAddons(result);
     } catch (error) {
       console.warn(error.response.data.error);

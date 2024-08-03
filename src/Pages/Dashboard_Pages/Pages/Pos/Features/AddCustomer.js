@@ -28,13 +28,10 @@ export default function AddCustomer() {
     formData.append("password", customer.password);
     formData.append("password_confirmation", customer.password_confirmation);
 
-    const handleResponse = (responseData) => responseData;
-
     try {
       const response = await addData(
         "admin/customers",
         formData,
-        handleResponse
       );
 
       if (response.status === "success") {

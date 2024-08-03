@@ -36,14 +36,11 @@ export default function Show() {
     e.preventDefault();
     setLoading(true);
 
-    const handleResponse = (responseData) => responseData;
-
     try {
       const response = await updateData(
         `admin/orders/${id}`,
         { status: e.target.value },
-        "patch",
-        handleResponse
+        "patch"
       );
 
       if (response) {

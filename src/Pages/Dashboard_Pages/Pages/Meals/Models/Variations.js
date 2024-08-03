@@ -28,13 +28,10 @@ export default function Variations() {
     formData.append("number_of_piece", meal.number_of_piece);
     formData.append("cost", meal.cost);
 
-    const handleResponse = (responseData) => responseData;
-
     try {
       const response = await addData(
         `admin/meals/${id.id}/size-cost`,
-        formData,
-        handleResponse
+        formData
       );
 
       if (response.status === "success") {

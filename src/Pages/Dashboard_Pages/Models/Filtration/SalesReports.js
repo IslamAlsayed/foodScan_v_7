@@ -82,7 +82,7 @@ export default function SalesReports() {
             <div className="col col-12 col-md-6 col-lg-3">
               <label className="mb-2">status</label>
               <select className="form-control" name="status">
-                <option value="" disabled>
+                <option value="" selected disabled>
                   --
                 </option>
                 <option value="1">Pending</option>
@@ -104,7 +104,7 @@ export default function SalesReports() {
             <div className="col col-12 col-md-6 col-lg-3">
               <label className="mb-2">paid status</label>
               <select className="form-control" name="paid_status">
-                <option value="" disabled>
+                <option value="" selected disabled>
                   --
                 </option>
                 <option value="1">paid</option>
@@ -120,7 +120,7 @@ export default function SalesReports() {
             <div className="col col-12 col-md-6 col-lg-3">
               <label className="mb-2">source</label>
               <select className="form-control" name="source">
-                <option value="" disabled>
+                <option value="" selected disabled>
                   --
                 </option>
                 <option value="1">web</option>

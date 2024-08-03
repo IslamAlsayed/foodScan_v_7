@@ -159,6 +159,7 @@
 
 .Header .navbar .profile .dropdown-menu li {
   height: fit-content;
+  background: #fff !important;
 }
 
 .Header .navbar .profile .dropdown-menu.show {

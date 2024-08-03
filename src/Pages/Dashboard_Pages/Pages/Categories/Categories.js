@@ -2,8 +2,7 @@ import "../DataTable.css";
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import { Table } from "antd";
 import { Link } from "react-router-dom/cjs/react-router-dom.min";
-import Breadcrumb from "../../../../Componenets/Dashboard/Features/Breadcrumb";
-
+import Breadcrumb from "../../../../Components/Dashboard/Features/Breadcrumb";
 import { FiEdit } from "react-icons/fi";
 import { BsEye } from "react-icons/bs";
 import { BiTrash } from "react-icons/bi";
@@ -47,38 +46,6 @@ export default function Categories() {
     setEditItem(item);
     setModalVisible(true);
     document.body.style.overflow = "hidden";
-  };
-
-  const handleDelete = async (id) => {
-    Swal.fire({
-      title: "Delete category",
-      text: "Are you sure you want to delete this category?",
-      icon: "question",
-      showCancelButton: true,
-      confirmButtonColor: "#28a745",
-      cancelButtonColor: "#dc3545",
-      confirmButtonText: "Yes, delete category",
-      cancelButtonText: "No, cancel",
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        const handleResponse = (responseData) => responseData;
-
-        try {
-          const response = await deleteData(`categories/${id}`);
-
-          if (response) {
-            Swal.fire("Category!", response.message, "success");
-
-            setCategories((prevData) =>
-              prevData.filter((data) => data.id !== id)
-            );
-          }
-        } catch (error) {
-          console.warn(error.response.data.error);
-          Swal.fire("Error!", error.response.data.error, "error");
-        }
-      }
-    });
   };
 
   const columns = [
@@ -129,15 +96,6 @@ export default function Categories() {
             style={{ "--c": "#35B263", "--bg": "#DCFCE7" }}
           >
             <FiEdit />
-          </Link>
-          <Link
-            to="#"
-            className="trashIcon"
-            data-tooltip="delete"
-            onClick={() => handleDelete(item.id)}
-            style={{ "--c": "#F15353", "--bg": "#FECACA" }}
-          >
-            <BiTrash />
           </Link>
         </>
       ),

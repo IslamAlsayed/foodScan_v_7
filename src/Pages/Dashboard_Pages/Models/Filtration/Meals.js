@@ -113,7 +113,9 @@ export default function Meals() {
             <div className="col col-12 col-md-6 col-lg-3 mb-3">
               <label className="mb-2">category</label>
               <select className="form-control" name="category" id="category">
-                <option value="">...</option>
+                <option value="" selected disabled>
+                  --
+                </option>
                 <option value="1">cate 1</option>
                 <option value="2">cate 2</option>
                 <option value="3">cate 3</option>
@@ -133,12 +135,16 @@ export default function Meals() {
 
             <div className="col col-12 col-md-6 col-lg-3 mb-3">
               <label className="mb-2">size</label>
-              <input
-                type="text"
-                className="form-control"
-                name="size"
-                id="size"
-              />
+
+              <select className="form-control" name="size" id="size">
+                <option value="" selected disabled>
+                  --
+                </option>
+                <option value="1">small</option>
+                <option value="2">medium</option>
+                <option value="3">large</option>
+                <option value="4">family</option>
+              </select>
             </div>
 
             <div className="col col-12 col-md-6 col-lg-3 mb-3">
@@ -154,7 +160,7 @@ export default function Meals() {
             <div className="col col-12 col-md-6 col-lg-3 mb-3">
               <label className="mb-2">type</label>
               <select className="form-control">
-                <option value="" disabled>
+                <option value="" selected disabled>
                   --
                 </option>
                 <option value="1">veg</option>

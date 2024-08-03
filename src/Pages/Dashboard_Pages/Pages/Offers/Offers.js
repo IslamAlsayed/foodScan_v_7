@@ -2,49 +2,33 @@ import "../DataTable.css";
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import { Table } from "antd";
 import { Link } from "react-router-dom/cjs/react-router-dom.min";
-import Breadcrumb from "../../../../Componenets/Dashboard/Features/Breadcrumb";
-
+import Breadcrumb from "../../../../Components/Dashboard/Features/Breadcrumb";
 import { FiEdit } from "react-icons/fi";
 import { BsEye } from "react-icons/bs";
 import { BiTrash } from "react-icons/bi";
 import EditOffer from "../../Models/Edit/EditOffer";
-import axios from "axios";
 import Filtration from "../../Models/Filtration/Offers";
 import AddRow from "../../Models/AddRow/Offers";
+import { getData } from "../../../../axiosConfig/API";
 
 export default function Offers() {
   const componentRef = useRef();
   const [offers, setOffers] = useState([]);
-
   const [updated, setUpdated] = useState(false);
   const [editItem, setEditItem] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
 
-  const AdminToken = JSON.parse(localStorage.getItem("AdminToken")) || null;
-
   const fetchOffers = useCallback(async () => {
     try {
-      const response = await axios.get(
-        "http://127.0.0.1:8000/api/admin/offers",
-        {
-          headers: {
-            Accept: "application/json",
-            Authorization: `Bearer ${AdminToken}`,
-          },
-        }
-      );
-
-      if (response) setOffers(response.data.data);
+      const result = await getData("admin/offers");
+      setOffers(result);
     } catch (error) {
-      console.error("Error fetching offers:", error);
+      console.warn(error.response.data.error);
     }
   }, []);
 
   useEffect(() => {
     fetchOffers(1);
-  }, [fetchOffers]);
-
-  useEffect(() => {
     if (updated) fetchOffers(1);
     setUpdated(false);
   }, [updated, fetchOffers]);

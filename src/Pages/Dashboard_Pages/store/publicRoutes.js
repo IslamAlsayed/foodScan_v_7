@@ -29,10 +29,6 @@ import SalesReports from "../Pages/SalesReports";
 import ItemsReports from "../Pages/ItemsReports";
 import CreditBalanceReport from "../Pages/CreditBalanceReport";
 import Settings from "../Pages/Settings/Settings";
-// import { ResetPasswordAdmin } from "../../Admin_Pages/ResetPasswordAdmin";
-// import { ResetPasswordGeneral } from "../../ResetPasswordGeneral";
-import { ResetPasswordAdmin } from "../Auth/ResetPasswordAdmin";
-import { ResetPasswordGeneral } from "../Auth/ResetPasswordGeneral";
 
 const routes = [
   {

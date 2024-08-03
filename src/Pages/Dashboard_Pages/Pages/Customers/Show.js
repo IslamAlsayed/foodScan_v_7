@@ -31,10 +31,7 @@ export default function Show() {
 
   const fetchCustomerOrders = useCallback(async (id) => {
     try {
-      const result = await getData(
-        `admin/customers/${id}/orders`,
-        handleResponse
-      );
+      const result = await getData(`admin/customers/${id}/orders`);
       setCustomerOrders(result);
     } catch (error) {
       console.error(error.response.data.error);

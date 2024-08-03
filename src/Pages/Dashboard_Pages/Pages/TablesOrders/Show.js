@@ -13,37 +13,31 @@ export default function Show() {
   const [loading, setLoading] = useState(true);
   const [status, setStatus] = useState(null);
 
-  const fetchOrder = useCallback(
-    async (id) => {
-      try {
-        const result = await getData(`admin/orders/${id}`);
-        setDeliveryOrder(result);
-        setStatus(result.status);
-        setLoading(false);
-      } catch (error) {
-        setLoading(false);
-        console.warn(error.response.data.error);
-      }
-    },
-    [id]
-  );
+  const fetchOrder = useCallback(async (id) => {
+    try {
+      const result = await getData(`admin/orders/${id}`);
+      setDeliveryOrder(result);
+      setStatus(result.status);
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      console.warn(error.response.data.error);
+    }
+  }, []);
 
   useEffect(() => {
     fetchOrder(id);
-  }, [id]);
+  }, [fetchOrder]);
 
   const handleStatusChange = async (e) => {
     e.preventDefault();
     setLoading(true);
 
-    const handleResponse = (responseData) => responseData;
-
     try {
       const response = await updateData(
         `admin/orders/${id}`,
         { status: e.target.value },
-        "patch",
-        handleResponse
+        "patch"
       );
 
       if (response) {
@@ -151,7 +145,7 @@ export default function Show() {
             <div className="cards">
               <div className="card" data-id="1">
                 <div className="card-img">
-                  <img src={ImageTest} alt="image" />
+                  <img src={ImageTest} alt="test" />
                 </div>
                 <div className="card-text">
                   <p className="name fw-bold">kung peo chicken</p>
@@ -164,7 +158,7 @@ export default function Show() {
 
               <div className="card" data-id="2">
                 <div className="card-img">
-                  <img src={ImageTest} alt="image" />
+                  <img src={ImageTest} alt="test" />
                 </div>
                 <div className="card-text">
                   <p className="name fw-bold">kung peo chicken</p>

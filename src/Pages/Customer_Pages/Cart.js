@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import CheckOutCard from "../../Componenets/Customer/CheckOutCard";
+import CheckOutCard from "../../Components/Customer/CheckOutCard";
 import { Link, useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { useContext, useEffect, useRef, useState } from "react";
 import axios from "axios";

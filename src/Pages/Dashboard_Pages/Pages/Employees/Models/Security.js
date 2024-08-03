@@ -26,8 +26,6 @@ export default function Security() {
       return;
     }
 
-    const handleResponse = (responseData) => responseData;
-
     try {
       const response = await updateData(
         "admin/employees/change-password",
@@ -36,8 +34,7 @@ export default function Security() {
           new_password: new_password,
           new_password_confirmation: new_password_confirmation,
         },
-        "patch",
-        handleResponse
+        "patch"
       );
 
       if (response) {

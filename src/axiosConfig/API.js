@@ -101,3 +101,42 @@ export const updateData = async (url, data, method) => {
     throw error;
   }
 };
+
+/*
+const handleDelete = async (id) => {
+    Swal.fire({
+      title: "Delete meal",
+      text: "Are you sure you want to delete this meal?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#28a745",
+      cancelButtonColor: "#dc3545",
+      confirmButtonText: "Yes, delete meal",
+      cancelButtonText: "No, cancel",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const response = await deleteData(`admin/meals/${id}`);
+
+          if (response) {
+            Swal.fire("Meal!", response.message, "success");
+
+            setMeals((prevData) => prevData.filter((meal) => meal.id !== id));
+          }
+        } catch (error) {
+          console.warn(error.response.data.error);
+          Swal.fire("Error!", error.response.data.error, "error");
+        }
+      }
+    });
+  };
+ <Link
+            to="#"
+            className="trashIcon"
+            data-tooltip="delete"
+            onClick={() => handleDelete(item.id)}
+            style={{ "--c": "#F15353", "--bg": "#FECACA" }}
+          >
+            <BiTrash />
+          </Link>
+ */

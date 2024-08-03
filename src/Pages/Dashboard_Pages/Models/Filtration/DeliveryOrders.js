@@ -82,7 +82,7 @@ export default function DeliveryOrders() {
             <div className="col col-12 col-md-6 col-lg-3">
               <label className="mb-2">status</label>
               <select className="form-control" name="status">
-                <option value="" disabled>
+                <option value="" selected disabled>
                   --
                 </option>
                 <option value="1">accept</option>

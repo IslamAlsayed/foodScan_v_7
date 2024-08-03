@@ -3,11 +3,11 @@ import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { setTable } from "../../Store/action";
 import "./Fetchdata.css";
-import { FilterCard } from "../../Componenets/Customer/FilterCard";
+import { FilterCard } from "../../Components/Customer/FilterCard";
 import all_cat from "../../Images/all.jpg";
 import ReactPaginate from "react-paginate";
-import { ListCard } from "../../Componenets/Customer/ListCard";
-import { GridCard } from "../../Componenets/Customer/GridCard";
+import { ListCard } from "../../Components/Customer/ListCard";
+import { GridCard } from "../../Components/Customer/GridCard";
 import { useLocation } from "react-router-dom/cjs/react-router-dom.min";
 
 const FetchData = () => {

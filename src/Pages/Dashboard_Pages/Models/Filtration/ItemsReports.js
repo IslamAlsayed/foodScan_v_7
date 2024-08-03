@@ -81,7 +81,7 @@ export default function ItemsReports() {
             <div className="col col-12 col-md-6 col-lg-3">
               <label className="mb-2">type</label>
               <select className="form-control" name="type">
-                <option value="" disabled>
+                <option value="" selected disabled>
                   --
                 </option>
                 <option value="1">veg</option>

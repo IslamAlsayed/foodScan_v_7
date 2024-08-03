@@ -1,7 +1,7 @@
 import "./DataTable.css";
 import React, { useRef } from "react";
 import { Table } from "antd";
-import Breadcrumb from "../../../Componenets/Dashboard/Features/Breadcrumb";
+import Breadcrumb from "../../../Components/Dashboard/Features/Breadcrumb";
 
 import Filtration from "../Models/Filtration/CreditBalanceReport";
 

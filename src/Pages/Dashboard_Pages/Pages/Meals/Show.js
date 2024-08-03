@@ -23,49 +23,34 @@ export default function ShowItem() {
   const [extras, setExtras] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const fetchMeal = useCallback(
-    async (id) => {
-      try {
-        const result = await getData(`meals/${id}`);
-        setMeal(result);
-        setLoading(false);
-      } catch (error) {
-        setLoading(false);
-        console.warn(error.response.data.error);
-      }
-    },
-    [id]
-  );
+  const fetchMeal = useCallback(async (id) => {
+    try {
+      const result = await getData(`meals/${id}`);
+      setMeal(result);
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      console.warn(error.response.data.error);
+    }
+  }, []);
 
-  const fetchAddons = useCallback(
-    async (id) => {
-      try {
-        const result = await getData(
-          `admin/meals/${id}/addons`,
-          handleResponse
-        );
-        setAddons(result);
-      } catch (error) {
-        console.warn(error.response.data.error);
-      }
-    },
-    [id]
-  );
+  const fetchAddons = useCallback(async (id) => {
+    try {
+      const result = await getData(`admin/meals/${id}/addons`);
+      setAddons(result);
+    } catch (error) {
+      console.warn(error.response.data.error);
+    }
+  }, []);
 
-  const fetchExtras = useCallback(
-    async (id) => {
-      try {
-        const result = await getData(
-          `admin/meals/${id}/extras`,
-          handleResponse
-        );
-        setExtras(result);
-      } catch (error) {
-        console.warn(error.response.data.error);
-      }
-    },
-    [id]
-  );
+  const fetchExtras = useCallback(async (id) => {
+    try {
+      const result = await getData(`admin/meals/${id}/extras`);
+      setExtras(result);
+    } catch (error) {
+      console.warn(error.response.data.error);
+    }
+  }, []);
 
   useEffect(() => {
     fetchMeal(id);
@@ -73,7 +58,7 @@ export default function ShowItem() {
       fetchAddons(meal.id);
       fetchExtras(meal.id);
     }
-  }, [id, meal]);
+  }, [meal]);
 
   if (loading) return <p>Loading...</p>;
 

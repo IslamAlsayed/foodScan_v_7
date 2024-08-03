@@ -20,10 +20,7 @@ export default function Show() {
 
   const fetchAdministrator = useCallback(async (id) => {
     try {
-      const result = await getData(
-        `admin/administrators/${id}`,
-        handleResponse
-      );
+      const result = await getData(`admin/administrators/${id}`);
       setAdministrator(result);
       setLoading(false);
     } catch (error) {
@@ -34,10 +31,7 @@ export default function Show() {
 
   const fetchAdministratorOrders = useCallback(async (id) => {
     try {
-      const result = await getData(
-        `admin/administrators/${id}/orders`,
-        handleResponse
-      );
+      const result = await getData(`admin/administrators/${id}/orders`);
       setAdministratorOrders(result);
     } catch (error) {
       console.error(error.response.data.error);

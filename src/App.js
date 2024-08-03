@@ -5,7 +5,7 @@ import {
   Switch,
 } from "react-router-dom/cjs/react-router-dom.min";
 
-import { Navbar } from "./Componenets/Customer/Navbar";
+import { Navbar } from "./Components/Customer/Navbar";
 import { Redirect } from "react-router-dom/cjs/react-router-dom.min";
 
 import { Auth } from "./Pages/Dashboard_Pages/Auth/Auth";
