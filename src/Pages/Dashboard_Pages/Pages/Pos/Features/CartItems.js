@@ -20,7 +20,7 @@ export default function CartItems() {
 
   useEffect(() => {
     const loadStoreItems = () => {
-      const cartItems = JSON.parse(localStorage.getItem("cartItems")) || [];
+      const cartItems = JSON.parse(localStorage.getItem("cartItems") || []);
       setItems(cartItems);
 
       let newTotal = cartItems.reduce(
@@ -103,9 +103,9 @@ export default function CartItems() {
   };
 
   const handleResetCart = () => {
-    localStorage.removeItem("cartItems");
+    // localStorage.setItem("cartItems", []);
+    localStorage.setItem("cartItems", JSON.stringify([]));
     setItems([]);
-
     const event = new Event("storageUpdated");
     window.dispatchEvent(event);
   };
@@ -257,9 +257,13 @@ export default function CartItems() {
             order
           </button>
         </div>
-        <div className="invoice" onClick={() => handleItemClick()}>
-          invoice
-        </div>
+        {items.length > 0 ? (
+          <div className="invoice" onClick={() => handleItemClick()}>
+            invoice
+          </div>
+        ) : (
+          false
+        )}
       </div>
 
       {modalVisible && (

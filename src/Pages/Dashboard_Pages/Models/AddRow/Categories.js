@@ -1,23 +1,41 @@
 import "../Models.css";
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { FaCheckCircle } from "react-icons/fa";
 import { HiXMark } from "react-icons/hi2";
 import Swal from "sweetalert2";
 import { addData } from "../../../../axiosConfig/API";
 
-function Categories() {
+function Categories({ visible, updated }) {
   const imageRef = useRef(null);
+  const [staticVisible, setStaticVisible] = useState([]);
   const [category, setCategory] = useState({
     name: "",
     description: "",
     image_file: null,
+    status: 1,
   });
 
-  const handleChange = (e) => {
-    const { name, value, type, files } = e.target;
+  useEffect(() => {
+    setStaticVisible(visible);
+  }, [visible]);
 
-    setCategory((prevCategory) => ({
-      ...prevCategory,
+  const closeModal = () => {
+    setStaticVisible(false);
+    document.body.style.overflow = "visible";
+  };
+
+  const handleChange = (e) => {
+    const { name, value, id, type, files } = e.target;
+
+    if (name === "status") {
+      setCategory((prevData) => ({
+        ...prevData,
+        status: id === "active" ? 1 : 0,
+      }));
+    }
+
+    setCategory((prevDate) => ({
+      ...prevDate,
       [name]: type === "file" ? files[0] : value,
     }));
   };
@@ -29,62 +47,47 @@ function Categories() {
     formData.append("name", category.name);
     formData.append("description", category.description);
     if (category.image_file) formData.append("image_file", category.image_file);
+    formData.append("status", category.status);
 
-    Swal.fire({
-      title: "Are you sure?",
-      text: "Do you want to save the changes?",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, save it!",
-      cancelButtonText: "No, cancel",
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        try {
-          const response = await addData("categories", formData);
+    try {
+      const response = await addData("categories", formData);
 
-          if (response.status === "Created") {
-            setCategory({
-              name: "",
-              description: "",
-              image_file: null,
-            });
+      if (response.status === "success") {
+        updated();
+        setCategory({
+          name: "",
+          description: "",
+          image_file: null,
+          status: 1,
+        });
 
-            if (imageRef.current) imageRef.current.value = null;
+        if (imageRef.current) imageRef.current.value = null;
 
-            Swal.fire("Saved!", response.message, "success");
-          }
-        } catch (error) {
-          if (error.response && error.response.status === 422) {
-            Swal.fire("Error!", "Validation error occurred.", "error");
-          } else {
-            Swal.fire("Error!", error.response.data.error, "error");
-          }
-        }
+        Swal.fire("Saved!", response.message, "success");
       }
-    });
-  };
-
-  const closeModel = () => {
-    var AddTable = document.getElementById("AddTable");
-    if (AddTable) AddTable.classList.remove("visible");
+    } catch (error) {
+      Swal.fire("Error!", error.response.data.message, "error");
+    }
   };
 
   return (
-    <div id="AddTable">
+    <div
+      id="AddTable"
+      className={`Categories ${staticVisible ? "visible" : ""}`}
+    >
       <div className="modal-container">
         <div className="breadcrumb">
           <h3>{window.location.pathname.replace("/admin/dashboard/", "")}</h3>
 
           <div className="closeSidebar">
-            <HiXMark onClick={closeModel} />
+            <HiXMark onClick={closeModal} />
           </div>
         </div>
+
         <div className="modal-content">
           <form onSubmit={handleSubmit}>
             <div className="row">
-              <div className="col-6">
+              <div className="col-12">
                 <div className="mb-3">
                   <label htmlFor="name" className="form-label">
                     Name <span className="star">*</span>
@@ -101,36 +104,35 @@ function Categories() {
                 </div>
               </div>
 
-              <div className="col-6">
+              <div className="col-12">
                 <div className="mb-3">
-                  <label htmlFor="description" className="form-label">
-                    Description <span className="star">*</span>
+                  <label htmlFor="image" className="form-label">
+                    Image
                   </label>
                   <input
-                    type="text"
-                    className="form-control"
-                    name="description"
-                    id="description"
-                    value={category.description}
+                    type="file"
+                    className="form-control email"
+                    name="image"
+                    id="image"
+                    ref={imageRef}
                     onChange={handleChange}
-                    required
                   />
                 </div>
               </div>
 
               <div className="col-12">
                 <div className="mb-3">
-                  <label htmlFor="image_file" className="form-label">
-                    Image
+                  <label htmlFor="description" className="form-label">
+                    Description <span className="star">*</span>
                   </label>
-                  <input
-                    type="file"
+                  <textarea
                     className="form-control"
-                    name="image_file"
-                    id="image_file"
-                    ref={imageRef}
+                    name="description"
+                    id="description"
+                    value={category.description}
                     onChange={handleChange}
-                  />
+                    required
+                  ></textarea>
                 </div>
               </div>
             </div>
@@ -139,12 +141,12 @@ function Categories() {
               <div className="col d-flex gap-3">
                 <button type="submit" className="btn btn-primary">
                   <FaCheckCircle />
-                  <span className="ps-2">Save</span>
+                  <span className="ps-2">update</span>
                 </button>
                 <button
                   type="button"
                   className="btn btn-secondary"
-                  onClick={closeModel}
+                  onClick={closeModal}
                 >
                   <HiXMark />
                   <span className="ps-2">Close</span>

@@ -5,46 +5,41 @@ import { HiXMark } from "react-icons/hi2";
 import Swal from "sweetalert2";
 import { getData, updateData } from "../../../../axiosConfig/API";
 
-export default function EditMeal({ visible, item, modalClose }) {
+export default function EditMeal({ visible, visibleToggle, item, updated }) {
   const imageRef = useRef(null);
-  const [staticModalVisible, setStaticModalVisible] = useState(false);
-  const [mealCategories, setMealCategories] = useState(false);
+  const [staticVisible, setStaticVisible] = useState();
+  const [categories, setCategories] = useState([]);
   const [meal, setMeal] = useState({
     name: "",
-    description: "",
-    type: "vegetarian",
-    category_id: -1,
-    image: null,
     status: 1,
+    type: "vegetarian",
+    category_id: "",
+    image: null,
+    description: "",
     price: "",
     size: "",
-    number: 1,
+    cost: "",
+    number_of_pieces: 1,
   });
 
-  const fetchCategories = useCallback(async () => {
-    try {
-      const result = await getData("categories");
-      setMealCategories(result);
-    } catch (error) {
-      console.warn(error.response.data.error);
-    }
-  }, []);
-
   useEffect(() => {
-    setStaticModalVisible(visible);
     if (item) {
-      fetchCategories(item.categories);
+      const { image, ...rest } = item;
+      setMeal({ ...rest, image: null });
     }
   }, [item]);
 
+  useEffect(() => {
+    setStaticVisible(visible);
+  }, [visible]);
+
   const handleChange = (e) => {
     const { name, value, id, type, files } = e.target;
-
     setMeal((prevData) => {
       if (name === "type") {
         return {
           ...prevData,
-          type: id === "veg" ? "vegetarian" : "non-vegetarian",
+          type: id === "vegetarian" ? "vegetarian" : "non-vegetarian",
         };
       }
       if (name === "status") {
@@ -71,71 +66,64 @@ export default function EditMeal({ visible, item, modalClose }) {
 
     const formData = new FormData();
     formData.append("name", meal.name);
-    formData.append("description", meal.description);
+    formData.append("status", meal.status);
     formData.append("type", meal.type);
     formData.append("category_id", meal.category_id);
-    formData.append("status", meal.status);
     if (meal.image) formData.append("image", meal.image);
-    formData.append("meal_size_costs[0][size]", 1);
-    formData.append("meal_size_costs[0][cost]", 120);
-    formData.append("meal_size_costs[1][size]", 2);
-    formData.append("meal_size_costs[1][cost]", 150);
-    formData.append("meal_size_costs[3][size]", 3);
-    formData.append("meal_size_costs[3][number_of_pieces]", 4);
-    formData.append("meal_size_costs[3][cost]", 80);
+    formData.append("description", meal.description);
     formData.append("price", meal.price);
-    formData.append("number", meal.number);
+    formData.append("size", meal.size);
+    formData.append("cost", meal.cost);
+    formData.append("number_of_pieces", meal.number_of_pieces);
+    formData.append("_method", "put");
 
     try {
       const response = await updateData(
         `admin/meals/${item.id}`,
         formData,
-        "put"
+        true
       );
 
       if (response.status === "success") {
-        setMeal({
-          name: "",
-          description: "",
-          type: "vegetarian",
-          category_id: -1,
-          image: null,
-          status: 1,
-          price: "",
-          size: "",
-          number: 1,
-        });
-
-        modalClose();
-
+        updated();
         if (imageRef.current) imageRef.current.value = null;
-
         Swal.fire("Updated!", response.message, "success");
       }
     } catch (error) {
-      if (error.response && error.response.status === 422) {
-        Swal.fire("Error!", "Validation error occurred.", "error");
-      } else {
-        Swal.fire("Error!", error.response.data.error, "error");
-      }
+      Swal.fire("Error!", error.response.data.message, "error");
     }
   };
 
+  const fetchCategories = useCallback(async () => {
+    try {
+      const result = await getData("categories");
+      setCategories(result);
+    } catch (error) {
+      console.error(error.response.data.message);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchCategories();
+  }, [fetchCategories]);
+
   return (
-    <div id="AddTable" className={staticModalVisible ? "visible" : ""}>
+    <div id="AddTable" className={staticVisible ? "visible" : ""}>
       <div className="modal-container">
         <div className="breadcrumb">
-          <h3>{window.location.pathname.replace("/admin/dashboard/", "")}</h3>
+          <h3>
+            edit {window.location.pathname.replace("/admin/dashboard/", "")}
+          </h3>
 
           <div className="closeSidebar">
-            <HiXMark onClick={() => modalClose()} />
+            <HiXMark onClick={visibleToggle} />
           </div>
         </div>
 
         <div className="modal-content">
           <form onSubmit={handleSubmit}>
             <div className="row">
-              <div className="col-6">
+              <div className="col-12 col-sm-6">
                 <div className="mb-3">
                   <label htmlFor="name" className="form-label">
                     name <span className="star">*</span>
@@ -145,48 +133,32 @@ export default function EditMeal({ visible, item, modalClose }) {
                     className="form-control"
                     name="name"
                     id="name"
-                    onChange={(e) => handleChange(e)}
                     value={meal.name}
-                    required
+                    onChange={handleChange}
                   />
                 </div>
               </div>
 
-              <div className="col-6">
+              <div className="col-12 col-sm-6">
                 <div className="mb-3">
                   <label htmlFor="category" className="form-label">
                     category <span className="star">*</span>
                   </label>
-
                   <select
                     className="form-control"
                     name="category_id"
                     id="category"
-                    required
+                    value={meal.category_id}
                     onChange={handleChange}
                   >
-                    <option
-                      value={-1}
-                      disabled
-                      selected={meal.category_id === -1}
-                    >
-                      choose
-                    </option>
-                    {mealCategories &&
-                      mealCategories.map((category) => (
-                        <option
-                          key={category.id}
-                          value={category.id}
-                          selected={category.id === meal.category_id}
-                        >
-                          {category.name}
-                        </option>
-                      ))}
+                    {categories.map((category) => (
+                      <option value={category.id}>{category.name}</option>
+                    ))}
                   </select>
                 </div>
               </div>
 
-              <div className="col-6">
+              <div className="col-12 col-sm-6">
                 <div className="mb-3">
                   <label htmlFor="price" className="form-label">
                     price <span className="star">*</span>
@@ -196,57 +168,107 @@ export default function EditMeal({ visible, item, modalClose }) {
                     className="form-control"
                     name="price"
                     id="price"
-                    onChange={(e) => handleChange(e)}
                     value={meal.price}
+                    onChange={handleChange}
                     required
                   />
                 </div>
               </div>
 
-              <div className="col-6">
+              <div className="col-12 col-sm-6">
                 <div className="mb-3">
-                  <label htmlFor="number" className="form-label">
+                  <label htmlFor="number_of_pieces" className="form-label">
                     number of pieces <span className="star">*</span>
                   </label>
                   <input
-                    type="number"
+                    type="number_of_pieces"
                     className="form-control"
-                    name="number"
-                    id="number"
-                    onChange={(e) => handleChange(e)}
-                    value={meal.number}
-                    required
+                    name="number_of_pieces"
+                    id="number_of_pieces"
+                    value={meal.number_of_pieces}
+                    onChange={handleChange}
                   />
                 </div>
               </div>
 
-              <div className="col-6">
+              <div className="col-12 col-sm-6">
+                <div className="mb-3">
+                  <label htmlFor="size" className="form-label">
+                    size <span className="star">*</span>
+                  </label>
+                  <select
+                    className="form-control"
+                    name="size"
+                    id="size"
+                    value={meal.size}
+                    onChange={handleChange}
+                    required
+                  >
+                    <option value="1">small</option>
+                    <option value="2">medium</option>
+                    <option value="3">big</option>
+                    <option value="4">family</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="col-12 col-sm-6">
+                <div className="mb-3">
+                  <label htmlFor="cost" className="form-label">
+                    cost <span className="star">*</span>
+                  </label>
+                  <input
+                    type="cost"
+                    className="form-control"
+                    name="cost"
+                    id="cost"
+                    value={meal.cost}
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
+
+              <div className="col-12">
+                <div className="mb-3">
+                  <label htmlFor="image" className="form-label">
+                    image <span className="star">*</span>
+                  </label>
+                  <input
+                    type="file"
+                    className="form-control"
+                    name="image"
+                    id="image"
+                    ref={imageRef}
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
+
+              <div className="col-12 col-sm-6">
                 <div className="mb-3">
                   <label htmlFor="vegetarian" className="form-label">
                     type <span className="star">*</span>
                   </label>
                   <div className="row">
-                    <div className="col col-4 d-flex gap-2 align-items-center">
+                    <div className="col d-flex gap-2 align-items-center">
                       <input
                         type="radio"
                         name="type"
                         id="vegetarian"
-                        required
-                        checked={meal.type === "vegetarian"}
                         value="vegetarian"
                         onChange={handleChange}
+                        checked={meal.type === "vegetarian"}
                       />
                       <label htmlFor="vegetarian">vegetarian</label>
                     </div>
-                    <div className="col col-4 d-flex gap-2 align-items-center">
+                    <div className="col d-flex gap-2 align-items-center">
                       <input
                         type="radio"
                         name="type"
                         id="non-vegetarian"
-                        required
-                        checked={meal.type === "non-vegetarian"}
                         value="non-vegetarian"
                         onChange={handleChange}
+                        checked={meal.type === "non-vegetarian"}
                       />
                       <label htmlFor="non-vegetarian">non vegetarian</label>
                     </div>
@@ -254,7 +276,7 @@ export default function EditMeal({ visible, item, modalClose }) {
                 </div>
               </div>
 
-              <div className="col-6">
+              <div className="col-12 col-sm-6">
                 <div className="mb-3">
                   <label htmlFor="active" className="form-label">
                     status <span className="star">*</span>
@@ -265,10 +287,9 @@ export default function EditMeal({ visible, item, modalClose }) {
                         type="radio"
                         name="status"
                         id="active"
-                        required
                         value={1}
-                        checked={meal.status === 1}
                         onChange={handleChange}
+                        checked={meal.status === 1}
                       />
                       <label htmlFor="active">active</label>
                     </div>
@@ -277,31 +298,13 @@ export default function EditMeal({ visible, item, modalClose }) {
                         type="radio"
                         name="status"
                         id="inactive"
-                        required
                         value={0}
-                        checked={meal.status === 0}
                         onChange={handleChange}
+                        checked={meal.status === 0}
                       />
-                      <label htmlFor="inactive">in active</label>
+                      <label htmlFor="inactive">inactive</label>
                     </div>
                   </div>
-                </div>
-              </div>
-
-              <div className="col-12">
-                <div className="mb-3">
-                  <label htmlFor="image" className="form-label">
-                    image
-                  </label>
-                  <input
-                    type="file"
-                    className="form-control"
-                    name="image"
-                    id="image"
-                    ref={imageRef}
-                    onChange={(e) => handleChange(e)}
-                    required
-                  />
                 </div>
               </div>
 
@@ -314,9 +317,8 @@ export default function EditMeal({ visible, item, modalClose }) {
                     className="form-control"
                     name="description"
                     id="description"
-                    onChange={(e) => handleChange(e)}
                     value={meal.description}
-                    required
+                    onChange={handleChange}
                   ></textarea>
                 </div>
               </div>
@@ -331,7 +333,7 @@ export default function EditMeal({ visible, item, modalClose }) {
                 <button
                   type="button"
                   className="btn btn-secondary"
-                  onClick={() => modalClose()}
+                  onClick={visibleToggle}
                 >
                   <HiXMark />
                   <span className="ps-2">close</span>

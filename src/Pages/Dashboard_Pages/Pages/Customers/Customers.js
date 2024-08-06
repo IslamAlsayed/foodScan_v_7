@@ -5,24 +5,24 @@ import Breadcrumb from "../../../../Components/Dashboard/Features/Breadcrumb";
 import { Table } from "antd";
 import { FiEdit } from "react-icons/fi";
 import { BsEye } from "react-icons/bs";
-import EditCustomer from "../../Models/Edit/EditCustomer";
 import { getData } from "../../../../axiosConfig/API";
 import Filtration from "../../Models/Filtration/Customers";
 import AddRow from "../../Models/AddRow/Customers";
+import EditCustomer from "../../Models/Edit/EditCustomer";
 
 export default function Customers() {
   const componentRef = useRef();
-  const [customers, setCustomers] = useState([]);
-  const [updated, setUpdated] = useState(false);
+  const [customers, setCustomer] = useState([]);
   const [editItem, setEditItem] = useState(null);
-  const [modalVisible, setModalVisible] = useState(false);
+  const [modalVisibleToggle, setModalVisibleToggle] = useState(false);
+  const [modalEditVisibleToggle, setModalEditVisibleToggle] = useState(false);
 
   const fetchCustomers = useCallback(async () => {
     try {
       const result = await getData("admin/customers");
-      setCustomers(result);
+      setCustomer(result);
     } catch (error) {
-      console.warn(error.response.data.error);
+      console.error(error.response.data.message);
     }
   }, []);
 
@@ -30,25 +30,32 @@ export default function Customers() {
     fetchCustomers();
   }, [fetchCustomers]);
 
-  useEffect(() => {
-    if (updated) fetchCustomers();
-    setUpdated(false);
-  }, [updated, fetchCustomers]);
-
-  const handleModalClose = () => {
-    setModalVisible(false);
-    setEditItem(null);
-    setUpdated(true);
-    document.body.style.overflow = "visible";
+  const handleModalToggle = () => {
+    setModalVisibleToggle(!modalVisibleToggle);
+    document.body.style.overflow = modalVisibleToggle ? "visible" : "hidden";
   };
 
-  const handleEdit = (item) => {
+  const handleModalEditToggle = () => {
+    setModalEditVisibleToggle(!modalEditVisibleToggle);
+    document.body.style.overflow = modalEditVisibleToggle
+      ? "visible"
+      : "hidden";
+  };
+
+  const handleEdit = async (item) => {
     setEditItem(item);
-    setModalVisible(true);
-    document.body.style.overflow = "hidden";
+    setModalEditVisibleToggle(!modalEditVisibleToggle);
+    document.body.style.overflow = modalEditVisibleToggle
+      ? "visible"
+      : "hidden";
   };
 
   const columns = [
+    {
+      title: "ID",
+      dataIndex: "id",
+      key: "id",
+    },
     {
       title: "NAME",
       dataIndex: "name",
@@ -106,21 +113,25 @@ export default function Customers() {
       <Breadcrumb />
 
       {/* Filtration */}
-      <Filtration />
+      <Filtration handleModalToggle={handleModalToggle} />
 
       {/* Add Row */}
-      <AddRow />
+      <AddRow
+        visible={modalVisibleToggle}
+        visibleToggle={handleModalToggle}
+        updated={fetchCustomers}
+      />
+
+      {/* Edit Row */}
+      <EditCustomer
+        visible={modalEditVisibleToggle}
+        visibleToggle={handleModalEditToggle}
+        item={editItem}
+        updated={fetchCustomers}
+      />
 
       <div className="tableItems" ref={componentRef}>
         <Table columns={columns} dataSource={customers} pagination={true} />
-
-        {modalVisible && (
-          <EditCustomer
-            visible={modalVisible}
-            item={editItem}
-            modalClose={handleModalClose}
-          />
-        )}
       </div>
     </div>
   );

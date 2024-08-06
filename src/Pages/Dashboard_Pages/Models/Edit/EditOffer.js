@@ -1,37 +1,36 @@
 import "../Models.css";
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { FaCheckCircle } from "react-icons/fa";
 import { HiXMark } from "react-icons/hi2";
 import Swal from "sweetalert2";
 import { updateData } from "../../../../axiosConfig/API";
 
-export default function EditOffer({ visible, item, modalClose }) {
+export default function EditOffer({ visible, visibleToggle, item, updated }) {
   const imageRef = useRef(null);
-  const [staticModalVisible, setStaticModalVisible] = useState(false);
+  const [staticVisible, setStaticVisible] = useState();
   const [offer, setOffer] = useState({
     name: "",
     discount: "",
     startDate: "",
     endDate: "",
+    status: "active",
     image: null,
-    status: 1,
   });
 
   useEffect(() => {
-    setStaticModalVisible(visible);
-    if (item) setOffer(item);
+    if (item) {
+      const { image, ...rest } = item;
+      setOffer({ ...rest, image: null });
+    }
   }, [item]);
+
+  useEffect(() => {
+    setStaticVisible(visible);
+  }, [visible]);
 
   const handleChange = (e) => {
     const { name, value, id, type, files } = e.target;
-
     setOffer((prevData) => {
-      if (name === "status") {
-        return {
-          ...prevData,
-          status: id === "active" ? 1 : 0,
-        };
-      }
       if (name === "image" && type === "file") {
         return {
           ...prevData,
@@ -53,50 +52,38 @@ export default function EditOffer({ visible, item, modalClose }) {
     formData.append("discount", offer.discount);
     formData.append("startDate", offer.startDate);
     formData.append("endDate", offer.endDate);
-    if (offer.image) formData.append("image", offer.image);
     formData.append("status", offer.status);
+    if (offer.image) formData.append("image", offer.image);
+    formData.append("_method", "put");
 
     try {
       const response = await updateData(
         `admin/offers/${item.id}`,
         formData,
-        "put"
+        true
       );
 
       if (response.status === "success") {
-        setOffer({
-          name: "",
-          discount: "",
-          startDate: "",
-          endDate: "",
-          image_file: null,
-          status: 1,
-        });
-
-        modalClose();
-
-        if (imageRef.current) imageRef.current.value = null;
-
+        updated();
         Swal.fire("Updated!", response.message, "success");
       }
     } catch (error) {
-      if (error.response && error.response.status === 422) {
-        Swal.fire("Error!", "Validation error occurred.", "error");
-      } else {
-        Swal.fire("Error!", error.response.data.error, "error");
-      }
+      Swal.fire("Error!", error.response.data.message, "error");
     }
   };
 
   return (
-    <div id="AddTable" className={staticModalVisible ? "visible" : ""}>
+    <div id="AddTable" className={staticVisible ? "visible" : ""}>
       <div className="modal-container">
         <div className="breadcrumb">
-          <h3>{window.location.pathname.replace("/admin/dashboard/", "")}</h3>
+          <h3>
+            edit {window.location.pathname.replace("/admin/dashboard/", "")}
+          </h3>
           <div className="closeSidebar">
-            <HiXMark onClick={() => modalClose()} />
+            <HiXMark onClick={visibleToggle} />
           </div>
         </div>
+
         <div className="modal-content">
           <form onSubmit={handleSubmit}>
             <div className="row">
@@ -168,23 +155,6 @@ export default function EditOffer({ visible, item, modalClose }) {
                 </div>
               </div>
 
-              <div className="col-12">
-                <div className="mb-3">
-                  <label htmlFor="image" className="form-label">
-                    image (548px,140px) <span className="star">*</span>
-                  </label>
-                  <input
-                    type="file"
-                    className="form-control"
-                    name="image"
-                    id="image"
-                    ref={imageRef}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-              </div>
-
               <div className="col-6">
                 <div className="mb-3">
                   <label htmlFor="status" className="form-label">
@@ -196,10 +166,10 @@ export default function EditOffer({ visible, item, modalClose }) {
                         type="radio"
                         name="status"
                         id="active"
-                        required
-                        value="1"
-                        checked={offer.status === 1}
+                        value="active"
+                        checked={offer.status === "active"}
                         onChange={handleChange}
+                        required
                       />
                       <label htmlFor="active">active</label>
                     </div>
@@ -208,14 +178,31 @@ export default function EditOffer({ visible, item, modalClose }) {
                         type="radio"
                         name="status"
                         id="inactive"
-                        required
-                        value="0"
-                        checked={offer.status === 0}
+                        value="inactive"
+                        checked={offer.status === "inactive"}
                         onChange={handleChange}
+                        required
                       />
                       <label htmlFor="inactive">inactive</label>
                     </div>
                   </div>
+                </div>
+              </div>
+
+              <div className="col-12">
+                <div className="mb-3">
+                  <label htmlFor="image" className="form-label">
+                    image <span className="star">*</span>
+                  </label>
+                  <input
+                    type="file"
+                    className="form-control"
+                    name="image"
+                    id="image"
+                    ref={imageRef}
+                    onChange={handleChange}
+                    required
+                  />
                 </div>
               </div>
             </div>
@@ -229,7 +216,7 @@ export default function EditOffer({ visible, item, modalClose }) {
                 <button
                   type="button"
                   className="btn btn-secondary"
-                  onClick={() => modalClose()}
+                  onClick={visibleToggle}
                 >
                   <HiXMark />
                   <span className="ps-2">close</span>

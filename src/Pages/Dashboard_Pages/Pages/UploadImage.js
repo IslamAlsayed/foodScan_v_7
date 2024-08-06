@@ -1,5 +1,5 @@
 import "./SubModels.css";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useParams } from "react-router-dom/cjs/react-router-dom.min";
 import { FaCheckCircle } from "react-icons/fa";
 import { IoMdRefresh } from "react-icons/io";
@@ -9,6 +9,7 @@ import { updateData } from "../../../axiosConfig/API";
 
 export default function Image({ data }) {
   const { id } = useParams();
+  const imageRef = useRef(null);
   const [actionsVisible, setActionsVisible] = useState(false);
   const [categoryImage, setCategoryImage] = useState({
     id: data.id,
@@ -18,13 +19,26 @@ export default function Image({ data }) {
       : ImageTest,
   });
 
+  // const handleImageChange = (e) => {
+  //   const file = e.target.files[0];
+  //   if (file) {
+  //     const imageUrl = URL.createObjectURL(file);
+  //     setCategoryImage({
+  //       ...categoryImage,
+  //       image: file,
+  //       imagePreview: imageUrl,
+  //     });
+  //     setActionsVisible(true);
+  //   }
+  // };
+
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
       const imageUrl = URL.createObjectURL(file);
       setCategoryImage({
         ...categoryImage,
-        image: file,
+        image: e.target.files[0],
         imagePreview: imageUrl,
       });
       setActionsVisible(true);
@@ -38,10 +52,16 @@ export default function Image({ data }) {
     formData.append("id", categoryImage.id);
     if (categoryImage.image) formData.append("image", categoryImage.image);
 
+    for (let pair of formData.entries()) {
+      console.log(`${pair[0]}:`, pair[1]);
+    }
+
     try {
       const response = await updateData(`categories/${id}`, formData, "put");
 
-      if (response.status === "Ok") {
+      console.log("response", response);
+
+      if (response.status === "success") {
         setActionsVisible(false);
         Swal.fire("Updated!", response.message, "success");
       }
@@ -49,11 +69,7 @@ export default function Image({ data }) {
       if (error.response && error.response.status === 422) {
         Swal.fire("Error!", "Validation error occurred.", "error");
       } else {
-        Swal.fire(
-          "Error!",
-          error.response.data.error || "Failed to update category",
-          "error"
-        );
+        Swal.fire("Error!", error.response.data.message, "error");
       }
     }
   };
@@ -77,7 +93,11 @@ export default function Image({ data }) {
         <img src={categoryImage.imagePreview} alt="preview" />
       </div>
 
-      <form onSubmit={handleSubmit} className="row">
+      <form
+        onSubmit={handleSubmit}
+        className="row"
+        encType="multipart/form-data"
+      >
         <div className="col">
           <label htmlFor="image" className="btn btn-primary">
             Upload New Image
@@ -86,6 +106,7 @@ export default function Image({ data }) {
             type="file"
             name="image"
             id="image"
+            ref={imageRef}
             onChange={handleImageChange}
           />
         </div>

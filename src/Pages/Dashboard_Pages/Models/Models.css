@@ -40,10 +40,16 @@
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
 }
 
+#AddTable.Categories .modal-container {
+  right: -400px;
+  width: 400px;
+}
+
 @media (max-width: 768px) {
   #AddTable .modal-container {
     width: 100%;
     right: -100%;
+    margin-top: 0;
   }
 }
 
@@ -80,7 +86,7 @@
 }
 
 #AddTable .modal-container .modal-content form::-webkit-scrollbar {
-  width: 4px;
+  width: 3px;
 }
 
 #AddTable .modal-container .modal-content form::-webkit-scrollbar-thumb {

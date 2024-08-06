@@ -36,7 +36,6 @@ export default function Login() {
         history.push(`/admin/dashboard`);
       }
     } catch (error) {
-      console.warn(error.message);
       setError(error.message);
       setTimeout(() => setError(""), 3000);
     }

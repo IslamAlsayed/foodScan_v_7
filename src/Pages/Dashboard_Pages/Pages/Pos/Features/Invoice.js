@@ -6,7 +6,7 @@ export default function Invoice({ visible, item, modalClose }) {
   const [staticModalVisible, setStaticModalVisible] = useState(false);
   const [invoiceItem, setInvoiceItem] = useState(false);
   const [cartItemTotal, setCartItemTotal] = useState(false);
-  const storeCartItem = JSON.parse(localStorage.getItem("cartItems")) || null;
+  const storeCartItem = JSON.parse(localStorage.getItem("cartItems") || []);
 
   useEffect(() => {
     setStaticModalVisible(visible);

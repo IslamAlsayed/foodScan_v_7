@@ -14,6 +14,15 @@
     height: 100%;
 }
 
+.SubModel.Image .uploadImage {
+    display: flex;
+    gap: 15px;
+}
+
+.SubModel.Image .uploadImage>.col {
+    padding: 0;
+}
+
 @media (max-width: 992px) {
     .SubModel.Image {
         justify-content: center;
@@ -37,6 +46,12 @@
 .SubModel.Image label,
 .SubModel.Image button {
     height: 40px;
+}
+
+@media (max-width: 450px) {
+    .SubModel.Image button {
+        width: 100%;
+    }
 }
 
 label {

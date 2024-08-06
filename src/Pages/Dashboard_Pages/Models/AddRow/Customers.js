@@ -1,13 +1,14 @@
 import "../Models.css";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaCheckCircle } from "react-icons/fa";
 import { FaXmark } from "react-icons/fa6";
 import { HiXMark } from "react-icons/hi2";
 import Swal from "sweetalert2";
 import { addData } from "../../../../axiosConfig/API";
 
-export default function Customers() {
-  const [customer, setCustomers] = useState({
+export default function Customers({ visible, visibleToggle, updated }) {
+  const [staticVisible, setStaticVisible] = useState([]);
+  const [customer, setCustomer] = useState({
     name: "",
     email: "",
     phone: "",
@@ -15,21 +16,22 @@ export default function Customers() {
     password_confirmation: "",
     status: 1,
     role: "customer",
+    identity_card: "",
   });
+
+  useEffect(() => {
+    setStaticVisible(visible);
+  }, [visible]);
 
   const handleChange = (e) => {
     const { name, value, id } = e.target;
-
     if (name === "status") {
-      setCustomers((prevAdmin) => ({
-        ...prevAdmin,
+      setCustomer((prevData) => ({
+        ...prevData,
         status: id === "active" ? 1 : 0,
       }));
     } else {
-      setCustomers((prevAdmin) => ({
-        ...prevAdmin,
-        [name]: value,
-      }));
+      setCustomer({ ...customer, [name]: value });
     }
   };
 
@@ -44,59 +46,39 @@ export default function Customers() {
     formData.append("password_confirmation", customer.password_confirmation);
     formData.append("Role", customer.role);
     formData.append("status", customer.status);
-    formData.append("identity_card", "172001");
+    formData.append("identity_card", customer.identity_card);
 
-    Swal.fire({
-      title: "Are you sure?",
-      text: "Do you want to save the changes?",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, save it!",
-      cancelButtonText: "No, cancel",
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        try {
-          const response = await addData("admin/employees", formData);
-
-          if (response.status === "success") {
-            setCustomers({
-              name: "",
-              description: "",
-              type: "vegetarian",
-              category_id: -1,
-              image: null,
-              status: 1,
-              cost: "",
-            });
-
-            Swal.fire("Saved!", response.message, "success");
-          }
-        } catch (error) {
-          if (error.response && error.response.status === 422) {
-            Swal.fire("Error!", "Validation error occurred.", "error");
-          } else {
-            Swal.fire("Error!", error.response.data.error, "error");
-          }
-        }
+    try {
+      const response = await addData("admin/customers", formData);
+      if (response.status === "success") {
+        updated();
+        setCustomer({
+          name: "",
+          email: "",
+          phone: "",
+          password: "",
+          password_confirmation: "",
+          status: 1,
+          role: "customer",
+          identity_card: "",
+        });
+        Swal.fire("Saved!", response.message, "success");
       }
-    });
-  };
-
-  const closeModel = () => {
-    var AddTable = document.getElementById("AddTable");
-    if (AddTable) AddTable.classList.remove("visible");
+    } catch (error) {
+      Swal.fire("Error!", error.response.data.message, "error");
+    }
   };
 
   return (
-    <div id="AddTable">
+    <div id="AddTable" className={`${staticVisible ? "visible" : ""}`}>
       <div className="modal-container">
         <div className="breadcrumb">
-          <h3>{window.location.pathname.replace("/admin/dashboard/", "")}</h3>
+          <h3>
+            add {window.location.pathname.replace("/admin/dashboard/", "")}
+          </h3>
 
           <div className="closeSidebar">
-            <FaXmark onClick={closeModel} />
+            <FaXmark onClick={visibleToggle} />
           </div>
         </div>
         <div className="modal-content">
@@ -155,35 +137,18 @@ export default function Customers() {
 
               <div className="col-6">
                 <div className="mb-3">
-                  <label htmlFor="status" className="form-label">
-                    status <span className="star">*</span>
+                  <label htmlFor="Identity_card" className="form-label">
+                    Identity card <span className="star">*</span>
                   </label>
-                  <div className="row">
-                    <div className="col d-flex gap-2 align-items-center">
-                      <input
-                        type="radio"
-                        name="status"
-                        id="active"
-                        required
-                        value={1}
-                        checked={customer.status === 1}
-                        onChange={handleChange}
-                      />
-                      <span>active</span>
-                    </div>
-                    <div className="col d-flex gap-2 align-items-center">
-                      <input
-                        type="radio"
-                        name="status"
-                        id="inactive"
-                        required
-                        value={0}
-                        checked={customer.status === 0}
-                        onChange={handleChange}
-                      />
-                      <span>in active</span>
-                    </div>
-                  </div>
+                  <input
+                    type="text"
+                    className="form-control"
+                    name="identity_card"
+                    id="Identity_card"
+                    value={customer.identity_card}
+                    onChange={handleChange}
+                    required
+                  />
                 </div>
               </div>
 
@@ -207,17 +172,72 @@ export default function Customers() {
               <div className="col-6">
                 <div className="mb-3">
                   <label htmlFor="password_confirmation" className="form-label">
-                    password confirm<span className="star">*</span>
+                    password confirmation <span className="star">*</span>
                   </label>
                   <input
                     type="text"
                     className="form-control"
                     name="password_confirmation"
                     id="password_confirm"
-                    value={customer.password_confirm}
+                    value={customer.password_confirmation}
                     onChange={handleChange}
                     required
                   />
+                </div>
+              </div>
+
+              <div className="col-6">
+                <div className="mb-3">
+                  <label htmlFor="role">Role</label>
+                  <select
+                    className="form-control"
+                    name="role"
+                    id="role"
+                    value={customer.role}
+                    onChange={handleChange}
+                    required
+                  >
+                    <option value="" selected disabled>
+                      --
+                    </option>
+                    <option value="chef">chef</option>
+                    <option value="admin">admin</option>
+                    <option value="casher">casher</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="col-6">
+                <div className="mb-3">
+                  <label htmlFor="status" className="form-label">
+                    status <span className="star">*</span>
+                  </label>
+                  <div className="row">
+                    <div className="col d-flex gap-2 align-items-center">
+                      <input
+                        type="radio"
+                        name="status"
+                        id="active"
+                        value={1}
+                        checked={customer.status === 1}
+                        onChange={handleChange}
+                        required
+                      />
+                      <label htmlFor="active">active</label>
+                    </div>
+                    <div className="col d-flex gap-2 align-items-center">
+                      <input
+                        type="radio"
+                        name="status"
+                        id="inactive"
+                        value={0}
+                        checked={customer.status === 0}
+                        onChange={handleChange}
+                        required
+                      />
+                      <label htmlFor="inactive">inactive</label>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -231,7 +251,7 @@ export default function Customers() {
                 <button
                   type="button"
                   className="btn btn-secondary"
-                  onClick={closeModel}
+                  onClick={visibleToggle}
                 >
                   <HiXMark />
                   <span className="ps-2">close</span>

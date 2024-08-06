@@ -5,24 +5,24 @@ import { Link } from "react-router-dom/cjs/react-router-dom.min";
 import Breadcrumb from "../../../../Components/Dashboard/Features/Breadcrumb";
 import { FiEdit } from "react-icons/fi";
 import { BsEye } from "react-icons/bs";
-import EditMeal from "../../Models/Edit/EditMeal";
 import { getData } from "../../../../axiosConfig/API";
 import Filtration from "../../Models/Filtration/Meals";
 import AddRow from "../../Models/AddRow/Meals";
+import EditMeal from "../../Models/Edit/EditMeal";
 
 export default function Meals() {
   const componentRef = useRef();
   const [meals, setMeals] = useState([]);
-  const [updated, setUpdated] = useState(false);
   const [editItem, setEditItem] = useState(null);
-  const [modalVisible, setModalVisible] = useState(false);
+  const [modalVisibleToggle, setModalVisibleToggle] = useState(false);
+  const [modalEditVisibleToggle, setModalEditVisibleToggle] = useState(false);
 
   const fetchMeals = useCallback(async () => {
     try {
       const result = await getData("admin/meals");
       setMeals(result);
     } catch (error) {
-      console.warn(error.response.data.error);
+      console.error(error.response.data.message);
     }
   }, []);
 
@@ -30,27 +30,24 @@ export default function Meals() {
     fetchMeals();
   }, [fetchMeals]);
 
-  useEffect(() => {
-    if (updated) fetchMeals();
-    setUpdated(false);
-  }, [updated, fetchMeals]);
-
-  const handleEdit = async (item) => {
-    try {
-      const categories = await getData("categories");
-      setEditItem({ ...item, categories });
-      setModalVisible(true);
-      document.body.style.overflow = "hidden";
-    } catch (error) {
-      console.warn(error.response.data.error);
-    }
+  const handleModalToggle = () => {
+    setModalVisibleToggle(!modalVisibleToggle);
+    document.body.style.overflow = modalVisibleToggle ? "visible" : "hidden";
   };
 
-  const handleModalClose = () => {
-    setModalVisible(false);
-    setEditItem(null);
-    setUpdated(true);
-    document.body.style.overflow = "visible";
+  const handleModalEditToggle = () => {
+    setModalEditVisibleToggle(!modalEditVisibleToggle);
+    document.body.style.overflow = modalEditVisibleToggle
+      ? "visible"
+      : "hidden";
+  };
+
+  const handleEdit = async (item) => {
+    setEditItem(item);
+    setModalEditVisibleToggle(!modalEditVisibleToggle);
+    document.body.style.overflow = modalEditVisibleToggle
+      ? "visible"
+      : "hidden";
   };
 
   const columns = [
@@ -123,21 +120,25 @@ export default function Meals() {
       <Breadcrumb />
 
       {/* Filtration */}
-      <Filtration />
+      <Filtration handleModalToggle={handleModalToggle} />
 
       {/* Add Row */}
-      <AddRow />
+      <AddRow
+        visible={modalVisibleToggle}
+        visibleToggle={handleModalToggle}
+        updated={fetchMeals}
+      />
+
+      {/* Edit Row */}
+      <EditMeal
+        visible={modalEditVisibleToggle}
+        visibleToggle={handleModalEditToggle}
+        item={editItem}
+        updated={fetchMeals}
+      />
 
       <div className="tableItems" ref={componentRef}>
         <Table columns={columns} dataSource={meals} pagination={true} />
-
-        {modalVisible && (
-          <EditMeal
-            visible={modalVisible}
-            item={editItem}
-            modalClose={handleModalClose}
-          />
-        )}
       </div>
     </div>
   );

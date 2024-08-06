@@ -44,11 +44,7 @@ export default function Variations() {
         Swal.fire("Saved!", response.message, "success");
       }
     } catch (error) {
-      if (error.response && error.response.status === 422) {
-        Swal.fire("Error!", "Validation error occurred.", "error");
-      } else {
-        Swal.fire("Error!", error.response.data.error, "error");
-      }
+      Swal.fire("Error!", error.response.data.message, "error");
     }
   };
 
@@ -127,7 +123,6 @@ export default function Variations() {
                       id="number_of_piece"
                       value={meal.number_of_piece}
                       onChange={handleChange}
-                      required
                     />
                   </div>
                 </div>

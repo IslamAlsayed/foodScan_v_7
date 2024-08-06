@@ -1,14 +1,14 @@
 import "../Models.css";
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import { FaCheckCircle } from "react-icons/fa";
 import { HiXMark } from "react-icons/hi2";
 import Swal from "sweetalert2";
-import { updateData } from "../../../../axiosConfig/API";
+import { getData, updateData } from "../../../../axiosConfig/API";
 
-export default function EditExtra({ visible, item, modalClose }) {
+export default function EditExtra({ visible, visibleToggle, item, updated }) {
   const imageRef = useRef(null);
-  const [staticModalVisible, setStaticModalVisible] = useState(false);
-  const [mealCategories, setMealCategories] = useState(false);
+  const [staticVisible, setStaticVisible] = useState();
+  const [categories, setCategories] = useState([]);
   const [extra, setExtra] = useState({
     name: "",
     description: "",
@@ -20,12 +20,15 @@ export default function EditExtra({ visible, item, modalClose }) {
   });
 
   useEffect(() => {
-    setStaticModalVisible(visible);
     if (item) {
-      setExtra(item);
-      setMealCategories(item.categories);
+      const { image, ...rest } = item;
+      setExtra({ ...rest, image: null });
     }
   }, [item]);
+
+  useEffect(() => {
+    setStaticVisible(visible);
+  }, [visible]);
 
   const handleChange = (e) => {
     const { name, value, id, type, files } = e.target;
@@ -36,22 +39,23 @@ export default function EditExtra({ visible, item, modalClose }) {
           ...prevData,
           type: id === "veg" ? "vegetarian" : "non-vegetarian",
         };
-      } else if (name === "status") {
+      }
+      if (name === "status") {
         return {
           ...prevData,
           status: id === "active" ? 1 : 0,
         };
-      } else if (name === "image" && type === "file") {
+      }
+      if (name === "image" && type === "file") {
         return {
           ...prevData,
           image: files[0],
         };
-      } else {
-        return {
-          ...prevData,
-          [name]: value,
-        };
       }
+      return {
+        ...prevData,
+        [name]: value,
+      };
     });
   };
 
@@ -66,47 +70,47 @@ export default function EditExtra({ visible, item, modalClose }) {
     if (extra.image) formData.append("image", extra.image);
     formData.append("status", extra.status);
     formData.append("cost", extra.cost);
+    formData.append("_method", "put");
 
     try {
       const response = await updateData(
-        `admin/orders/${item.id}`,
+        `admin/extras/${item.id}`,
         formData,
-        "put"
+        true
       );
 
       if (response.status === "success") {
-        setExtra({
-          name: "",
-          description: "",
-          type: "vegetarian",
-          category_id: -1,
-          image: null,
-          status: 1,
-          cost: "",
-        });
-
-        modalClose();
-
+        updated();
         if (imageRef.current) imageRef.current.value = null;
-
         Swal.fire("Updated!", response.message, "success");
       }
     } catch (error) {
-      if (error.response && error.response.status === 422) {
-        Swal.fire("Error!", "Validation error occurred.", "error");
-      } else {
-        Swal.fire("Error!", error.response.data.error, "error");
-      }
+      Swal.fire("Error!", error.response.data.message, "error");
     }
   };
 
+  const fetchCategories = useCallback(async () => {
+    try {
+      const result = await getData("categories");
+      setCategories(result);
+    } catch (error) {
+      console.error(error.response.data.message);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchCategories();
+  }, [fetchCategories]);
+
   return (
-    <div id="AddTable" className={staticModalVisible ? "visible" : ""}>
+    <div id="AddTable" className={staticVisible ? "visible" : ""}>
       <div className="modal-container">
         <div className="breadcrumb">
-          <h3>{window.location.pathname.replace("/admin/dashboard/", "")}</h3>
+          <h3>
+            edit {window.location.pathname.replace("/admin/dashboard/", "")}
+          </h3>
           <div className="closeSidebar">
-            <HiXMark onClick={() => modalClose()} />
+            <HiXMark onClick={visibleToggle} />
           </div>
         </div>
         <div className="modal-content">
@@ -115,7 +119,7 @@ export default function EditExtra({ visible, item, modalClose }) {
               <div className="col-6">
                 <div className="mb-3">
                   <label htmlFor="name" className="form-label">
-                    Name <span className="star">*</span>
+                    Name
                   </label>
                   <input
                     type="text"
@@ -132,32 +136,19 @@ export default function EditExtra({ visible, item, modalClose }) {
               <div className="col-6">
                 <div className="mb-3">
                   <label htmlFor="category_id" className="form-label">
-                    Category <span className="star">*</span>
+                    Category
                   </label>
                   <select
                     className="form-control"
                     name="category_id"
                     id="category"
-                    required
+                    value={extra.category_id}
                     onChange={handleChange}
+                    required
                   >
-                    <option
-                      value={-1}
-                      disabled
-                      selected={extra.category_id === -1}
-                    >
-                      choose
-                    </option>
-                    {mealCategories &&
-                      mealCategories.map((category) => (
-                        <option
-                          key={category.id}
-                          value={category.id}
-                          selected={category.id === extra.category_id}
-                        >
-                          {category.name}
-                        </option>
-                      ))}
+                    {categories.map((category) => (
+                      <option value={category.id}>{category.name}</option>
+                    ))}
                   </select>
                 </div>
               </div>
@@ -165,7 +156,7 @@ export default function EditExtra({ visible, item, modalClose }) {
               <div className="col-12">
                 <div className="mb-3">
                   <label htmlFor="cost" className="form-label">
-                    Price <span className="star">*</span>
+                    Cost
                   </label>
                   <input
                     type="text"
@@ -181,9 +172,7 @@ export default function EditExtra({ visible, item, modalClose }) {
 
               <div className="col-6">
                 <div className="mb-3">
-                  <label className="form-label">
-                    Type <span className="star">*</span>
-                  </label>
+                  <label className="form-label">Type</label>
                   <div className="row">
                     <div className="col col-4 d-flex gap-2 align-items-center">
                       <input
@@ -215,9 +204,7 @@ export default function EditExtra({ visible, item, modalClose }) {
 
               <div className="col-6">
                 <div className="mb-3">
-                  <label className="form-label">
-                    Status <span className="star">*</span>
-                  </label>
+                  <label className="form-label">Status</label>
                   <div className="row">
                     <div className="col col-4 d-flex gap-2 align-items-center">
                       <input
@@ -257,9 +244,8 @@ export default function EditExtra({ visible, item, modalClose }) {
                     className="form-control"
                     name="image"
                     id="image"
-                    required
                     ref={imageRef}
-                    onChange={(e) => handleChange(e)}
+                    onChange={handleChange}
                   />
                 </div>
               </div>
@@ -267,7 +253,7 @@ export default function EditExtra({ visible, item, modalClose }) {
               <div className="col-12">
                 <div className="mb-3">
                   <label htmlFor="description" className="form-label">
-                    Description <span className="star">*</span>
+                    Description
                   </label>
                   <textarea
                     className="form-control"
@@ -290,7 +276,7 @@ export default function EditExtra({ visible, item, modalClose }) {
                 <button
                   type="button"
                   className="btn btn-secondary"
-                  onClick={() => modalClose()}
+                  onClick={visibleToggle}
                 >
                   <HiXMark />
                   <span className="ps-2">close</span>

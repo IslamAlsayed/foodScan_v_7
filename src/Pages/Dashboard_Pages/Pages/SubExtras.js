@@ -8,11 +8,11 @@ import { BiTrash } from "react-icons/bi";
 import Swal from "sweetalert2";
 import { getData, addData, deleteData } from "../../../axiosConfig/API";
 
-export default function SubExtra({ meal_id, data }) {
+export default function SubExtras({ order_id, data }) {
   const componentRef = useRef();
   const [extras, setExtras] = useState();
-  const [optionsExtras, setOptionsExtras] = useState();
   const [extra_id, setExtra_id] = useState();
+  const [optionsExtras, setOptionsExtras] = useState();
 
   const fetchOptionsExtras = useCallback(async (id) => {
     if (!id) return;
@@ -20,13 +20,14 @@ export default function SubExtra({ meal_id, data }) {
       const result = await getData(`admin/meals/${id}/options-extras`);
       setOptionsExtras(result);
     } catch (error) {
-      console.warn(error.response.data.error);
+      console.error(error.response.data.message);
     }
   }, []);
 
   useEffect(() => {
-    if (meal_id) fetchOptionsExtras(meal_id);
-  }, [meal_id, fetchOptionsExtras]);
+    if (data) setExtras(data);
+    if (order_id) fetchOptionsExtras(order_id);
+  }, [data, setExtras, fetchOptionsExtras]);
 
   const handleAddExtra = async (e) => {
     e.preventDefault();
@@ -34,23 +35,21 @@ export default function SubExtra({ meal_id, data }) {
     try {
       const response = await addData("admin/meals/extras", {
         extra_id: extra_id,
-        meal_id: meal_id,
+        meal_id: order_id,
       });
 
-      if (response) {
+      if (response.status === "success") {
+        refreshExtras();
         setExtra_id("");
-        reloadExtras();
-        fetchOptionsExtras(meal_id);
-
+        fetchOptionsExtras(order_id);
         Swal.fire("Extra!", response.message, "success");
       }
     } catch (error) {
-      console.warn(error.response.data.error);
-      Swal.fire("Error!", error.response.data.error, "error");
+      Swal.fire("Error!", error.response.data.message, "error");
     }
   };
 
-  const handleDelete = async (extra) => {
+  const handleDelete = async (id) => {
     Swal.fire({
       title: "Delete extra",
       text: "Are you sure you want to delete this extra?",
@@ -64,28 +63,26 @@ export default function SubExtra({ meal_id, data }) {
       if (result.isConfirmed) {
         try {
           const response = await deleteData(
-            `admin/extras-meals/${extra.extra_id}/${meal_id}`
+            `admin/extras-meals/${id}/${order_id}`
           );
 
-          if (response) {
-            reloadExtras();
-            fetchOptionsExtras(meal_id);
+          if (response.status === "success") {
+            refreshExtras();
             Swal.fire("Extra!", response.message, "success");
           }
         } catch (error) {
-          console.warn(error.response.data.error);
-          Swal.fire("Error!", error.response.data.error, "error");
+          Swal.fire("Error!", error.response.data.message, "error");
         }
       }
     });
   };
 
-  const reloadExtras = useCallback(async () => {
+  const refreshExtras = useCallback(async () => {
     try {
-      const result = await getData(`admin/meals/${meal_id}/extras`);
+      const result = await getData(`admin/meals/${order_id}/extras`);
       setExtras(result);
     } catch (error) {
-      console.warn(error.response.data.error);
+      console.error(error.response.data.message);
     }
   }, []);
 
@@ -112,7 +109,7 @@ export default function SubExtra({ meal_id, data }) {
           to="#"
           className="trashIcon"
           data-tooltip="delete"
-          onClick={() => handleDelete(item)}
+          onClick={() => handleDelete(item.extra_id)}
           style={{ "--c": "#F15353", "--bg": "#FECACA" }}
         >
           <BiTrash />
@@ -123,18 +120,22 @@ export default function SubExtra({ meal_id, data }) {
 
   return (
     <div className="SubModel">
-      <Row gutter={16}>
-        <Col span={12}>
-          <button
-            type="button"
-            className="btn btn-primary"
-            data-bs-toggle="modal"
-            data-bs-target="#addExtra"
-          >
-            add extra
-          </button>
-        </Col>
-      </Row>
+      {Object(optionsExtras).length > 0 ? (
+        <Row gutter={16}>
+          <Col span={12}>
+            <button
+              type="button"
+              className="btn btn-primary"
+              data-bs-toggle="modal"
+              data-bs-target="#addExtra"
+            >
+              add extra
+            </button>
+          </Col>
+        </Row>
+      ) : (
+        false
+      )}
 
       <div
         className="modal fade"
@@ -162,13 +163,13 @@ export default function SubExtra({ meal_id, data }) {
               <div className="row">
                 <div className="col col-12">
                   <div className="mb-3">
-                    <label htmlFor="extra_id" className="form-label">
+                    <label htmlFor="showExtra" className="form-label">
                       Extra <span className="star">*</span>
                     </label>
                     <select
                       className="form-control"
-                      name="extra_id"
-                      id="extra_id"
+                      name="showExtra"
+                      id="showExtra"
                       required
                       value={extra_id}
                       onChange={(e) => setExtra_id(e.target.value)}
@@ -178,9 +179,7 @@ export default function SubExtra({ meal_id, data }) {
                       </option>
                       {optionsExtras &&
                         optionsExtras.map((extra) => (
-                          <option key={extra.id} value={extra.id}>
-                            {extra.name}
-                          </option>
+                          <option value={extra.id}>{extra.name}</option>
                         ))}
                     </select>
                   </div>

@@ -13,16 +13,16 @@ import { getData } from "../../../../axiosConfig/API";
 export default function Offers() {
   const componentRef = useRef();
   const [offers, setOffers] = useState([]);
-  const [updated, setUpdated] = useState(false);
   const [editItem, setEditItem] = useState(null);
-  const [modalVisible, setModalVisible] = useState(false);
+  const [modalVisibleToggle, setModalVisibleToggle] = useState(false);
+  const [modalEditVisibleToggle, setModalEditVisibleToggle] = useState(false);
 
   const fetchOffers = useCallback(async () => {
     try {
       const result = await getData("admin/offers");
       setOffers(result);
     } catch (error) {
-      console.warn(error.response.data.error);
+      console.error(error.response.data.message);
     }
   }, []);
 
@@ -30,25 +30,32 @@ export default function Offers() {
     fetchOffers();
   }, [fetchOffers]);
 
-  useEffect(() => {
-    if (updated) fetchOffers();
-    setUpdated(false);
-  }, [updated, fetchOffers]);
+  const handleModalToggle = () => {
+    setModalVisibleToggle(!modalVisibleToggle);
+    document.body.style.overflow = modalVisibleToggle ? "visible" : "hidden";
+  };
 
-  const handleModalClose = () => {
-    setModalVisible(false);
-    setEditItem(null);
-    setUpdated(true);
-    document.body.style.overflow = "visible";
+  const handleModalEditToggle = () => {
+    setModalEditVisibleToggle(!modalEditVisibleToggle);
+    document.body.style.overflow = modalEditVisibleToggle
+      ? "visible"
+      : "hidden";
   };
 
   const handleEdit = async (item) => {
     setEditItem(item);
-    setModalVisible(true);
-    document.body.style.overflow = "hidden";
+    setModalEditVisibleToggle(!modalEditVisibleToggle);
+    document.body.style.overflow = modalEditVisibleToggle
+      ? "visible"
+      : "hidden";
   };
 
   const columns = [
+    {
+      title: "ID",
+      dataIndex: "id",
+      key: "id",
+    },
     {
       title: "NAME",
       dataIndex: "name",
@@ -61,13 +68,13 @@ export default function Offers() {
     },
     {
       title: "START DATE",
-      dataIndex: "startDate",
-      key: "startDate",
+      dataIndex: "start_date",
+      key: "start_date",
     },
     {
       title: "END DATE",
-      dataIndex: "endDate",
-      key: "endDate",
+      dataIndex: "end_date",
+      key: "end_date",
     },
     {
       title: "STATUS",
@@ -111,21 +118,25 @@ export default function Offers() {
       <Breadcrumb />
 
       {/* Filtration */}
-      <Filtration />
+      <Filtration handleModalToggle={handleModalToggle} />
 
       {/* Add Row */}
-      <AddRow />
+      <AddRow
+        visible={modalVisibleToggle}
+        visibleToggle={handleModalToggle}
+        updated={fetchOffers}
+      />
+
+      {/* Edit Row */}
+      <EditOffer
+        visible={modalEditVisibleToggle}
+        visibleToggle={handleModalEditToggle}
+        item={editItem}
+        updated={fetchOffers}
+      />
 
       <div className="tableItems" ref={componentRef}>
         <Table columns={columns} dataSource={offers} pagination={true} />
-
-        {modalVisible && (
-          <EditOffer
-            visible={modalVisible}
-            item={editItem}
-            modalClose={handleModalClose}
-          />
-        )}
       </div>
     </div>
   );

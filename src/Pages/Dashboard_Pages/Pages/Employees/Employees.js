@@ -13,16 +13,16 @@ import AddRow from "../../Models/AddRow/Employees";
 export default function Employees() {
   const componentRef = useRef();
   const [employees, setEmployee] = useState([]);
-  const [updated, setUpdated] = useState(false);
   const [editItem, setEditItem] = useState(null);
-  const [modalVisible, setModalVisible] = useState(false);
+  const [modalVisibleToggle, setModalVisibleToggle] = useState(false);
+  const [modalEditVisibleToggle, setModalEditVisibleToggle] = useState(false);
 
   const fetchEmployees = useCallback(async () => {
     try {
       const result = await getData("admin/employees");
       setEmployee(result);
     } catch (error) {
-      console.warn(error.response.data.error);
+      console.error(error.response.data.message);
     }
   }, []);
 
@@ -30,25 +30,32 @@ export default function Employees() {
     fetchEmployees();
   }, [fetchEmployees]);
 
-  useEffect(() => {
-    if (updated) fetchEmployees();
-    setUpdated(false);
-  }, [updated, fetchEmployees]);
-
-  const handleModalClose = () => {
-    setModalVisible(false);
-    setEditItem(null);
-    setUpdated(true);
-    document.body.style.overflow = "visible";
+  const handleModalToggle = () => {
+    setModalVisibleToggle(!modalVisibleToggle);
+    document.body.style.overflow = modalVisibleToggle ? "visible" : "hidden";
   };
 
-  const handleEdit = (item) => {
+  const handleModalEditToggle = () => {
+    setModalEditVisibleToggle(!modalEditVisibleToggle);
+    document.body.style.overflow = modalEditVisibleToggle
+      ? "visible"
+      : "hidden";
+  };
+
+  const handleEdit = async (item) => {
     setEditItem(item);
-    setModalVisible(true);
-    document.body.style.overflow = "hidden";
+    setModalEditVisibleToggle(!modalEditVisibleToggle);
+    document.body.style.overflow = modalEditVisibleToggle
+      ? "visible"
+      : "hidden";
   };
 
   const columns = [
+    {
+      title: "ID",
+      dataIndex: "id",
+      key: "id",
+    },
     {
       title: "NAME",
       dataIndex: "name",
@@ -106,21 +113,25 @@ export default function Employees() {
       <Breadcrumb />
 
       {/* Filtration */}
-      <Filtration />
+      <Filtration handleModalToggle={handleModalToggle} />
 
       {/* Add Row */}
-      <AddRow />
+      <AddRow
+        visible={modalVisibleToggle}
+        visibleToggle={handleModalToggle}
+        updated={fetchEmployees}
+      />
+
+      {/* Edit Row */}
+      <EditEmployee
+        visible={modalEditVisibleToggle}
+        visibleToggle={handleModalEditToggle}
+        item={editItem}
+        updated={fetchEmployees}
+      />
 
       <div className="tableItems" ref={componentRef}>
         <Table columns={columns} dataSource={employees} pagination={true} />
-
-        {modalVisible && (
-          <EditEmployee
-            visible={modalVisible}
-            item={editItem}
-            modalClose={handleModalClose}
-          />
-        )}
       </div>
     </div>
   );

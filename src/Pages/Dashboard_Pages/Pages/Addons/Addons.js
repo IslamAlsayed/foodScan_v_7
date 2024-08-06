@@ -13,16 +13,16 @@ import AddRow from "../../Models/AddRow/Addons";
 export default function Addon() {
   const componentRef = useRef();
   const [addons, setAddons] = useState([]);
-  const [updated, setUpdated] = useState(false);
   const [editItem, setEditItem] = useState(null);
-  const [modalVisible, setModalVisible] = useState(false);
+  const [modalVisibleToggle, setModalVisibleToggle] = useState(false);
+  const [modalEditVisibleToggle, setModalEditVisibleToggle] = useState(false);
 
   const fetchAddons = useCallback(async () => {
     try {
       const result = await getData("admin/addons");
       setAddons(result);
     } catch (error) {
-      console.warn(error.response.data.error);
+      console.error(error.response.data.message);
     }
   }, []);
 
@@ -30,30 +30,32 @@ export default function Addon() {
     fetchAddons();
   }, [fetchAddons]);
 
-  useEffect(() => {
-    if (updated) fetchAddons();
-    setUpdated(false);
-  }, [updated, fetchAddons]);
+  const handleModalToggle = () => {
+    setModalVisibleToggle(!modalVisibleToggle);
+    document.body.style.overflow = modalVisibleToggle ? "visible" : "hidden";
+  };
 
-  const handleModalClose = () => {
-    setModalVisible(false);
-    setEditItem(null);
-    setUpdated(true);
-    document.body.style.overflow = "visible";
+  const handleModalEditToggle = () => {
+    setModalEditVisibleToggle(!modalEditVisibleToggle);
+    document.body.style.overflow = modalEditVisibleToggle
+      ? "visible"
+      : "hidden";
   };
 
   const handleEdit = async (item) => {
-    try {
-      const categories = await getData("categories");
-      setEditItem({ ...item, categories });
-      setModalVisible(true);
-      document.body.style.overflow = "hidden";
-    } catch (error) {
-      console.warn(error.response.data.error);
-    }
+    setEditItem(item);
+    setModalEditVisibleToggle(!modalEditVisibleToggle);
+    document.body.style.overflow = modalEditVisibleToggle
+      ? "visible"
+      : "hidden";
   };
 
   const columns = [
+    {
+      title: "ID",
+      dataIndex: "id",
+      key: "id",
+    },
     {
       title: "NAME",
       dataIndex: "name",
@@ -122,22 +124,26 @@ export default function Addon() {
       <Breadcrumb />
 
       {/* Filtration */}
-      <Filtration />
+      <Filtration handleModalToggle={handleModalToggle} />
 
       {/* Add Row */}
-      <AddRow />
+      <AddRow
+        visible={modalVisibleToggle}
+        visibleToggle={handleModalToggle}
+        updated={fetchAddons}
+      />
+
+      {/* Edit Row */}
+      <EditAddon
+        visible={modalEditVisibleToggle}
+        visibleToggle={handleModalEditToggle}
+        item={editItem}
+        updated={fetchAddons}
+      />
 
       <div className="tableItems" ref={componentRef}>
         <Table columns={columns} dataSource={addons} pagination={true} />
       </div>
-
-      {modalVisible && (
-        <EditAddon
-          visible={modalVisible}
-          item={editItem}
-          modalClose={handleModalClose}
-        />
-      )}
     </div>
   );
 }

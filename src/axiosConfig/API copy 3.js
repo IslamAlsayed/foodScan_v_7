@@ -60,7 +60,7 @@ export const deleteData = async (url) => {
   }
 };
 
-export const updateData = async (url, data, multipart, method = "post") => {
+export const updateData = async (url, data, method) => {
   try {
     const response = await axios({
       method: method,
@@ -68,7 +68,7 @@ export const updateData = async (url, data, multipart, method = "post") => {
       data: data,
       headers: {
         Accept: "application/json",
-        "Content-Type": multipart ? "multipart/form-data" : false,
+        "Content-Type": "multipart/form-data",
         Authorization: `Bearer ${Cookies.get("token_foodScan") || null}`,
       },
     });

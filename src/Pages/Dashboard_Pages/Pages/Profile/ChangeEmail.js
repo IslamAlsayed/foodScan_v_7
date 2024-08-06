@@ -12,7 +12,7 @@ export function ChangeEmail() {
   const [message, setMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
-  const adminData = JSON.parse(localStorage.getItem("adminData")) || null;
+  const adminData = JSON.parse(localStorage.getItem("adminData") || {});
 
   useEffect(() => {
     if (adminData) {
@@ -46,7 +46,7 @@ export function ChangeEmail() {
         "patch"
       );
 
-      if (response.status === "Ok") {
+      if (response.status === "success") {
         setMessage(response.data.message);
         setOld_email("");
         setEmail("");
@@ -62,7 +62,7 @@ export function ChangeEmail() {
       } else {
         Swal.fire(
           "Error!",
-          error.response.data.error || "An error occurred",
+          error.response.data.message || "An error occurred",
           "error"
         );
       }

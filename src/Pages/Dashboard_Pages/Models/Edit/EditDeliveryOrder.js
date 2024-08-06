@@ -5,44 +5,56 @@ import { HiXMark } from "react-icons/hi2";
 import Swal from "sweetalert2";
 import { updateData } from "../../../../axiosConfig/API";
 
-export default function EditDeliveryOrder({ visible, order, modalClose }) {
-  const [staticModalVisible, setStaticModalVisible] = useState(false);
-  const [status, setStatus] = useState();
+export default function EditDeliveryOrder({
+  visible,
+  visibleToggle,
+  item,
+  updated,
+}) {
+  const [staticVisible, setStaticVisible] = useState();
+  const [status, setStatus] = useState("Not Started");
 
   useEffect(() => {
-    setStaticModalVisible(visible);
-  }, [order]);
+    if (item) setStatus(item.status);
+    setStaticVisible(visible);
+  }, [item, visible]);
+
+  const handleChange = (e) => {
+    const { value } = e.target;
+    setStatus({ status: value });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    console.log("status", status);
+
     try {
       const response = await updateData(
-        `admin/orders/${order.id}`,
-        { status: status },
+        `admin/orders/${item.id}`,
+        { status },
+        false,
         "patch"
       );
 
       if (response.status === "success") {
-        modalClose();
+        updated();
         Swal.fire("Updated!", response.message, "success");
       }
     } catch (error) {
-      if (error.response && error.response.status === 422) {
-        Swal.fire("Error!", "Validation error occurred.", "error");
-      } else {
-        Swal.fire("Error!", error.response.data.error, "error");
-      }
+      Swal.fire("Error!", error.response.data.message, "error");
     }
   };
 
   return (
-    <div id="AddTable" className={staticModalVisible ? "visible" : ""}>
+    <div id="AddTable" className={staticVisible ? "visible" : ""}>
       <div className="modal-container">
         <div className="breadcrumb">
-          <h3>{window.location.pathname.replace("/admin/dashboard/", "")}</h3>
+          <h3>
+            edit {window.location.pathname.replace("/admin/dashboard/", "")}
+          </h3>
           <div className="closeSidebar">
-            <HiXMark onClick={modalClose} />
+            <HiXMark onClick={visibleToggle} />
           </div>
         </div>
         <div className="modal-content">
@@ -56,32 +68,13 @@ export default function EditDeliveryOrder({ visible, order, modalClose }) {
                   <select
                     className="form-control"
                     name="status"
-                    value={order.status}
+                    value={status}
                     onChange={(e) => setStatus(e.target.value)}
-                    required
                   >
                     <option value="Not Started">Not Started</option>
                     <option value="In Progress">In Progress</option>
                     <option value="Cancelled">Cancelled</option>
                     <option value="Accepted">Accepted</option>
-                    {/* <option
-                      value="Not Started"
-                      selected={status === "Not Started"}
-                    >
-                      Not Started
-                    </option>
-                    <option
-                      value="In Progress"
-                      selected={status === "In Progress"}
-                    >
-                      In Progress
-                    </option>
-                    <option value="Cancelled" selected={status === "Cancelled"}>
-                      Cancelled
-                    </option>
-                    <option value="Accepted" selected={status === "Accepted"}>
-                      Accepted
-                    </option> */}
                   </select>
                 </div>
               </div>
@@ -96,7 +89,7 @@ export default function EditDeliveryOrder({ visible, order, modalClose }) {
                 <button
                   type="button"
                   className="btn btn-secondary"
-                  onClick={modalClose}
+                  onClick={visibleToggle}
                 >
                   <HiXMark />
                   <span className="ps-2">Close</span>

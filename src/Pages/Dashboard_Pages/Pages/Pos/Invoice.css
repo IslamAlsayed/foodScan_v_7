@@ -1,6 +1,6 @@
 .Pos .modal-overlay {
     width: 100%;
-    height: 100svh;
+    height: calc(100svh + 50px);
     position: fixed;
     top: 0;
     left: 0;
@@ -20,6 +20,7 @@
 
 .Pos .modal-overlay .modal-container {
     width: 400px;
+    height: fit-content;
     direction: ltr;
     overflow-y: auto;
     margin: 50px auto;
@@ -53,11 +54,11 @@
 }
 
 .Pos .modal-overlay .modal-container .modal-content {
-    padding-bottom: 20px;
+    padding-bottom: 15px;
 }
 
 .Pos .modal-overlay .modal-container .modal-content>div {
-    padding-inline: 20px;
+    padding-inline: 15px;
 }
 
 .Pos .modal-content .options {
@@ -104,9 +105,10 @@
 }
 
 .Pos .modal-content .message-qrCode p,
-.modal-content .restaurant-addres.Pos s p {
+.Pos .modal-content .restaurant-address p {
     width: 80%;
     margin: auto;
+    text-align: center;
 }
 
 .Pos .modal-content .message-qrCode {
@@ -149,10 +151,6 @@
     border-bottom: 2px dotted #c9c9c9;
 }
 
-.Pos .modal-content .total {
-    background-color: #c9c9c9;
-}
-
 .Pos .modal-content .total .row:last-child .col {
     font-weight: bold;
     color: #1772FF;
@@ -160,6 +158,8 @@
 
 .Pos .modal-content .messageThank {
     text-align: center;
-    padding-top: 10px;
+    padding-top: 5px;
     font-weight: bold;
+    margin-top: 15px;
+    border-top: 2px solid #a5a5a5;
 }

@@ -25,7 +25,7 @@ export default function DetailsItem({ visible, cartItem, modalClose }) {
 
   const addItemToStore = () => {
     let updateItems;
-    const cartItems = JSON.parse(localStorage.getItem("cartItems")) || [];
+    const cartItems = JSON.parse(localStorage.getItem("cartItems") || []);
     const statusExistItem = cartItems.find((order) => order.id == cartItem.id);
 
     if (statusExistItem) {
@@ -70,53 +70,6 @@ export default function DetailsItem({ visible, cartItem, modalClose }) {
     handleModalReset();
     modalClose();
   };
-
-  // const addItemToStore = () => {
-  //   let updateItems;
-  //   const cartItems = JSON.parse(localStorage.getItem("cartItems")) || [];
-  //   const statusExistItem = cartItems.find((order) => order.id == cartItem.id);
-
-  //   if (statusExistItem) {
-  //     updateItems = cartItems.map((item) => {
-  //       if (item.id === cartItem.id) {
-  //         if (!item.sizes.includes(size)) {
-  //           return {
-  //             ...item,
-  //             sizes: [...item.sizes, size],
-  //             quantity: item.quantity + quantity,
-  //             addonQuantity: item.addonQuantity + addonQuantity,
-  //           };
-  //         } else {
-  //           return {
-  //             ...item,
-  //             quantity: item.quantity + quantity,
-  //             addonQuantity: item.addonQuantity + addonQuantity,
-  //           };
-  //         }
-  //       } else {
-  //         return item;
-  //       }
-  //     });
-  //   } else {
-  //     const newItem = {
-  //       ...cartItem,
-  //       id,
-  //       quantity,
-  //       sizes: [size],
-  //       addonQuantity,
-  //       notes,
-  //     };
-  //     updateItems = [...cartItems, newItem];
-  //   }
-
-  //   localStorage.setItem("cartItems", JSON.stringify(updateItems));
-
-  //   const event = new Event("storageUpdated");
-  //   window.dispatchEvent(event);
-
-  //   handleModalReset();
-  //   modalClose();
-  // };
 
   const handleModalReset = () => {
     setQuantity(1);

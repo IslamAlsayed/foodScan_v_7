@@ -2,7 +2,6 @@ import "./DataTable.css";
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import { Table } from "antd";
 import Breadcrumb from "../../../Components/Dashboard/Features/Breadcrumb";
-
 import { getData } from "../../../axiosConfig/API";
 import Filtration from "../Models/Filtration/Transactions";
 
@@ -15,7 +14,7 @@ export default function Transactions() {
       const result = await getData("admin/transactions");
       setTransaction(result);
     } catch (error) {
-      console.warn(error.response.data.error);
+      console.error(error.response.data.message);
     }
   }, []);
 
@@ -48,7 +47,15 @@ export default function Transactions() {
       title: "AMOUNT",
       key: "amount",
       render: (text, item) => (
-        <span className={parseFloat(item.amount) > 0 ? "active" : "inactive"}>
+        <span
+          className={
+            parseFloat(item.amount) === 0
+              ? "not_value"
+              : parseFloat(item.amount) > 0
+              ? "active"
+              : "inactive"
+          }
+        >
           {item.amount}
         </span>
       ),

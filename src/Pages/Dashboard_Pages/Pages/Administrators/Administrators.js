@@ -5,24 +5,24 @@ import Breadcrumb from "../../../../Components/Dashboard/Features/Breadcrumb";
 import { Table } from "antd";
 import { FiEdit } from "react-icons/fi";
 import { BsEye } from "react-icons/bs";
-import EditAdministrator from "../../Models/Edit/EditAdministrator";
 import { getData } from "../../../../axiosConfig/API";
 import Filtration from "../../Models/Filtration/Administrators";
 import AddRow from "../../Models/AddRow/Administrators";
+import EditAdministrator from "../../Models/Edit/EditAdministrator";
 
 export default function Administrators() {
   const componentRef = useRef();
-  const [administrators, setAdministrators] = useState([]);
-  const [updated, setUpdated] = useState(false);
+  const [administrators, setAdministrator] = useState([]);
   const [editItem, setEditItem] = useState(null);
-  const [modalVisible, setModalVisible] = useState(false);
+  const [modalVisibleToggle, setModalVisibleToggle] = useState(false);
+  const [modalEditVisibleToggle, setModalEditVisibleToggle] = useState(false);
 
   const fetchAdministrators = useCallback(async () => {
     try {
       const result = await getData("admin/employees");
-      setAdministrators(result);
+      setAdministrator(result);
     } catch (error) {
-      console.warn(error.response.data.error);
+      console.error(error.response.data.message);
     }
   }, []);
 
@@ -30,25 +30,32 @@ export default function Administrators() {
     fetchAdministrators();
   }, [fetchAdministrators]);
 
-  useEffect(() => {
-    if (updated) fetchAdministrators();
-    setUpdated(false);
-  }, [updated, fetchAdministrators]);
-
-  const handleModalClose = () => {
-    setModalVisible(false);
-    setEditItem(null);
-    setUpdated(true);
-    document.body.style.overflow = "visible";
+  const handleModalToggle = () => {
+    setModalVisibleToggle(!modalVisibleToggle);
+    document.body.style.overflow = modalVisibleToggle ? "visible" : "hidden";
   };
 
-  const handleEdit = (item) => {
+  const handleModalEditToggle = () => {
+    setModalEditVisibleToggle(!modalEditVisibleToggle);
+    document.body.style.overflow = modalEditVisibleToggle
+      ? "visible"
+      : "hidden";
+  };
+
+  const handleEdit = async (item) => {
     setEditItem(item);
-    setModalVisible(true);
-    document.body.style.overflow = "hidden";
+    setModalEditVisibleToggle(!modalEditVisibleToggle);
+    document.body.style.overflow = modalEditVisibleToggle
+      ? "visible"
+      : "hidden";
   };
 
   const columns = [
+    {
+      title: "ID",
+      dataIndex: "id",
+      key: "id",
+    },
     {
       title: "NAME",
       dataIndex: "name",
@@ -106,10 +113,22 @@ export default function Administrators() {
       <Breadcrumb />
 
       {/* Filtration */}
-      <Filtration />
+      <Filtration handleModalToggle={handleModalToggle} />
 
       {/* Add Row */}
-      <AddRow />
+      <AddRow
+        visible={modalVisibleToggle}
+        visibleToggle={handleModalToggle}
+        updated={fetchAdministrators}
+      />
+
+      {/* Edit Row */}
+      <EditAdministrator
+        visible={modalEditVisibleToggle}
+        visibleToggle={handleModalEditToggle}
+        item={editItem}
+        updated={fetchAdministrators}
+      />
 
       <div className="tableItems" ref={componentRef}>
         <Table
@@ -117,14 +136,6 @@ export default function Administrators() {
           dataSource={administrators}
           pagination={true}
         />
-
-        {modalVisible && (
-          <EditAdministrator
-            visible={modalVisible}
-            item={editItem}
-            modalClose={handleModalClose}
-          />
-        )}
       </div>
     </div>
   );

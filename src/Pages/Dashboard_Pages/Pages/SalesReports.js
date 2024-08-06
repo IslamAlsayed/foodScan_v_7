@@ -15,7 +15,7 @@ export default function SalesReports() {
       const result = await getData("admin/transactions");
       setSalesReports(result);
     } catch (error) {
-      console.warn(error.response.data.error);
+      console.error(error.response.data.message);
     }
   }, []);
 
@@ -52,16 +52,19 @@ export default function SalesReports() {
     {
       title: "AMOUNT",
       key: "amount",
-      render: (text, item) =>
-        parseFloat(item.amount) > 0 ? (
-          <span style={{ "--c": "#35B263", "--bg": "#DCFCE7" }}>
-            {item.amount}
-          </span>
-        ) : (
-          <span style={{ "--c": "#ff4f20", "--bg": "#ffe8e8" }}>
-            {item.amount}
-          </span>
-        ),
+      render: (text, item) => (
+        <span
+          className={
+            parseFloat(item.amount) === 0
+              ? "not_value"
+              : parseFloat(item.amount) > 0
+              ? "active"
+              : "inactive"
+          }
+        >
+          {item.amount}
+        </span>
+      ),
     },
   ];
 

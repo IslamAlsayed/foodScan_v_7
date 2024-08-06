@@ -1,17 +1,22 @@
 import "../Models.css";
-import React, { useState, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { FaCheckCircle } from "react-icons/fa";
 import { HiXMark } from "react-icons/hi2";
 import Swal from "sweetalert2";
 import { addData } from "../../../../axiosConfig/API";
 
-function DiningTables() {
+function DiningTables({ visible, visibleToggle, updated }) {
+  const [staticVisible, setStaticVisible] = useState([]);
   const [diningTable, setDiningTable] = useState({
     floor: "",
     size: "",
     num: "",
     status: 1,
   });
+
+  useEffect(() => {
+    setStaticVisible(visible);
+  }, [visible]);
 
   const handleChange = (e) => {
     const { name, value, id } = e.target;
@@ -31,55 +36,34 @@ function DiningTables() {
     formData.append("floor", diningTable.floor);
     formData.append("status", diningTable.status);
 
-    Swal.fire({
-      title: "Are you sure?",
-      text: "Do you want to save the changes?",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, save it!",
-      cancelButtonText: "No, cancel",
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        try {
-          const response = await addData("admin/dining-tables", formData);
+    try {
+      const response = await addData("admin/dining-tables", formData);
 
-          if (response.status === "Created") {
-            setDiningTable({
-              floor: "",
-              size: "",
-              num: "",
-              status: 1,
-            });
+      if (response.status === "success") {
+        updated();
+        setDiningTable({
+          floor: "",
+          size: "",
+          num: "",
+          status: 1,
+        });
 
-            Swal.fire("Saved!", response.message, "success");
-          }
-        } catch (error) {
-          if (error.response && error.response.status === 422) {
-            Swal.fire("Error!", "Validation error occurred.", "error");
-          } else {
-            Swal.fire("Error!", error.response.data.error, "error");
-          }
-        }
+        Swal.fire("Saved!", response.message, "success");
       }
-    });
-  };
-
-  const closeModel = () => {
-    var AddTable = document.getElementById("AddTable");
-    if (AddTable) AddTable.classList.remove("visible");
+    } catch (error) {
+      Swal.fire("Error!", error.response.data.message, "error");
+    }
   };
 
   return (
-    <div id="AddTable">
+    <div id="AddTable" className={`${staticVisible ? "visible" : ""}`}>
       <div className="modal-container">
         <div className="breadcrumb">
           <span>
             {window.location.pathname.replace("/admin/dashboard/", "")}
           </span>
           <div className="closeSidebar">
-            <HiXMark onClick={closeModel} />
+            <HiXMark onClick={visibleToggle} />
           </div>
         </div>
         <div className="modal-content">
@@ -180,7 +164,7 @@ function DiningTables() {
                 <button
                   type="button"
                   className="btn btn-secondary"
-                  onClick={closeModel}
+                  onClick={visibleToggle}
                 >
                   <HiXMark />
                   <span className="ps-2">close</span>

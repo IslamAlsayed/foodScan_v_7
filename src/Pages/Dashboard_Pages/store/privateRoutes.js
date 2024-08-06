@@ -13,7 +13,6 @@ import ShowDiningTable from "../Pages/DiningTables/Show";
 import ShowExtra from "../Pages/Extras/Show";
 import ShowAddon from "../Pages/Addons/Show";
 import ShowDeliveryOrder from "../Pages/DeliveryOrders/Show";
-import ShowTablesOrder from "../Pages/TablesOrders/Show";
 import ShowOffer from "../Pages/Offers/Show";
 import ShowAdministrator from "../Pages/Administrators/Show";
 import ShowCustomer from "../Pages/Customers/Show";
@@ -56,12 +55,6 @@ const privateRoutes = [
     name: "show delivery order",
     icon: LuFileSpreadsheet,
     component: ShowDeliveryOrder,
-  },
-  {
-    path: "/admin/dashboard/tables-orders/show/:id",
-    name: "show table order",
-    icon: LuFileSpreadsheet,
-    component: ShowTablesOrder,
   },
   {
     path: "/admin/dashboard/offer/show/:id",

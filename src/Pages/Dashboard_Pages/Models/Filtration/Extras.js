@@ -11,7 +11,7 @@ import { LuPrinter } from "react-icons/lu";
 import { FaCheckCircle } from "react-icons/fa";
 import { HiXMark } from "react-icons/hi2";
 
-export default function Extras() {
+export default function Extras({ handleModalToggle }) {
   const [toggleFilter, setToggleFilter] = useState(false);
 
   useEffect(() => {
@@ -30,11 +30,6 @@ export default function Extras() {
   const handleExport = () => {
     var listPrint = document.getElementById("listPrint");
     listPrint.classList.toggle("show");
-  };
-
-  const handleDisplayAddModel = () => {
-    var AddTable = document.getElementById("AddTable");
-    if (AddTable) AddTable.classList.toggle("visible");
   };
 
   const pathname = window.location.pathname.replace("/admin/dashboard/", "");
@@ -63,10 +58,6 @@ export default function Extras() {
               <ul>
                 <li>
                   <Button icon={<LuPrinter />}>Print</Button>
-                  {/* <ReactToPrint
-                  trigger={() => <Button icon={<LuPrinter />}>Print</Button>}
-                  content={() => componentRef.current}
-                /> */}
                 </li>
                 <li>
                   <Button icon={<FileExcelOutlined />}>XLS</Button>
@@ -78,7 +69,7 @@ export default function Extras() {
           <Button
             type="primary"
             icon={<PlusOutlined />}
-            onClick={handleDisplayAddModel}
+            onClick={handleModalToggle}
           >
             Add {pathname}
           </Button>

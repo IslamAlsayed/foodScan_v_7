@@ -7,22 +7,22 @@ import { FiEdit } from "react-icons/fi";
 import { BsEye } from "react-icons/bs";
 import EditExtra from "../../Models/Edit/EditExtras";
 import { getData } from "../../../../axiosConfig/API";
-import Filtration from "../../Models/Filtration/Customers";
-import AddRow from "../../Models/AddRow/Customers";
+import Filtration from "../../Models/Filtration/Extras";
+import AddRow from "../../Models/AddRow/Extras";
 
 export default function Extra() {
   const componentRef = useRef();
   const [extras, setExtras] = useState([]);
-  const [updated, setUpdated] = useState(false);
   const [editItem, setEditItem] = useState(null);
-  const [modalVisible, setModalVisible] = useState(false);
+  const [modalVisibleToggle, setModalVisibleToggle] = useState(false);
+  const [modalEditVisibleToggle, setModalEditVisibleToggle] = useState(false);
 
   const fetchExtras = useCallback(async () => {
     try {
       const result = await getData("admin/extras");
       setExtras(result);
     } catch (error) {
-      console.warn(error.response.data.error);
+      console.error(error.response.data.message);
     }
   }, []);
 
@@ -30,53 +30,51 @@ export default function Extra() {
     fetchExtras();
   }, [fetchExtras]);
 
-  useEffect(() => {
-    if (updated) fetchExtras();
-    setUpdated(false);
-  }, [updated, fetchExtras]);
+  const handleModalToggle = () => {
+    setModalVisibleToggle(!modalVisibleToggle);
+    document.body.style.overflow = modalVisibleToggle ? "visible" : "hidden";
+  };
 
-  const handleModalClose = () => {
-    setModalVisible(false);
-    setEditItem(null);
-    setUpdated(true);
-    document.body.style.overflow = "visible";
+  const handleModalEditToggle = () => {
+    setModalEditVisibleToggle(!modalEditVisibleToggle);
+    document.body.style.overflow = modalEditVisibleToggle
+      ? "visible"
+      : "hidden";
   };
 
   const handleEdit = async (item) => {
-    try {
-      const categories = await getData("categories");
-      setEditItem({ ...item, categories });
-      setModalVisible(true);
-      document.body.style.overflow = "hidden";
-    } catch (error) {
-      console.warn(error.response.data.error);
-    }
+    setEditItem(item);
+    setModalEditVisibleToggle(!modalEditVisibleToggle);
+    document.body.style.overflow = modalEditVisibleToggle
+      ? "visible"
+      : "hidden";
   };
 
   const columns = [
+    {
+      title: "ID",
+      dataIndex: "id",
+      key: "id",
+    },
     {
       title: "NAME",
       dataIndex: "name",
       key: "name",
     },
     {
+      title: "COST",
+      dataIndex: "cost",
+      key: "cost",
+    },
+    {
       title: "CATEGORY",
-      dataIndex: "category_id",
-      key: "category_id",
+      dataIndex: "category_name",
+      key: "category_name",
     },
     {
       title: "PRICE",
       dataIndex: "cost",
       key: "cost",
-    },
-    {
-      title: "STATUS",
-      key: "status",
-      render: (text, item) => (
-        <span className={item.status === 1 ? "active" : "inactive"}>
-          {item.status === 1 ? "active" : "inactive"}
-        </span>
-      ),
     },
     {
       title: "Image",
@@ -88,6 +86,15 @@ export default function Extra() {
           alt={record.name}
           style={{ width: "70px" }}
         />
+      ),
+    },
+    {
+      title: "STATUS",
+      key: "status",
+      render: (text, item) => (
+        <span className={item.status === 1 ? "active" : "inactive"}>
+          {item.status === 1 ? "active" : "inactive"}
+        </span>
       ),
     },
     {
@@ -122,21 +129,25 @@ export default function Extra() {
       <Breadcrumb />
 
       {/* Filtration */}
-      <Filtration />
+      <Filtration handleModalToggle={handleModalToggle} />
 
       {/* Add Row */}
-      <AddRow />
+      <AddRow
+        visible={modalVisibleToggle}
+        visibleToggle={handleModalToggle}
+        updated={fetchExtras}
+      />
+
+      {/* Edit Row */}
+      <EditExtra
+        visible={modalEditVisibleToggle}
+        visibleToggle={handleModalEditToggle}
+        item={editItem}
+        updated={fetchExtras}
+      />
 
       <div className="tableItems" ref={componentRef}>
         <Table columns={columns} dataSource={extras} pagination={true} />
-
-        {modalVisible && (
-          <EditExtra
-            visible={modalVisible}
-            item={editItem}
-            modalClose={handleModalClose}
-          />
-        )}
       </div>
     </div>
   );

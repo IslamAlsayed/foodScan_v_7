@@ -1,12 +1,13 @@
 import "../Models.css";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaCheckCircle } from "react-icons/fa";
 import { FaXmark } from "react-icons/fa6";
 import { HiXMark } from "react-icons/hi2";
 import Swal from "sweetalert2";
 import { addData } from "../../../../axiosConfig/API";
 
-function Employees() {
+function Employees({ visible, visibleToggle, updated }) {
+  const [staticVisible, setStaticVisible] = useState([]);
   const [employee, setEmployee] = useState({
     name: "",
     email: "",
@@ -17,6 +18,10 @@ function Employees() {
     role: "employee",
     identity_card: "",
   });
+
+  useEffect(() => {
+    setStaticVisible(visible);
+  }, [visible]);
 
   const handleChange = (e) => {
     const { name, value, id } = e.target;
@@ -45,8 +50,8 @@ function Employees() {
 
     try {
       const response = await addData("admin/employees", formData);
-
       if (response.status === "success") {
+        updated();
         setEmployee({
           name: "",
           email: "",
@@ -54,45 +59,26 @@ function Employees() {
           password: "",
           password_confirmation: "",
           status: 1,
-          role: "",
+          role: "employee",
           identity_card: "",
         });
-
         Swal.fire("Saved!", response.message, "success");
       }
     } catch (error) {
-      if (error.response && error.response.status === 422) {
-        Swal.fire("Error!", "Validation error occurred.", "error");
-      } else {
-        Swal.fire("Error!", error.response.data.error, "error");
-      }
+      Swal.fire("Error!", error.response.data.message, "error");
     }
   };
 
-  const closeModel = () => {
-    setEmployee({
-      name: "",
-      email: "",
-      phone: "",
-      password: "",
-      password_confirmation: "",
-      status: 1,
-      role: "",
-      identity_card: "",
-    });
-
-    var AddTable = document.getElementById("AddTable");
-    if (AddTable) AddTable.classList.remove("visible");
-  };
-
   return (
-    <div id="AddTable">
+    <div id="AddTable" className={`${staticVisible ? "visible" : ""}`}>
       <div className="modal-container">
         <div className="breadcrumb">
-          <h3>{window.location.pathname.replace("/admin/dashboard/", "")}</h3>
+          <h3>
+            add {window.location.pathname.replace("/admin/dashboard/", "")}
+          </h3>
 
           <div className="closeSidebar">
-            <FaXmark onClick={closeModel} />
+            <FaXmark onClick={visibleToggle} />
           </div>
         </div>
         <div className="modal-content">
@@ -207,15 +193,16 @@ function Employees() {
                     className="form-control"
                     name="role"
                     id="role"
-                    onChange={handleChange}
                     value={employee.role}
+                    onChange={handleChange}
                     required
                   >
-                    <option value={-1} disabled>
-                      choose
+                    <option value="" selected disabled>
+                      --
                     </option>
-                    <option value="chef">Chef</option>
-                    <option value="cashier">Cashier</option>
+                    <option value="chef">chef</option>
+                    <option value="admin">admin</option>
+                    <option value="casher">casher</option>
                   </select>
                 </div>
               </div>
@@ -231,10 +218,10 @@ function Employees() {
                         type="radio"
                         name="status"
                         id="active"
-                        required
                         value={1}
                         checked={employee.status === 1}
                         onChange={handleChange}
+                        required
                       />
                       <label htmlFor="active">active</label>
                     </div>
@@ -243,10 +230,10 @@ function Employees() {
                         type="radio"
                         name="status"
                         id="inactive"
-                        required
                         value={0}
                         checked={employee.status === 0}
                         onChange={handleChange}
+                        required
                       />
                       <label htmlFor="inactive">inactive</label>
                     </div>
@@ -264,7 +251,7 @@ function Employees() {
                 <button
                   type="button"
                   className="btn btn-secondary"
-                  onClick={closeModel}
+                  onClick={visibleToggle}
                 >
                   <HiXMark />
                   <span className="ps-2">close</span>

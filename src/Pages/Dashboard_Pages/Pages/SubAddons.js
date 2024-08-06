@@ -8,11 +8,11 @@ import { BiTrash } from "react-icons/bi";
 import Swal from "sweetalert2";
 import { getData, addData, deleteData } from "../../../axiosConfig/API";
 
-export default function SubAddon({ meal_id, data }) {
+export default function SubAddons({ order_id, data }) {
   const componentRef = useRef();
   const [addons, setAddons] = useState();
-  const [optionsAddons, setOptionsAddons] = useState();
   const [addon_id, setAddon_id] = useState();
+  const [optionsAddons, setOptionsAddons] = useState();
 
   const fetchOptionsAddons = useCallback(async (id) => {
     if (!id) return;
@@ -20,13 +20,14 @@ export default function SubAddon({ meal_id, data }) {
       const result = await getData(`admin/meals/${id}/options-addons`);
       setOptionsAddons(result);
     } catch (error) {
-      console.warn(error.response.data.error);
+      console.error(error.response.data.message);
     }
   }, []);
 
   useEffect(() => {
-    if (meal_id) fetchOptionsAddons(meal_id);
-  }, [meal_id, fetchOptionsAddons]);
+    if (data) setAddons(data);
+    if (order_id) fetchOptionsAddons(order_id);
+  }, [data, setAddons, fetchOptionsAddons]);
 
   const handleAddAddon = async (e) => {
     e.preventDefault();
@@ -34,23 +35,21 @@ export default function SubAddon({ meal_id, data }) {
     try {
       const response = await addData("admin/meals/addons", {
         addon_id: addon_id,
-        meal_id: meal_id,
+        meal_id: order_id,
       });
 
-      if (response) {
+      if (response.status === "success") {
+        refreshAddons();
         setAddon_id("");
-        reloadAddons();
-        fetchOptionsAddons(meal_id);
-
+        fetchOptionsAddons(order_id);
         Swal.fire("Addon!", response.message, "success");
       }
     } catch (error) {
-      console.warn(error.response.data.error);
-      Swal.fire("Error!", error.response.data.error, "error");
+      Swal.fire("Error!", error.response.data.message, "error");
     }
   };
 
-  const handleDelete = async (addon) => {
+  const handleDelete = async (id) => {
     Swal.fire({
       title: "Delete addon",
       text: "Are you sure you want to delete this addon?",
@@ -64,28 +63,26 @@ export default function SubAddon({ meal_id, data }) {
       if (result.isConfirmed) {
         try {
           const response = await deleteData(
-            `admin/addons-meals/${addon.addon_id}/${meal_id}`
+            `admin/addons-meals/${id}/${order_id}`
           );
 
-          if (response) {
-            reloadAddons();
-            fetchOptionsAddons(meal_id);
+          if (response.status === "success") {
+            refreshAddons();
             Swal.fire("Addon!", response.message, "success");
           }
         } catch (error) {
-          console.warn(error.response.data.error);
-          Swal.fire("Error!", error.response.data.error, "error");
+          Swal.fire("Error!", error.response.data.message, "error");
         }
       }
     });
   };
 
-  const reloadAddons = useCallback(async () => {
+  const refreshAddons = useCallback(async () => {
     try {
-      const result = await getData(`admin/meals/${meal_id}/addons`);
+      const result = await getData(`admin/meals/${order_id}/addons`);
       setAddons(result);
     } catch (error) {
-      console.warn(error.response.data.error);
+      console.error(error.response.data.message);
     }
   }, []);
 
@@ -112,7 +109,7 @@ export default function SubAddon({ meal_id, data }) {
           to="#"
           className="trashIcon"
           data-tooltip="delete"
-          onClick={() => handleDelete(item)}
+          onClick={() => handleDelete(item.addon_id)}
           style={{ "--c": "#F15353", "--bg": "#FECACA" }}
         >
           <BiTrash />
@@ -123,18 +120,22 @@ export default function SubAddon({ meal_id, data }) {
 
   return (
     <div className="SubModel">
-      <Row gutter={16}>
-        <Col span={12}>
-          <button
-            type="button"
-            className="btn btn-primary"
-            data-bs-toggle="modal"
-            data-bs-target="#addAddon"
-          >
-            add addon
-          </button>
-        </Col>
-      </Row>
+      {Object(optionsAddons).length > 0 ? (
+        <Row gutter={16}>
+          <Col span={12}>
+            <button
+              type="button"
+              className="btn btn-primary"
+              data-bs-toggle="modal"
+              data-bs-target="#addAddon"
+            >
+              add addon
+            </button>
+          </Col>
+        </Row>
+      ) : (
+        false
+      )}
 
       <div
         className="modal fade"
@@ -162,13 +163,13 @@ export default function SubAddon({ meal_id, data }) {
               <div className="row">
                 <div className="col col-12">
                   <div className="mb-3">
-                    <label htmlFor="size" className="form-label">
-                      SELECT <span className="star">*</span>
+                    <label htmlFor="showAddon" className="form-label">
+                      Addon <span className="star">*</span>
                     </label>
                     <select
                       className="form-control"
-                      name="size"
-                      id="size"
+                      name="showAddon"
+                      id="showAddon"
                       required
                       value={addon_id}
                       onChange={(e) => setAddon_id(e.target.value)}
@@ -178,9 +179,7 @@ export default function SubAddon({ meal_id, data }) {
                       </option>
                       {optionsAddons &&
                         optionsAddons.map((addon) => (
-                          <option key={addon.id} value={addon.id}>
-                            {addon.name}
-                          </option>
+                          <option value={addon.id}>{addon.name}</option>
                         ))}
                     </select>
                   </div>

@@ -2,27 +2,26 @@ import cloneDeep from "lodash/cloneDeep";
 
 const getCartData = () => {
   let currentCart = localStorage.getItem("cartItems");
-  if (currentCart && currentCart == []) {
-    return [];
-  } else if (!currentCart) {
-    currentCart = [];
-    localStorage.setItem("cartItems", JSON.stringify(currentCart));
-    return JSON.parse(currentCart);
+
+  if (!currentCart) {
+    localStorage.setItem("cartItems", JSON.stringify([]));
   } else {
-    return JSON.parse(currentCart);
+    currentCart = JSON.parse(currentCart);
   }
+
+  return currentCart;
 };
+
 const getCartTotal = () => {
   let currentTotal = localStorage.getItem("cartTotal");
-  if (currentTotal === 0) {
-    return 0;
-  } else if (!currentTotal) {
-    currentTotal = 0;
-    localStorage.setItem("cartTotal", JSON.stringify(currentTotal));
-    return JSON.parse(currentTotal);
+
+  if (!currentTotal) {
+    localStorage.setItem("cartTotal", JSON.stringify(0));
   } else {
-    return JSON.parse(currentTotal);
+    currentTotal = JSON.parse(currentTotal);
   }
+
+  return Number(currentTotal);
 };
 
 const VALUE = {

@@ -15,15 +15,15 @@ export default function DiningTables() {
   const componentRef = useRef();
   const [DiningTables, setDiningTables] = useState([]);
   const [editItem, setEditItem] = useState(null);
-  const [updated, setUpdated] = useState(false);
-  const [modalVisible, setModalVisible] = useState(false);
+  const [modalVisibleToggle, setModalVisibleToggle] = useState(false);
+  const [modalEditVisibleToggle, setModalEditVisibleToggle] = useState(false);
 
   const fetchDiningTables = useCallback(async () => {
     try {
       const result = await getData("admin/dining-tables");
       setDiningTables(result);
     } catch (error) {
-      console.warn(error.response.data.error);
+      console.error(error.response.data.message);
     }
   }, []);
 
@@ -31,22 +31,24 @@ export default function DiningTables() {
     fetchDiningTables();
   }, [fetchDiningTables]);
 
-  useEffect(() => {
-    if (updated) fetchDiningTables();
-    setUpdated(false);
-  }, [updated, fetchDiningTables]);
-
-  const handleModalClose = () => {
-    setModalVisible(false);
-    setEditItem(null);
-    setUpdated(true);
-    document.body.style.overflow = "visible";
+  const handleModalToggle = () => {
+    setModalVisibleToggle(!modalVisibleToggle);
+    document.body.style.overflow = modalVisibleToggle ? "visible" : "hidden";
   };
 
-  const handleEdit = (item) => {
+  const handleModalEditToggle = () => {
+    setModalEditVisibleToggle(!modalEditVisibleToggle);
+    document.body.style.overflow = modalEditVisibleToggle
+      ? "visible"
+      : "hidden";
+  };
+
+  const handleEdit = async (item) => {
     setEditItem(item);
-    setModalVisible(true);
-    document.body.style.overflow = "hidden";
+    setModalEditVisibleToggle(!modalEditVisibleToggle);
+    document.body.style.overflow = modalEditVisibleToggle
+      ? "visible"
+      : "hidden";
   };
 
   const columns = [
@@ -128,21 +130,25 @@ export default function DiningTables() {
       <Breadcrumb />
 
       {/* Filtration */}
-      <Filtration />
+      <Filtration handleModalToggle={handleModalToggle} />
 
       {/* Add Row */}
-      <AddRow />
+      <AddRow
+        visible={modalVisibleToggle}
+        visibleToggle={handleModalToggle}
+        updated={fetchDiningTables}
+      />
+
+      {/* Edit Row */}
+      <EditDiningTable
+        visible={modalEditVisibleToggle}
+        visibleToggle={handleModalEditToggle}
+        item={editItem}
+        updated={fetchDiningTables}
+      />
 
       <div className="tableItems" ref={componentRef}>
         <Table columns={columns} dataSource={DiningTables} pagination={true} />
-
-        {modalVisible && (
-          <EditDiningTable
-            visible={modalVisible}
-            item={editItem}
-            modalClose={handleModalClose}
-          />
-        )}
       </div>
     </div>
   );

@@ -29,10 +29,7 @@ export default function AddCustomer() {
     formData.append("password_confirmation", customer.password_confirmation);
 
     try {
-      const response = await addData(
-        "admin/customers",
-        formData,
-      );
+      const response = await addData("admin/customers", formData);
 
       if (response.status === "success") {
         setCustomer({
@@ -46,11 +43,7 @@ export default function AddCustomer() {
         Swal.fire("Saved!", response.message, "success");
       }
     } catch (error) {
-      if (error.response && error.response.status === 422) {
-        Swal.fire("Error!", "Validation error occurred.", "error");
-      } else {
-        Swal.fire("Error!", error.response.data.error, "error");
-      }
+      Swal.fire("Error!", error.response.data.message, "error");
     }
   };
 

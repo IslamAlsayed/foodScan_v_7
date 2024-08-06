@@ -5,8 +5,13 @@ import { HiXMark } from "react-icons/hi2";
 import Swal from "sweetalert2";
 import { updateData } from "../../../../axiosConfig/API";
 
-export default function EditCustomer({ visible, item, modalClose }) {
-  const [staticModalVisible, setStaticModalVisible] = useState(false);
+export default function EditCustomer({
+  visible,
+  visibleToggle,
+  item,
+  updated,
+}) {
+  const [staticVisible, setStaticVisible] = useState();
   const [customer, setCustomer] = useState({
     name: "",
     email: "",
@@ -18,9 +23,12 @@ export default function EditCustomer({ visible, item, modalClose }) {
   });
 
   useEffect(() => {
-    setStaticModalVisible(visible);
     if (item) setCustomer(item);
   }, [item]);
+
+  useEffect(() => {
+    setStaticVisible(visible);
+  }, [visible]);
 
   const handleChange = (e) => {
     const { name, value, id } = e.target;
@@ -51,43 +59,33 @@ export default function EditCustomer({ visible, item, modalClose }) {
     formData.append("password", customer.password);
     formData.append("password_confirmation", customer.password_confirmation);
     formData.append("status", customer.status);
+    formData.append("_method", "put");
 
     try {
       const response = await updateData(
-        `admin/employees/${item.id}`,
+        `admin/customers/${item.id}`,
         formData,
-        "put"
+        false
       );
 
       if (response.status === "success") {
-        setCustomer({
-          name: "",
-          email: "",
-          role: "",
-          phone: "",
-          password: "",
-          password_confirmation: "",
-          status: 1,
-        });
-        modalClose();
+        updated();
         Swal.fire("Updated!", response.message, "success");
       }
     } catch (error) {
-      if (error.response && error.response.status === 422) {
-        Swal.fire("Error!", "Validation error occurred.", "error");
-      } else {
-        Swal.fire("Error!", error.response.data.error, "error");
-      }
+      Swal.fire("Error!", error.response.data.message, "error");
     }
   };
 
   return (
-    <div id="AddTable" className={staticModalVisible ? "visible" : ""}>
+    <div id="AddTable" className={staticVisible ? "visible" : ""}>
       <div className="modal-container">
         <div className="breadcrumb">
-          <h3>{window.location.pathname.replace("/admin/dashboard/", "")}</h3>
+          <h3>
+            edit {window.location.pathname.replace("/admin/dashboard/", "")}
+          </h3>
           <div className="closeSidebar">
-            <HiXMark onClick={() => modalClose()} />
+            <HiXMark onClick={visibleToggle} />
           </div>
         </div>
         <div className="modal-content">
@@ -105,7 +103,6 @@ export default function EditCustomer({ visible, item, modalClose }) {
                     id="name"
                     value={customer.name}
                     onChange={handleChange}
-                    required
                   />
                 </div>
               </div>
@@ -122,7 +119,6 @@ export default function EditCustomer({ visible, item, modalClose }) {
                     id="email"
                     value={customer.email}
                     onChange={handleChange}
-                    required
                   />
                 </div>
               </div>
@@ -137,7 +133,6 @@ export default function EditCustomer({ visible, item, modalClose }) {
                     id="role"
                     value={customer.role}
                     onChange={handleChange}
-                    required
                     className="form-control"
                   >
                     <option value="chef" selected={customer.role === "chef"}>
@@ -165,7 +160,6 @@ export default function EditCustomer({ visible, item, modalClose }) {
                     id="phone"
                     value={customer.phone}
                     onChange={handleChange}
-                    required
                   />
                 </div>
               </div>
@@ -182,7 +176,6 @@ export default function EditCustomer({ visible, item, modalClose }) {
                     id="password"
                     value={customer.password}
                     onChange={handleChange}
-                    required
                   />
                 </div>
               </div>
@@ -199,7 +192,6 @@ export default function EditCustomer({ visible, item, modalClose }) {
                     id="password_confirmation"
                     value={customer.password_confirmation}
                     onChange={handleChange}
-                    required
                   />
                 </div>
               </div>
@@ -215,7 +207,6 @@ export default function EditCustomer({ visible, item, modalClose }) {
                         type="radio"
                         name="status"
                         id="active"
-                        required
                         value={1}
                         checked={customer.status === 1}
                         onChange={handleChange}
@@ -227,7 +218,6 @@ export default function EditCustomer({ visible, item, modalClose }) {
                         type="radio"
                         name="status"
                         id="inactive"
-                        required
                         value={0}
                         checked={customer.status === 0}
                         onChange={handleChange}
@@ -248,7 +238,7 @@ export default function EditCustomer({ visible, item, modalClose }) {
                 <button
                   type="button"
                   className="btn btn-secondary"
-                  onClick={() => modalClose()}
+                  onClick={visibleToggle}
                 >
                   <HiXMark />
                   <span className="ps-2">close</span>

@@ -5,8 +5,13 @@ import { HiXMark } from "react-icons/hi2";
 import Swal from "sweetalert2";
 import { updateData } from "../../../../axiosConfig/API";
 
-export default function EditDiningTable({ visible, item, modalClose }) {
-  const [staticModalVisible, setStaticModalVisible] = useState(false);
+export default function EditDiningTable({
+  visible,
+  visibleToggle,
+  item,
+  updated,
+}) {
+  const [staticVisible, setStaticVisible] = useState();
   const [diningTable, setDiningTable] = useState({
     num: "",
     size: "",
@@ -15,9 +20,12 @@ export default function EditDiningTable({ visible, item, modalClose }) {
   });
 
   useEffect(() => {
-    setStaticModalVisible(visible);
     if (item) setDiningTable(item);
   }, [item]);
+
+  useEffect(() => {
+    setStaticVisible(visible);
+  }, [visible]);
 
   const handleChange = (e) => {
     const { name, value, id } = e.target;
@@ -41,39 +49,30 @@ export default function EditDiningTable({ visible, item, modalClose }) {
       const response = await updateData(
         `admin/dining-tables/${item.id}`,
         formData,
+        false,
         "put"
       );
 
+      console.log("diningTable", response);
+
       if (response.status === "success") {
-        setDiningTable({
-          num: "",
-          size: "",
-          floor: "",
-          status: "",
-        });
-
-        modalClose();
-
+        updated();
         Swal.fire("Updated!", response.message, "success");
       }
     } catch (error) {
-      if (error.response && error.response.status === 422) {
-        Swal.fire("Error!", "Validation error occurred.", "error");
-      } else {
-        Swal.fire("Error!", error.response.data.error, "error");
-      }
+      Swal.fire("Error!", error.response.data.message, "error");
     }
   };
 
   return (
-    <div id="AddTable" className={staticModalVisible ? "visible" : ""}>
+    <div id="AddTable" className={staticVisible ? "visible" : ""}>
       <div className="modal-container">
         <div className="breadcrumb">
           <span>
             {window.location.pathname.replace("/admin/dashboard/", "")}
           </span>
           <div className="closeSidebar">
-            <HiXMark onClick={() => modalClose()} />
+            <HiXMark onClick={visibleToggle} />
           </div>
         </div>
         <div className="modal-content">
@@ -90,7 +89,7 @@ export default function EditDiningTable({ visible, item, modalClose }) {
                     name="num"
                     id="number"
                     value={diningTable.num}
-                    onClick={() => modalClose()}
+                    onChange={handleChange}
                     required
                   />
                 </div>
@@ -141,10 +140,10 @@ export default function EditDiningTable({ visible, item, modalClose }) {
                         type="radio"
                         name="status"
                         id="active"
-                        required
                         value={1}
                         checked={diningTable.status === 1}
                         onChange={handleChange}
+                        required
                       />
                       <span>active</span>
                     </div>
@@ -153,10 +152,10 @@ export default function EditDiningTable({ visible, item, modalClose }) {
                         type="radio"
                         name="status"
                         id="inactive"
-                        required
                         value={0}
                         checked={diningTable.status === 0}
                         onChange={handleChange}
+                        required
                       />
                       <span>inactive</span>
                     </div>
@@ -174,7 +173,7 @@ export default function EditDiningTable({ visible, item, modalClose }) {
                 <button
                   type="button"
                   className="btn btn-secondary"
-                  onClick={() => modalClose()}
+                  onClick={visibleToggle}
                 >
                   <HiXMark />
                   <span className="ps-2">close</span>

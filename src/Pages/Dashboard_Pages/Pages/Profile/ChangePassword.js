@@ -12,8 +12,7 @@ export function ChangePassword() {
     useState("");
   const [message, setMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-
-  const adminData = JSON.parse(localStorage.getItem("adminData")) || null;
+  const adminData = JSON.parse(localStorage.getItem("adminData") || {});
 
   useEffect(() => {
     if (adminData) {
@@ -49,7 +48,7 @@ export function ChangePassword() {
         "patch"
       );
 
-      if (response.status === "Ok") {
+      if (response.status === "success") {
         setMessage(response.message);
         setOld_password("");
         setNew_password("");
@@ -65,7 +64,7 @@ export function ChangePassword() {
       } else {
         Swal.fire(
           "Error!",
-          error.response.data.error || "An error occurred",
+          error.response.data.message || "An error occurred",
           "error"
         );
       }

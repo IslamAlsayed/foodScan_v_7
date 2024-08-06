@@ -1,6 +1,6 @@
 import "./Pos.css";
 import "../DataTable.css";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { IoIosSearch } from "react-icons/io";
 import { AiFillShopping } from "react-icons/ai";
 import { FaShoppingBag } from "react-icons/fa";
@@ -9,13 +9,12 @@ import subMainMenu from "../../store/mainMenu";
 import AddCustomer from "./Features/AddCustomer";
 import CartItems from "./Features/CartItems";
 import DetailsItem from "./Features/DetailsItem";
-import { getData } from "../../../../axiosConfig/API";
 
 export default function Pos() {
   const [cartItemTotal, setCartItemTotal] = useState(1);
 
   useEffect(() => {
-    const cartItem = JSON.parse(localStorage.getItem("cartItems")) || null;
+    const cartItem = JSON.parse(localStorage.getItem("cartItems") || []);
 
     let total = cartItem.reduce(
       (prev, item) => prev + item.price * item.quantity,

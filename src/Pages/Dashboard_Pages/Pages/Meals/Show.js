@@ -12,8 +12,8 @@ import { useParams } from "react-router-dom";
 import Information from "./Information";
 import UploadImage from "../UploadImage";
 import Variations from "./Variations";
-import SubExtra from "../SubExtra";
-import SubAddon from "../SubAddon";
+import SubExtra from "../SubExtras";
+import SubAddon from "../SubAddons";
 import { getData } from "../../../../axiosConfig/API";
 
 export default function ShowItem() {
@@ -33,17 +33,7 @@ export default function ShowItem() {
       setLoading(false);
     } catch (error) {
       setLoading(false);
-      console.warn(error.response.data.error);
-    }
-  }, []);
-
-  const fetchAddons = useCallback(async (id) => {
-    if (!id) return;
-    try {
-      const result = await getData(`admin/meals/${id}/addons`);
-      setAddons(result);
-    } catch (error) {
-      console.warn(error.response.data.error);
+      console.error(error.response.data.message);
     }
   }, []);
 
@@ -53,7 +43,17 @@ export default function ShowItem() {
       const result = await getData(`admin/meals/${id}/extras`);
       setExtras(result);
     } catch (error) {
-      console.warn(error.response.data.error);
+      console.error(error.response.data.message);
+    }
+  }, []);
+
+  const fetchAddons = useCallback(async (id) => {
+    if (!id) return;
+    try {
+      const result = await getData(`admin/meals/${id}/addons`);
+      setAddons(result);
+    } catch (error) {
+      console.error(error.response.data.message);
     }
   }, []);
 
@@ -63,8 +63,8 @@ export default function ShowItem() {
 
   useEffect(() => {
     if (isMealLoaded && meal) {
-      fetchAddons(meal.id);
       fetchExtras(meal.id);
+      fetchAddons(meal.id);
     }
   }, [isMealLoaded, meal]);
 
@@ -116,7 +116,7 @@ export default function ShowItem() {
           }
           key="4"
         >
-          <SubExtra meal_id={id} data={extras} />
+          <SubExtra order_id={id} data={extras} />
         </Tabs.TabPane>
         <Tabs.TabPane
           tab={
@@ -127,7 +127,7 @@ export default function ShowItem() {
           }
           key="5"
         >
-          <SubAddon meal_id={id} data={addons} />
+          <SubAddon order_id={id} data={addons} />
         </Tabs.TabPane>
       </Tabs>
     </div>

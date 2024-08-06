@@ -1,32 +1,30 @@
 import "../Models.css";
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { FaCheckCircle } from "react-icons/fa";
 import { HiXMark } from "react-icons/hi2";
 import { FaXmark } from "react-icons/fa6";
 import Swal from "sweetalert2";
 import { addData } from "../../../../axiosConfig/API";
 
-export default function Offers() {
+export default function Offers({ visible, visibleToggle, updated }) {
   const imageRef = useRef(null);
+  const [staticVisible, setStaticVisible] = useState([]);
   const [offer, setOffer] = useState({
     name: "",
     discount: "",
     startDate: "",
     endDate: "",
+    status: "active",
     image: null,
-    status: 1,
   });
+
+  useEffect(() => {
+    setStaticVisible(visible);
+  }, [visible]);
 
   const handleChange = (e) => {
     const { name, value, id, type, files } = e.target;
-
     setOffer((prevData) => {
-      if (name === "status") {
-        return {
-          ...prevData,
-          status: id === "active" ? 1 : 0,
-        };
-      }
       if (name === "image" && type === "file") {
         return {
           ...prevData,
@@ -48,62 +46,34 @@ export default function Offers() {
     formData.append("discount", offer.discount);
     formData.append("startDate", offer.startDate);
     formData.append("endDate", offer.endDate);
-    if (offer.image) formData.append("image", offer.image);
     formData.append("status", offer.status);
+    if (offer.image) formData.append("image", offer.image);
 
-    Swal.fire({
-      title: "Are you sure?",
-      text: "Do you want to save the changes?",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, save it!",
-      cancelButtonText: "No, cancel",
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        try {
-          const response = await addData("admin/offers", formData);
+    try {
+      const response = await addData("admin/offers", formData);
 
-          if (response.status === "success") {
-            setOffer({
-              name: "",
-              discount: "",
-              startDate: "",
-              endDate: "",
-              image: null,
-              status: 1,
-            });
-
-            if (imageRef.current) imageRef.current.value = null;
-
-            Swal.fire("Saved!", response.data.message, "success");
-          }
-        } catch (error) {
-          if (error.response && error.response.status === 422) {
-            Swal.fire("Error!", "Validation error occurred.", "error");
-          } else {
-            Swal.fire("Error!", error.response.data.error, "error");
-          }
-        }
+      if (response.status === "success") {
+        updated();
+        if (imageRef.current) imageRef.current.value = null;
+        Swal.fire("Saved!", response.data.message, "success");
       }
-    });
-  };
-
-  const closeModel = () => {
-    var AddTable = document.getElementById("AddTable");
-    if (AddTable) AddTable.classList.remove("visible");
+    } catch (error) {
+      Swal.fire("Error!", error.response.data.message, "error");
+    }
   };
 
   return (
-    <div id="AddTable">
+    <div id="AddTable" className={`${staticVisible ? "visible" : ""}`}>
       <div className="modal-container">
         <div className="breadcrumb">
-          <h3>{window.location.pathname.replace("/admin/dashboard/", "")}</h3>
+          <h3>
+            add {window.location.pathname.replace("/admin/dashboard/", "")}
+          </h3>
           <div className="closeSidebar">
-            <FaXmark onClick={closeModel} />
+            <FaXmark onClick={visibleToggle} />
           </div>
         </div>
+
         <div className="modal-content">
           <form onSubmit={handleSubmit}>
             <div className="row">
@@ -175,23 +145,6 @@ export default function Offers() {
                 </div>
               </div>
 
-              <div className="col-12">
-                <div className="mb-3">
-                  <label htmlFor="image" className="form-label">
-                    image (548px,140px) <span className="star">*</span>
-                  </label>
-                  <input
-                    type="file"
-                    className="form-control"
-                    name="image"
-                    id="image"
-                    ref={imageRef}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-              </div>
-
               <div className="col-6">
                 <div className="mb-3">
                   <label htmlFor="status" className="form-label">
@@ -203,10 +156,10 @@ export default function Offers() {
                         type="radio"
                         name="status"
                         id="active"
-                        required
-                        value={1}
-                        checked={offer.status === 1}
+                        value="active"
+                        checked={offer.status === "active"}
                         onChange={handleChange}
+                        required
                       />
                       <label htmlFor="active">active</label>
                     </div>
@@ -215,14 +168,31 @@ export default function Offers() {
                         type="radio"
                         name="status"
                         id="inactive"
-                        required
-                        value={0}
-                        checked={offer.status === 0}
+                        value="inactive"
+                        checked={offer.status === "inactive"}
                         onChange={handleChange}
+                        required
                       />
                       <label htmlFor="inactive">inactive</label>
                     </div>
                   </div>
+                </div>
+              </div>
+
+              <div className="col-12">
+                <div className="mb-3">
+                  <label htmlFor="image" className="form-label">
+                    image <span className="star">*</span>
+                  </label>
+                  <input
+                    type="file"
+                    className="form-control"
+                    name="image"
+                    id="image"
+                    ref={imageRef}
+                    onChange={handleChange}
+                    required
+                  />
                 </div>
               </div>
             </div>
@@ -236,7 +206,7 @@ export default function Offers() {
                 <button
                   type="button"
                   className="btn btn-secondary"
-                  onClick={closeModel}
+                  onClick={visibleToggle}
                 >
                   <HiXMark />
                   <span className="ps-2">close</span>

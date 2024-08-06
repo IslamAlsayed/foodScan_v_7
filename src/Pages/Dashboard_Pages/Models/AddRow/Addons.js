@@ -5,8 +5,9 @@ import { HiXMark } from "react-icons/hi2";
 import Swal from "sweetalert2";
 import { getData, addData } from "../../../../axiosConfig/API";
 
-export default function Addons() {
+export default function Addons({ visible, visibleToggle, updated }) {
   const imageRef = useRef(null);
+  const [staticVisible, setStaticVisible] = useState([]);
   const [categories, setCategories] = useState([]);
   const [addon, setAddon] = useState({
     name: "",
@@ -18,18 +19,9 @@ export default function Addons() {
     cost: "",
   });
 
-  const fetchCategories = useCallback(async () => {
-    try {
-      const result = await getData("categories");
-      setCategories(result);
-    } catch (error) {
-      console.warn(error.response.data.error);
-    }
-  }, []);
-
   useEffect(() => {
-    fetchCategories();
-  }, [fetchCategories]);
+    setStaticVisible(visible);
+  }, [visible]);
 
   const handleChange = (e) => {
     const { name, value, id } = e.target;
@@ -57,63 +49,57 @@ export default function Addons() {
     formData.append("name", addon.name);
     formData.append("description", addon.description);
     formData.append("type", addon.type);
-    formData.append("cost", addon.cost);
     formData.append("category_id", addon.category_id);
+    formData.append("image", addon.image);
     formData.append("status", addon.status);
-    if (addon.image) formData.append("image", addon.image);
+    formData.append("cost", addon.cost);
 
-    Swal.fire({
-      title: "Are you sure?",
-      text: "Do you want to save the changes?",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, save it!",
-      cancelButtonText: "No, cancel",
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        try {
-          const response = await addData("admin/addons", formData);
+    try {
+      const response = await addData("admin/addons", formData);
 
-          if (response.status === "success") {
-            setAddon({
-              name: "",
-              description: "",
-              type: "vegetarian",
-              category_id: -1,
-              image: null,
-              status: 1,
-              cost: "",
-            });
+      if (response.status === "success") {
+        updated();
+        setAddon({
+          name: "",
+          description: "",
+          type: "vegetarian",
+          category_id: "",
+          image: null,
+          status: 1,
+          cost: "",
+        });
 
-            if (imageRef.current) imageRef.current.value = null;
+        if (imageRef.current) imageRef.current.value = null;
 
-            Swal.fire("Saved!", response.message, "success");
-          }
-        } catch (error) {
-          if (error.response && error.response.status === 422) {
-            Swal.fire("Error!", "Validation error occurred.", "error");
-          } else {
-            Swal.fire("Error!", error.response.data.error, "error");
-          }
-        }
+        Swal.fire("Saved!", response.message, "success");
       }
-    });
+    } catch (error) {
+      Swal.fire("Error!", error.response.data.message, "error");
+    }
   };
 
-  const closeModel = () => {
-    var AddTable = document.getElementById("AddTable");
-    if (AddTable) AddTable.classList.remove("visible");
-  };
+  const fetchCategories = useCallback(async () => {
+    try {
+      const result = await getData("categories");
+      setCategories(result);
+    } catch (error) {
+      console.error(error.response.data.message);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchCategories();
+  }, [fetchCategories]);
 
   return (
-    <div id="AddTable">
+    <div id="AddTable" className={`${staticVisible ? "visible" : ""}`}>
       <div className="modal-container">
         <div className="breadcrumb">
-          <h3>{window.location.pathname.replace("/admin/dashboard/", "")}</h3>
+          <h3>
+            add {window.location.pathname.replace("/admin/dashboard/", "")}
+          </h3>
           <div className="closeSidebar">
-            <HiXMark onClick={closeModel} />
+            <HiXMark onClick={visibleToggle} />
           </div>
         </div>
         <div className="modal-content">
@@ -286,7 +272,7 @@ export default function Addons() {
                 <button
                   type="button"
                   className="btn btn-secondary"
-                  onClick={closeModel}
+                  onClick={visibleToggle}
                 >
                   <HiXMark />
                   <span className="ps-2">close</span>

@@ -4,58 +4,67 @@ import { Table } from "antd";
 import Breadcrumb from "../../../Components/Dashboard/Features/Breadcrumb";
 
 import { getData } from "../../../axiosConfig/API";
-import Filtration from "../Models/Filtration/ItemsReports";
+import Filtration from "../Models/Filtration/SalesReports";
 
-export default function ItemsReports() {
+export default function SalesReports() {
   const componentRef = useRef();
-  const [itemsReports, setItemsReports] = useState([]);
+  const [salesReports, setSalesReports] = useState([]);
 
-  const fetchItemsReports = useCallback(async () => {
+  const fetchSalesReports = useCallback(async () => {
     try {
-      const result = await getData("admin/ItemsReports");
-      setItemsReports(result);
+      const result = await getData("admin/transactions");
+      setSalesReports(result);
     } catch (error) {
-      console.warn(error.response.data.error);
+      console.error(error.response.data.message);
     }
   }, []);
 
   useEffect(() => {
-    fetchItemsReports();
-  }, [fetchItemsReports]);
+    fetchSalesReports();
+  }, [fetchSalesReports]);
 
   const columns = [
     {
-      title: "NAME",
-      dataIndex: "name",
-      key: "name",
+      title: "SALE ID",
+      dataIndex: "id",
+      key: "id",
     },
     {
-      title: "CATEGORY",
-      dataIndex: "category",
-      key: "category",
+      title: "START DATE",
+      dataIndex: "created_at",
+      key: "created_at",
     },
     {
-      title: "TYPE",
-      key: "type",
-      render: (text, item) =>
-        //   <span className={item.type === "vag" ? "active" : "inactive"}>
-        //   {item.status === 1 ? "active" : "inactive"}
-        // </span>
-
-        item.type === "vag" ? (
-          <span style={{ "--c": "#35B263", "--bg": "#DCFCE7" }}>
-            {item.type}
-          </span>
-        ) : (
-          <span style={{ "--c": "#ff4f20", "--bg": "#ffe8e8" }}>
-            {item.type}
-          </span>
-        ),
+      title: "END DATE",
+      dataIndex: "updated_at",
+      key: "updated_at",
     },
     {
-      title: "QUANTITY",
-      dataIndex: "quantity",
-      key: "quantity",
+      title: "PAYMENT METHOD",
+      dataIndex: "payment_method",
+      key: "payment_method",
+    },
+    {
+      title: "ORDER SERIAL",
+      dataIndex: "order_id",
+      key: "order_id",
+    },
+    {
+      title: "AMOUNT",
+      key: "amount",
+      render: (text, item) => (
+        <span
+          className={
+            parseFloat(item.amount) === 0
+              ? "not_value"
+              : parseFloat(item.amount) > 0
+              ? "active"
+              : "inactive"
+          }
+        >
+          {item.amount}
+        </span>
+      ),
     },
   ];
 
@@ -67,13 +76,8 @@ export default function ItemsReports() {
       {/* Filtration */}
       <Filtration />
 
-      <div ref={componentRef}>
-        <Table
-          className="tableItems"
-          columns={columns}
-          dataSource={itemsReports}
-          pagination={true}
-        />
+      <div className="tableItems" ref={componentRef}>
+        <Table columns={columns} dataSource={salesReports} pagination={true} />
       </div>
     </div>
   );

@@ -5,23 +5,23 @@ import { Link } from "react-router-dom/cjs/react-router-dom.min";
 import Breadcrumb from "../../../../Components/Dashboard/Features/Breadcrumb";
 import { FiEdit } from "react-icons/fi";
 import { BsEye } from "react-icons/bs";
-import EditDeliveryOrder from "../../Models/Edit/EditDeliveryOrder";
 import { getData } from "../../../../axiosConfig/API";
 import Filtration from "../../Models/Filtration/DeliveryOrders";
+import EditDeliveryOrder from "../../Models/Edit/EditDeliveryOrder";
 
 export default function DeliveryOrders() {
   const componentRef = useRef();
   const [deliveryOrders, setDeliveryOrders] = useState([]);
-  const [updated, setUpdated] = useState(false);
-  const [editOrder, setEditOrder] = useState(null);
-  const [modalVisible, setModalVisible] = useState(false);
+  const [editItem, setEditItem] = useState(null);
+  const [modalVisibleToggle, setModalVisibleToggle] = useState(false);
+  const [modalEditVisibleToggle, setModalEditVisibleToggle] = useState(false);
 
   const fetchDeliveryOrders = useCallback(async () => {
     try {
       const result = await getData("admin/orders");
       setDeliveryOrders(result);
     } catch (error) {
-      console.warn(error.response.data.error);
+      console.error(error.response.data.message);
     }
   }, []);
 
@@ -29,22 +29,24 @@ export default function DeliveryOrders() {
     fetchDeliveryOrders();
   }, [fetchDeliveryOrders]);
 
-  useEffect(() => {
-    if (updated) fetchDeliveryOrders();
-    setUpdated(false);
-  }, [updated, fetchDeliveryOrders]);
-
-  const handleModalClose = () => {
-    setModalVisible(false);
-    setEditOrder(null);
-    setUpdated(true);
-    document.body.style.overflow = "visible";
+  const handleModalToggle = () => {
+    setModalVisibleToggle(!modalVisibleToggle);
+    document.body.style.overflow = modalVisibleToggle ? "visible" : "hidden";
   };
 
-  const handleEdit = (order) => {
-    setEditOrder(order);
-    setModalVisible(true);
-    document.body.style.overflow = "hidden";
+  const handleModalEditToggle = () => {
+    setModalEditVisibleToggle(!modalEditVisibleToggle);
+    document.body.style.overflow = modalEditVisibleToggle
+      ? "visible"
+      : "hidden";
+  };
+
+  const handleEdit = async (item) => {
+    setEditItem(item);
+    setModalEditVisibleToggle(!modalEditVisibleToggle);
+    document.body.style.overflow = modalEditVisibleToggle
+      ? "visible"
+      : "hidden";
   };
 
   const columns = [
@@ -108,7 +110,14 @@ export default function DeliveryOrders() {
       <Breadcrumb />
 
       {/* Filtration */}
-      <Filtration />
+
+      {/* Edit Row */}
+      <EditDeliveryOrder
+        visible={modalEditVisibleToggle}
+        visibleToggle={handleModalEditToggle}
+        item={editItem}
+        updated={fetchDeliveryOrders}
+      />
 
       <div className="tableItems" ref={componentRef}>
         <Table
@@ -116,14 +125,6 @@ export default function DeliveryOrders() {
           dataSource={deliveryOrders}
           pagination={true}
         />
-
-        {modalVisible && (
-          <EditDeliveryOrder
-            visible={modalVisible}
-            order={editOrder}
-            modalClose={handleModalClose}
-          />
-        )}
       </div>
     </div>
   );

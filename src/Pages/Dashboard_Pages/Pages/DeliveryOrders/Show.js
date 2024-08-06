@@ -22,7 +22,7 @@ export default function Show() {
       setLoading(false);
     } catch (error) {
       setLoading(false);
-      console.warn(error.response.data.error);
+      console.error(error.response.data.message);
     }
   }, []);
 
@@ -32,26 +32,46 @@ export default function Show() {
 
   const handleStatusChange = async (e) => {
     e.preventDefault();
-    setLoading(true);
 
-    try {
-      const response = await updateData(
-        `admin/orders/${id}`,
-        { status: e.target.value },
-        "patch"
-      );
+    let newStatus = e.target.value;
 
-      if (response) {
-        setLoading(false);
-        setStatus(e.target.value);
+    Swal.fire({
+      title: "Are you sure?",
+      text: "Do you want to update the status order?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, save it!",
+      cancelButtonText: "No, cancel",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        setLoading(true);
+
+        const formData = new FormData();
+        formData.append("status", newStatus);
+        formData.append("_method", "patch");
+
+        try {
+          const response = await updateData(
+            `admin/orders/${id}`,
+            formData,
+            false
+          );
+
+          if (response) {
+            setLoading(false);
+            setStatus(newStatus);
+          }
+        } catch (error) {
+          if (error.response && error.response.status === 422) {
+            Swal.fire("Error!", "Validation error occurred.", "error");
+          } else {
+            Swal.fire("Error!", error.response.data.message, "error");
+          }
+        }
       }
-    } catch (error) {
-      if (error.response && error.response.status === 422) {
-        Swal.fire("Error!", "Validation error occurred.", "error");
-      } else {
-        Swal.fire("Error!", error.response.data.error, "error");
-      }
-    }
+    });
   };
 
   const handlePrint = () => {

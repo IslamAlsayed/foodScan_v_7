@@ -16,13 +16,8 @@ export const login = async (email, password) => {
 
     return response.data;
   } catch (error) {
-    if (error.response) {
-      console.error("Error response:", error.response.data);
-      throw new Error(error.response.data.message || "An error occurred");
-    } else {
-      console.error("Error occurred:", error.message);
-      throw new Error("An error occurred");
-    }
+    console.error(error.response.data.message);
+    throw new Error("An error occurred");
   }
 };
 

@@ -3,28 +3,21 @@ import React, { useEffect, useRef, useState, useCallback } from "react";
 import { Table } from "antd";
 import { Link } from "react-router-dom/cjs/react-router-dom.min";
 import Breadcrumb from "../../../../Components/Dashboard/Features/Breadcrumb";
-
-import { FiEdit } from "react-icons/fi";
 import { BsEye } from "react-icons/bs";
-import EditDeliveryOrder from "../../Models/Edit/EditDeliveryOrder";
 import { getData } from "../../../../axiosConfig/API";
-import Filtration from "../../Models/Filtration/Customers";
-import AddRow from "../../Models/AddRow/Customers";
+import Filtration from "../../Models/Filtration/TablesOrders";
 
 export default function TableOrders() {
   const componentRef = useRef();
   const [tableOrders, setTableOrders] = useState([]);
-
-  const [updated, setUpdated] = useState(false);
-  const [editOrder, setEditOrder] = useState(null);
-  const [modalVisible, setModalVisible] = useState(false);
+  const [modalVisibleToggle, setModalVisibleToggle] = useState(false);
 
   const fetchTableOrders = useCallback(async () => {
     try {
       const result = await getData("admin/orders");
       setTableOrders(result);
     } catch (error) {
-      console.warn(error.response.data.error);
+      console.error(error.response.data.message);
     }
   }, []);
 
@@ -32,27 +25,14 @@ export default function TableOrders() {
     fetchTableOrders();
   }, [fetchTableOrders]);
 
-  useEffect(() => {
-    if (updated) fetchTableOrders();
-    setUpdated(false);
-  }, [updated, fetchTableOrders]);
-
-  const handleModalClose = () => {
-    setModalVisible(false);
-    setEditOrder(null);
-    setUpdated(true);
-    document.body.style.overflow = "visible";
-  };
-
-  const handleEdit = (order) => {
-    setEditOrder(order);
-    setModalVisible(true);
-    document.body.style.overflow = "hidden";
+  const handleModalToggle = () => {
+    setModalVisibleToggle(!modalVisibleToggle);
+    document.body.style.overflow = modalVisibleToggle ? "visible" : "hidden";
   };
 
   const columns = [
     {
-      title: "ORDER ID",
+      title: "ID",
       dataIndex: "id",
       key: "id",
     },
@@ -96,15 +76,6 @@ export default function TableOrders() {
           >
             <BsEye />
           </Link>
-          <Link
-            to="#"
-            className="editIcon"
-            data-tooltip="edit"
-            onClick={() => handleEdit(item)}
-            style={{ "--c": "#35B263", "--bg": "#DCFCE7" }}
-          >
-            <FiEdit />
-          </Link>
         </>
       ),
     },
@@ -116,21 +87,10 @@ export default function TableOrders() {
       <Breadcrumb />
 
       {/* Filtration */}
-      <Filtration />
-
-      {/* Add Row */}
-      <AddRow />
+      <Filtration handleModalToggle={handleModalToggle} />
 
       <div className="tableItems" ref={componentRef}>
         <Table columns={columns} dataSource={tableOrders} pagination={true} />
-
-        {modalVisible && (
-          <EditDeliveryOrder
-            visible={modalVisible}
-            order={editOrder}
-            modalClose={handleModalClose}
-          />
-        )}
       </div>
     </div>
   );

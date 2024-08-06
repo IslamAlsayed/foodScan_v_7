@@ -47,8 +47,8 @@ export default function Security() {
         setTimeout(() => setMessage(""), 3000);
       }
     } catch (error) {
-      setErrorMessage(error.response.data.error);
-      console.warn(error.response.data.error);
+      setErrorMessage(error.response.data.message);
+      console.error(error.response.data.message);
     }
   };
 

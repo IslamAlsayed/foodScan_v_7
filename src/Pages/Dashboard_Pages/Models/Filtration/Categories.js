@@ -11,7 +11,7 @@ import { LuPrinter } from "react-icons/lu";
 import { FaCheckCircle } from "react-icons/fa";
 import { HiXMark } from "react-icons/hi2";
 
-export default function Categories() {
+export default function Categories({ handleModalToggle }) {
   const [toggleFilter, setToggleFilter] = useState(false);
 
   useEffect(() => {
@@ -32,10 +32,14 @@ export default function Categories() {
     listPrint.classList.toggle("show");
   };
 
-  const handleDisplayAddModel = () => {
-    var AddTable = document.getElementById("AddTable");
-    if (AddTable) AddTable.classList.toggle("visible");
-  };
+  // const handleDisplayAddModel = () => {
+  // handleModalToggle();
+  //   var AddTable = document.getElementById("AddTable");
+  //   if (AddTable) {
+  //     AddTable.classList.toggle("visible");
+  //     document.body.style.overflow = "hidden";
+  //   }
+  // };
 
   const pathname = window.location.pathname.replace("/admin/dashboard/", "");
 
@@ -78,7 +82,8 @@ export default function Categories() {
           <Button
             type="primary"
             icon={<PlusOutlined />}
-            onClick={handleDisplayAddModel}
+            // onClick={handleDisplayAddModel}
+            onClick={handleModalToggle}
           >
             Add {pathname}
           </Button>
