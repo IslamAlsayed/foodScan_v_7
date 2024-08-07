@@ -124,12 +124,12 @@ export default function DeliveryOrders() {
       <Filtration handleModalToggle={handleModalToggle} />
 
       {/* Edit Row */}
-      <EditDeliveryOrder
+      {/* <EditDeliveryOrder
         visible={modalEditVisibleToggle}
         visibleToggle={handleModalEditToggle}
         item={editItem}
         updated={fetchDeliveryOrders}
-      />
+      /> */}
 
       <div className="tableItems" ref={componentRef}>
         <Table
