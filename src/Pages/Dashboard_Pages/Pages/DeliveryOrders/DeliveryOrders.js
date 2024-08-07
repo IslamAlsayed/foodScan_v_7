@@ -8,6 +8,7 @@ import { BsEye } from "react-icons/bs";
 import { getData } from "../../../../axiosConfig/API";
 import Filtration from "../../Models/Filtration/DeliveryOrders";
 import EditDeliveryOrder from "../../Models/Edit/EditDeliveryOrder";
+import UpdateMultiStatus from "../Actions/UpdateMultiStatus";
 
 export default function DeliveryOrders() {
   const componentRef = useRef();
@@ -74,7 +75,17 @@ export default function DeliveryOrders() {
       title: "STATUS",
       key: "status",
       render: (text, item) => (
-        <span className={item.status}>{item.status}</span>
+        <UpdateMultiStatus
+          url={`admin/orders/${item.id}`}
+          item={item}
+          updated={fetchDeliveryOrders}
+          list={[
+            { value: "Not Started", label: "Not Started" },
+            { value: "In Progress", label: "In Progress" },
+            { value: "Cancelled", label: "Cancelled" },
+            { value: "Accepted", label: "Accepted" },
+          ]}
+        />
       ),
     },
     {
@@ -110,6 +121,7 @@ export default function DeliveryOrders() {
       <Breadcrumb />
 
       {/* Filtration */}
+      <Filtration handleModalToggle={handleModalToggle} />
 
       {/* Edit Row */}
       <EditDeliveryOrder

@@ -9,11 +9,13 @@ import { getData } from "../../../../axiosConfig/API";
 import Filtration from "../../Models/Filtration/Meals";
 import AddRow from "../../Models/AddRow/Meals";
 import EditMeal from "../../Models/Edit/EditMeal";
+import UpdateMultiStatus from "../Actions/UpdateMultiStatus";
 
 export default function Meals() {
   const componentRef = useRef();
   const [meals, setMeals] = useState([]);
   const [editItem, setEditItem] = useState(null);
+  const [activeItem, setActiveItem] = useState(null);
   const [modalVisibleToggle, setModalVisibleToggle] = useState(false);
   const [modalEditVisibleToggle, setModalEditVisibleToggle] = useState(false);
 
@@ -50,7 +52,16 @@ export default function Meals() {
       : "hidden";
   };
 
+  const handleStatus = (item) => {
+    setActiveItem(activeItem === item.id ? null : item.id);
+  };
+
   const columns = [
+    {
+      title: "ID",
+      dataIndex: "id",
+      key: "id",
+    },
     {
       title: "NAME",
       dataIndex: "name",
@@ -82,9 +93,16 @@ export default function Meals() {
       title: "STATUS",
       key: "status",
       render: (text, item) => (
-        <span className={item.status === 1 ? "active" : "inactive"}>
-          {item.status === 1 ? "active" : "inactive"}
-        </span>
+        <UpdateMultiStatus
+          url={`admin/meals/${item.id}`}
+          item={item}
+          updated={fetchMeals}
+          list={[
+            { value: 1, label: "active" },
+            { value: 0, label: "inactive" },
+          ]}
+          w
+        />
       ),
     },
     {

@@ -17,7 +17,6 @@ export default function Meals({ visible, visibleToggle, updated }) {
     category_id: "",
     image: null,
     description: "",
-    price: "",
     size: "",
     cost: "",
     number_of_pieces: 1,
@@ -65,7 +64,6 @@ export default function Meals({ visible, visibleToggle, updated }) {
     formData.append("category_id", meal.category_id);
     if (meal.image) formData.append("image", meal.image);
     formData.append("description", meal.description);
-    formData.append("price", meal.price);
     formData.append("size", meal.size);
     formData.append("cost", meal.cost);
     formData.append("number_of_pieces", meal.number_of_pieces);
@@ -82,7 +80,6 @@ export default function Meals({ visible, visibleToggle, updated }) {
           category_id: "",
           image: null,
           description: "",
-          price: "",
           size: "",
           cost: "",
           number_of_pieces: 1,
@@ -161,23 +158,6 @@ export default function Meals({ visible, visibleToggle, updated }) {
                       <option value={category.id}>{category.name}</option>
                     ))}
                   </select>
-                </div>
-              </div>
-
-              <div className="col-12 col-sm-6">
-                <div className="mb-3">
-                  <label htmlFor="price" className="form-label">
-                    price <span className="star">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    name="price"
-                    id="price"
-                    value={meal.price}
-                    onChange={handleChange}
-                    required
-                  />
                 </div>
               </div>
 

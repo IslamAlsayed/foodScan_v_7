@@ -149,7 +149,7 @@ export default function Extras({ visible, visibleToggle, updated }) {
               <div className="col-12">
                 <div className="mb-3">
                   <label htmlFor="cost" className="form-label">
-                    cost <span className="star">*</span>
+                    price <span className="star">*</span>
                   </label>
                   <input
                     type="number"

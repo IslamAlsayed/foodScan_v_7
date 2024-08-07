@@ -156,3 +156,54 @@ table thead tr th {
 .ShowItem p {
     padding-block: 10px;
 }
+
+.dropStatus {
+    width: fit-content;
+    position: relative;
+
+    &>span {
+        border-radius: 3px;
+        cursor: pointer;
+        margin: auto !important;
+    }
+
+    & .listStatus {
+        position: absolute;
+        top: calc(100% + 5px);
+        left: 50%;
+        padding: 7px;
+        z-index: 505;
+        transition: 0.2s;
+        color: #1772FF;
+        text-wrap: nowrap;
+        background-color: #fff;
+        transform: translateX(-50%);
+        border: 1px solid #eaeaea;
+        border-radius: 3px !important;
+        opacity: 0;
+        visibility: hidden;
+
+        &.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        & span {
+            cursor: pointer;
+            transition: 0.2s;
+            width: 100% !important;
+            display: block !important;
+            text-align: center !important;
+
+            &.disable {
+                opacity: .5;
+                cursor: default;
+                pointer-events: none;
+            }
+
+            &:not(:last-child) {
+                margin-bottom: 5px;
+            }
+        }
+    }
+}

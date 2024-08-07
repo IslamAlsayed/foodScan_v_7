@@ -1,5 +1,5 @@
 import "./Dashboard.css";
-import React, { useEffect, useRef, useState, useCallback } from "react";
+import React, { useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
 import { Link } from "react-router-dom/cjs/react-router-dom.min";
 import { BsFront } from "react-icons/bs";
@@ -9,8 +9,6 @@ import { RiMoneyDollarCircleFill, RiAlignItemLeftFill } from "react-icons/ri";
 import LineChartComponent from "./Charts/LineChartComponent";
 import AreaChartComponent from "./Charts/AreaChartComponent";
 import ImageTest from "../../../assets/global/profile.png";
-
-import axios from "axios";
 
 export default function Dashboard() {
   const [startDate, setStartDate] = useState(new Date());

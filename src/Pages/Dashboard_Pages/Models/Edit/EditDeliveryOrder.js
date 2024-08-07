@@ -62,9 +62,7 @@ export default function EditDeliveryOrder({
             <div className="row">
               <div className="col-12">
                 <div className="mb-3">
-                  <label className="form-label">
-                    STATUS <span className="star">*</span>
-                  </label>
+                  <label className="form-label">STATUS</label>
                   <select
                     className="form-control"
                     name="status"

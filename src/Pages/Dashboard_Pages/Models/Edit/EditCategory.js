@@ -12,6 +12,7 @@ export default function EditCategories({ visible, item, updated }) {
     name: "",
     description: "",
     image: null,
+    status: 1,
   });
 
   useEffect(() => {
@@ -31,9 +32,15 @@ export default function EditCategories({ visible, item, updated }) {
   };
 
   const handleChange = (e) => {
-    const { name, value, files } = e.target;
+    const { name, value, id, type, files } = e.target;
     setCategory((prevData) => {
-      if (name === "image") {
+      if (name === "status") {
+        return {
+          ...prevData,
+          status: id === "active" ? 1 : 0,
+        };
+      }
+      if (name === "image" && type === "file") {
         return {
           ...prevData,
           image: files[0],
@@ -53,6 +60,7 @@ export default function EditCategories({ visible, item, updated }) {
     formData.append("name", category.name);
     formData.append("description", category.description);
     if (category.image) formData.append("image", category.image);
+    formData.append("status", category.status);
     formData.append("_method", "put");
 
     try {
@@ -94,7 +102,7 @@ export default function EditCategories({ visible, item, updated }) {
               <div className="col-12">
                 <div className="mb-3">
                   <label htmlFor="name" className="form-label">
-                    Name <span className="star">*</span>
+                    Name
                   </label>
                   <input
                     type="text"
@@ -104,6 +112,38 @@ export default function EditCategories({ visible, item, updated }) {
                     value={category.name}
                     onChange={handleChange}
                   />
+                </div>
+              </div>
+
+              <div className="col-12 col-sm-6">
+                <div className="mb-3">
+                  <label htmlFor="active" className="form-label">
+                    status
+                  </label>
+                  <div className="row">
+                    <div className="col d-flex gap-2 align-items-center">
+                      <input
+                        type="radio"
+                        name="status"
+                        id="active"
+                        value={1}
+                        onChange={handleChange}
+                        checked={category.status === 1}
+                      />
+                      <label htmlFor="active">active</label>
+                    </div>
+                    <div className="col d-flex gap-2 align-items-center">
+                      <input
+                        type="radio"
+                        name="status"
+                        id="inactive"
+                        value={0}
+                        onChange={handleChange}
+                        checked={category.status === 0}
+                      />
+                      <label htmlFor="inactive">inactive</label>
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -126,7 +166,7 @@ export default function EditCategories({ visible, item, updated }) {
               <div className="col-12">
                 <div className="mb-3">
                   <label htmlFor="description" className="form-label">
-                    Description <span className="star">*</span>
+                    Description
                   </label>
                   <textarea
                     className="form-control"

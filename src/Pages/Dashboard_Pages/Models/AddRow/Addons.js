@@ -135,8 +135,8 @@ export default function Addons({ visible, visibleToggle, updated }) {
                     value={addon.category_id}
                     required
                   >
-                    <option value={-1} disabled>
-                      choose
+                    <option value="" selected disabled>
+                      --
                     </option>
                     {categories.map((category) => (
                       <option key={category.id} value={category.id}>

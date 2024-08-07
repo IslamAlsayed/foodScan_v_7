@@ -9,6 +9,7 @@ import { getData } from "../../../../axiosConfig/API";
 import Filtration from "../../Models/Filtration/Administrators";
 import AddRow from "../../Models/AddRow/Administrators";
 import EditAdministrator from "../../Models/Edit/EditAdministrator";
+import UpdateMultiStatus from "../Actions/UpdateMultiStatus";
 
 export default function Administrators() {
   const componentRef = useRef();
@@ -75,9 +76,15 @@ export default function Administrators() {
       title: "STATUS",
       key: "status",
       render: (text, item) => (
-        <span className={item.status === 1 ? "active" : "inactive"}>
-          {item.status === 1 ? "active" : "inactive"}
-        </span>
+        <UpdateMultiStatus
+          url={`admin/employees/${item.id}`}
+          item={item}
+          updated={fetchAdministrators}
+          list={[
+            { value: 1, label: "active" },
+            { value: 0, label: "inactive" },
+          ]}
+        />
       ),
     },
     {

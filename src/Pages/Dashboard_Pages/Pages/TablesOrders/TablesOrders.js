@@ -6,6 +6,7 @@ import Breadcrumb from "../../../../Components/Dashboard/Features/Breadcrumb";
 import { BsEye } from "react-icons/bs";
 import { getData } from "../../../../axiosConfig/API";
 import Filtration from "../../Models/Filtration/TablesOrders";
+import UpdateMultiStatus from "../Actions/UpdateMultiStatus";
 
 export default function TableOrders() {
   const componentRef = useRef();
@@ -60,7 +61,17 @@ export default function TableOrders() {
       title: "STATUS",
       key: "status",
       render: (text, item) => (
-        <span className={item.status}>{item.status}</span>
+        <UpdateMultiStatus
+          url={`admin/orders/${item.id}`}
+          item={item}
+          updated={fetchTableOrders}
+          list={[
+            { value: "Not Started", label: "Not Started" },
+            { value: "In Progress", label: "In Progress" },
+            { value: "Cancelled", label: "Cancelled" },
+            { value: "Accepted", label: "Accepted" },
+          ]}
+        />
       ),
     },
     {

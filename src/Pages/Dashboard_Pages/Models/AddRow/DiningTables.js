@@ -59,9 +59,10 @@ function DiningTables({ visible, visibleToggle, updated }) {
     <div id="AddTable" className={`${staticVisible ? "visible" : ""}`}>
       <div className="modal-container">
         <div className="breadcrumb">
-          <span>
-            {window.location.pathname.replace("/admin/dashboard/", "")}
-          </span>
+          <h3>
+            add {window.location.pathname.replace("/admin/dashboard/", "")}
+          </h3>
+
           <div className="closeSidebar">
             <HiXMark onClick={visibleToggle} />
           </div>

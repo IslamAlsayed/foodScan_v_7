@@ -5,10 +5,11 @@ import { Link } from "react-router-dom/cjs/react-router-dom.min";
 import Breadcrumb from "../../../../Components/Dashboard/Features/Breadcrumb";
 import { FiEdit } from "react-icons/fi";
 import { BsEye } from "react-icons/bs";
-import EditCategory from "../../Models/Edit/EditCategory";
 import { getData } from "../../../../axiosConfig/API";
 import Filtration from "../../Models/Filtration/Categories";
 import AddRow from "../../Models/AddRow/Categories";
+import EditCategory from "../../Models/Edit/EditCategory";
+import UpdateMultiStatus from "../Actions/UpdateMultiStatus";
 
 export default function Categories() {
   const componentRef = useRef();
@@ -52,6 +53,11 @@ export default function Categories() {
 
   const columns = [
     {
+      title: "ID",
+      dataIndex: "id",
+      key: "id",
+    },
+    {
       title: "NAME",
       dataIndex: "name",
       key: "name",
@@ -60,9 +66,15 @@ export default function Categories() {
       title: "STATUS",
       key: "status",
       render: (text, item) => (
-        <span className={item.status === 1 ? "active" : "inactive"}>
-          {item.status === 1 ? "active" : "inactive"}
-        </span>
+        <UpdateMultiStatus
+          url={`admin/categories/${item.id}`}
+          item={item}
+          updated={fetchCategories}
+          list={[
+            { value: 1, label: "active" },
+            { value: 0, label: "inactive" },
+          ]}
+        />
       ),
     },
     {

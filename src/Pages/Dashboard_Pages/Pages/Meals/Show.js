@@ -10,7 +10,7 @@ import {
 } from "react-icons/fa";
 import { useParams } from "react-router-dom";
 import Information from "./Information";
-import UploadImage from "../UploadImage";
+import UploadImage from "../Actions/UploadImage";
 import Variations from "./Variations";
 import SubExtra from "../SubExtras";
 import SubAddon from "../SubAddons";
@@ -105,7 +105,7 @@ export default function ShowItem() {
           }
           key="3"
         >
-          <Variations />
+          <Variations order_id={id} />
         </Tabs.TabPane>
         <Tabs.TabPane
           tab={

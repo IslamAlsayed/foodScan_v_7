@@ -11,7 +11,7 @@ function Categories({ visible, updated }) {
   const [category, setCategory] = useState({
     name: "",
     description: "",
-    image_file: null,
+    image: null,
     status: 1,
   });
 
@@ -26,18 +26,24 @@ function Categories({ visible, updated }) {
 
   const handleChange = (e) => {
     const { name, value, id, type, files } = e.target;
-
-    if (name === "status") {
-      setCategory((prevData) => ({
+    setCategory((prevData) => {
+      if (name === "status") {
+        return {
+          ...prevData,
+          status: id === "active" ? 1 : 0,
+        };
+      }
+      if (name === "image" && type === "file") {
+        return {
+          ...prevData,
+          image: files[0],
+        };
+      }
+      return {
         ...prevData,
-        status: id === "active" ? 1 : 0,
-      }));
-    }
-
-    setCategory((prevDate) => ({
-      ...prevDate,
-      [name]: type === "file" ? files[0] : value,
-    }));
+        [name]: value,
+      };
+    });
   };
 
   const handleSubmit = async (e) => {
@@ -46,7 +52,7 @@ function Categories({ visible, updated }) {
     const formData = new FormData();
     formData.append("name", category.name);
     formData.append("description", category.description);
-    if (category.image_file) formData.append("image_file", category.image_file);
+    if (category.image) formData.append("image", category.image);
     formData.append("status", category.status);
 
     try {
@@ -57,12 +63,10 @@ function Categories({ visible, updated }) {
         setCategory({
           name: "",
           description: "",
-          image_file: null,
+          image: null,
           status: 1,
         });
-
         if (imageRef.current) imageRef.current.value = null;
-
         Swal.fire("Saved!", response.message, "success");
       }
     } catch (error) {
@@ -77,7 +81,9 @@ function Categories({ visible, updated }) {
     >
       <div className="modal-container">
         <div className="breadcrumb">
-          <h3>{window.location.pathname.replace("/admin/dashboard/", "")}</h3>
+          <h3>
+            add {window.location.pathname.replace("/admin/dashboard/", "")}
+          </h3>
 
           <div className="closeSidebar">
             <HiXMark onClick={closeModal} />
@@ -104,6 +110,40 @@ function Categories({ visible, updated }) {
                 </div>
               </div>
 
+              <div className="col-12 col-sm-6">
+                <div className="mb-3">
+                  <label htmlFor="active" className="form-label">
+                    status <span className="star">*</span>
+                  </label>
+                  <div className="row">
+                    <div className="col d-flex gap-2 align-items-center">
+                      <input
+                        type="radio"
+                        name="status"
+                        id="active"
+                        value={1}
+                        onChange={handleChange}
+                        checked={category.status === 1}
+                        required
+                      />
+                      <label htmlFor="active">active</label>
+                    </div>
+                    <div className="col d-flex gap-2 align-items-center">
+                      <input
+                        type="radio"
+                        name="status"
+                        id="inactive"
+                        value={0}
+                        onChange={handleChange}
+                        checked={category.status === 0}
+                        required
+                      />
+                      <label htmlFor="inactive">inactive</label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               <div className="col-12">
                 <div className="mb-3">
                   <label htmlFor="image" className="form-label">
@@ -116,6 +156,7 @@ function Categories({ visible, updated }) {
                     id="image"
                     ref={imageRef}
                     onChange={handleChange}
+                    required
                   />
                 </div>
               </div>

@@ -90,7 +90,7 @@ export default function EditOffer({ visible, visibleToggle, item, updated }) {
               <div className="col-6">
                 <div className="mb-3">
                   <label htmlFor="name" className="form-label">
-                    name <span className="star">*</span>
+                    name
                   </label>
                   <input
                     type="text"
@@ -107,7 +107,7 @@ export default function EditOffer({ visible, visibleToggle, item, updated }) {
               <div className="col-6">
                 <div className="mb-3">
                   <label htmlFor="discount" className="form-label">
-                    discount <span className="star">*</span>
+                    discount
                   </label>
                   <input
                     type="text"
@@ -124,7 +124,7 @@ export default function EditOffer({ visible, visibleToggle, item, updated }) {
               <div className="col-6">
                 <div className="mb-3">
                   <label htmlFor="startDate" className="form-label">
-                    start date <span className="star">*</span>
+                    start date
                   </label>
                   <input
                     type="date"
@@ -141,7 +141,7 @@ export default function EditOffer({ visible, visibleToggle, item, updated }) {
               <div className="col-6">
                 <div className="mb-3">
                   <label htmlFor="endDate" className="form-label">
-                    end date <span className="star">*</span>
+                    end date
                   </label>
                   <input
                     type="date"
@@ -192,7 +192,7 @@ export default function EditOffer({ visible, visibleToggle, item, updated }) {
               <div className="col-12">
                 <div className="mb-3">
                   <label htmlFor="image" className="form-label">
-                    image <span className="star">*</span>
+                    image
                   </label>
                   <input
                     type="file"

@@ -81,7 +81,7 @@ export default function EditDiningTable({
               <div className="col-6">
                 <div className="mb-3">
                   <label htmlFor="number" className="form-label">
-                    number <span className="star">*</span>
+                    number
                   </label>
                   <input
                     type="number"
@@ -98,7 +98,7 @@ export default function EditDiningTable({
               <div className="col-6">
                 <div className="mb-3">
                   <label htmlFor="size" className="form-label">
-                    size <span className="star">*</span>
+                    size
                   </label>
                   <input
                     type="number"
@@ -115,7 +115,7 @@ export default function EditDiningTable({
               <div className="col-6">
                 <div className="mb-3">
                   <label htmlFor="floor" className="form-label">
-                    floor <span className="star">*</span>
+                    floor
                   </label>
                   <input
                     type="text"
@@ -132,7 +132,7 @@ export default function EditDiningTable({
               <div className="col-6">
                 <div className="mb-3">
                   <label htmlFor="status" className="form-label">
-                    status <span className="star">*</span>
+                    status
                   </label>
                   <div className="row">
                     <div className="col d-flex gap-2 align-items-center">

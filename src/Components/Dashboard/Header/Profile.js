@@ -47,6 +47,7 @@ export default function Profile() {
   const authLogout = () => {
     setTimeout(() => {
       logout();
+      document.body.style.overflow = "visible";
       history.push("/auth/login");
     }, 500);
   };

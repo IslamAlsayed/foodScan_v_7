@@ -9,6 +9,7 @@ import EditEmployee from "../../Models/Edit/EditEmployee";
 import { getData } from "../../../../axiosConfig/API";
 import Filtration from "../../Models/Filtration/Employees";
 import AddRow from "../../Models/AddRow/Employees";
+import UpdateMultiStatus from "../Actions/UpdateMultiStatus";
 
 export default function Employees() {
   const componentRef = useRef();
@@ -75,9 +76,15 @@ export default function Employees() {
       title: "STATUS",
       key: "status",
       render: (text, item) => (
-        <span className={item.status === 1 ? "active" : "inactive"}>
-          {item.status === 1 ? "active" : "inactive"}
-        </span>
+        <UpdateMultiStatus
+          url={`admin/employees/${item.id}`}
+          item={item}
+          updated={fetchEmployees}
+          list={[
+            { value: 1, label: "active" },
+            { value: 0, label: "inactive" },
+          ]}
+        />
       ),
     },
     {

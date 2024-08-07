@@ -94,7 +94,7 @@ export default function EditEmployee({
               <div className="col-6">
                 <div className="mb-3">
                   <label htmlFor="name" className="form-label">
-                    name <span className="star">*</span>
+                    name
                   </label>
                   <input
                     type="text"
@@ -110,7 +110,7 @@ export default function EditEmployee({
               <div className="col-6">
                 <div className="mb-3">
                   <label htmlFor="email" className="form-label">
-                    email <span className="star">*</span>
+                    email
                   </label>
                   <input
                     type="email"
@@ -126,7 +126,7 @@ export default function EditEmployee({
               <div className="col-6">
                 <div className="mb-3">
                   <label htmlFor="role" className="form-label">
-                    role <span className="star">*</span>
+                    role
                   </label>
                   <select
                     name="role"
@@ -151,7 +151,7 @@ export default function EditEmployee({
               <div className="col-6">
                 <div className="mb-3">
                   <label htmlFor="phone" className="form-label">
-                    phone <span className="star">*</span>
+                    phone
                   </label>
                   <input
                     type="text"
@@ -167,7 +167,7 @@ export default function EditEmployee({
               <div className="col-6">
                 <div className="mb-3">
                   <label htmlFor="password" className="form-label">
-                    password <span className="star">*</span>
+                    password
                   </label>
                   <input
                     type="text"
@@ -183,7 +183,7 @@ export default function EditEmployee({
               <div className="col-6">
                 <div className="mb-3">
                   <label htmlFor="password_confirmation" className="form-label">
-                    password confirmation <span className="star">*</span>
+                    password confirmation
                   </label>
                   <input
                     type="text"
@@ -199,7 +199,7 @@ export default function EditEmployee({
               <div className="col-6">
                 <div className="mb-3">
                   <label htmlFor="active" className="form-label">
-                    status <span className="star">*</span>
+                    status
                   </label>
                   <div className="row">
                     <div className="col d-flex gap-2 align-items-center">

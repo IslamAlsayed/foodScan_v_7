@@ -9,6 +9,7 @@ import EditAddon from "../../Models/Edit/EditAddon";
 import { getData } from "../../../../axiosConfig/API";
 import Filtration from "../../Models/Filtration/Addons";
 import AddRow from "../../Models/AddRow/Addons";
+import UpdateMultiStatus from "../Actions/UpdateMultiStatus";
 
 export default function Addon() {
   const componentRef = useRef();
@@ -63,22 +64,13 @@ export default function Addon() {
     },
     {
       title: "CATEGORY",
-      dataIndex: "category_id",
-      key: "category_id",
+      dataIndex: "category_name",
+      key: "category_name",
     },
     {
       title: "PRICE",
       dataIndex: "cost",
       key: "cost",
-    },
-    {
-      title: "STATUS",
-      key: "status",
-      render: (text, item) => (
-        <span className={item.status === 1 ? "active" : "inactive"}>
-          {item.status === 1 ? "active" : "inactive"}
-        </span>
-      ),
     },
     {
       title: "Image",
@@ -88,7 +80,21 @@ export default function Addon() {
         <img
           src={`http://localhost:8000/storage/${record.image}`}
           alt={record.name}
-          style={{ width: "70px" }}
+        />
+      ),
+    },
+    {
+      title: "STATUS",
+      key: "status",
+      render: (text, item) => (
+        <UpdateMultiStatus
+          url={`admin/addons/${item.id}`}
+          item={item}
+          updated={fetchAddons}
+          list={[
+            { value: 1, label: "active" },
+            { value: 0, label: "inactive" },
+          ]}
         />
       ),
     },

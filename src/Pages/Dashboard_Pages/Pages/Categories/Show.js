@@ -4,7 +4,7 @@ import { Tabs } from "antd";
 import { FaInfoCircle, FaImage } from "react-icons/fa";
 import { useParams } from "react-router-dom";
 import Information from "./Information";
-import UploadImage from "../UploadImage";
+import UploadImage from "../Actions/UploadImage";
 import { getData } from "../../../../axiosConfig/API";
 
 export default function ShowItem() {

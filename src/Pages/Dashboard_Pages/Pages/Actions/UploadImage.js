@@ -1,11 +1,11 @@
-import "./SubModels.css";
+import "../SubModels.css";
 import { useRef, useState } from "react";
 import { useParams } from "react-router-dom/cjs/react-router-dom.min";
 import { FaCheckCircle } from "react-icons/fa";
 import { IoMdRefresh } from "react-icons/io";
-import ImageTest from "../../../assets/global/profile.png";
+import ImageTest from "../../../../assets/global/profile.png";
 import Swal from "sweetalert2";
-import { updateData } from "../../../axiosConfig/API";
+import { updateData } from "../../../../axiosConfig/API";
 
 export default function Image({ data }) {
   const { id } = useParams();
@@ -18,19 +18,6 @@ export default function Image({ data }) {
       ? `http://localhost:8000/storage/${data.image}`
       : ImageTest,
   });
-
-  // const handleImageChange = (e) => {
-  //   const file = e.target.files[0];
-  //   if (file) {
-  //     const imageUrl = URL.createObjectURL(file);
-  //     setCategoryImage({
-  //       ...categoryImage,
-  //       image: file,
-  //       imagePreview: imageUrl,
-  //     });
-  //     setActionsVisible(true);
-  //   }
-  // };
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -51,15 +38,10 @@ export default function Image({ data }) {
     const formData = new FormData();
     formData.append("id", categoryImage.id);
     if (categoryImage.image) formData.append("image", categoryImage.image);
-
-    for (let pair of formData.entries()) {
-      console.log(`${pair[0]}:`, pair[1]);
-    }
+    formData.append("_method", "put");
 
     try {
-      const response = await updateData(`categories/${id}`, formData, "put");
-
-      console.log("response", response);
+      const response = await updateData(`admin/meals/${id}`, formData, true);
 
       if (response.status === "success") {
         setActionsVisible(false);

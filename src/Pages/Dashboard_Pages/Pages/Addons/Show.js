@@ -5,7 +5,7 @@ import { Tabs } from "antd";
 import { TabPane } from "react-bootstrap";
 import { FaInfoCircle } from "react-icons/fa";
 import Information from "./Information";
-import UpdateImage from "../UploadImage";
+import UpdateImage from "../Actions/UploadImage";
 import { FaImage } from "react-icons/fa6";
 import { getData } from "../../../../axiosConfig/API";
 

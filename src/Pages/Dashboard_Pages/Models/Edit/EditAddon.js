@@ -156,7 +156,7 @@ export default function EditAddon({ visible, visibleToggle, item, updated }) {
               <div className="col-12">
                 <div className="mb-3">
                   <label htmlFor="cost" className="form-label">
-                    Cost
+                    price
                   </label>
                   <input
                     type="text"

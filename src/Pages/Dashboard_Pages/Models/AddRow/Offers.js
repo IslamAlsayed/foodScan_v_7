@@ -54,6 +54,14 @@ export default function Offers({ visible, visibleToggle, updated }) {
 
       if (response.status === "success") {
         updated();
+        setOffer({
+          name: "",
+          discount: "",
+          startDate: "",
+          endDate: "",
+          status: "active",
+          image: null,
+        });
         if (imageRef.current) imageRef.current.value = null;
         Swal.fire("Saved!", response.data.message, "success");
       }

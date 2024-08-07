@@ -13,6 +13,11 @@ export default function Roles() {
 
   const columns = [
     {
+      title: "ID",
+      dataIndex: "id",
+      key: "id",
+    },
+    {
       title: "NAME",
       dataIndex: "name",
       key: "name",

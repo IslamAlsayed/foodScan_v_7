@@ -126,7 +126,7 @@ export default function EditMeal({ visible, visibleToggle, item, updated }) {
               <div className="col-12 col-sm-6">
                 <div className="mb-3">
                   <label htmlFor="name" className="form-label">
-                    name <span className="star">*</span>
+                    name
                   </label>
                   <input
                     type="text"
@@ -142,7 +142,7 @@ export default function EditMeal({ visible, visibleToggle, item, updated }) {
               <div className="col-12 col-sm-6">
                 <div className="mb-3">
                   <label htmlFor="category" className="form-label">
-                    category <span className="star">*</span>
+                    category
                   </label>
                   <select
                     className="form-control"
@@ -161,7 +161,7 @@ export default function EditMeal({ visible, visibleToggle, item, updated }) {
               <div className="col-12 col-sm-6">
                 <div className="mb-3">
                   <label htmlFor="price" className="form-label">
-                    price <span className="star">*</span>
+                    price
                   </label>
                   <input
                     type="text"
@@ -178,7 +178,7 @@ export default function EditMeal({ visible, visibleToggle, item, updated }) {
               <div className="col-12 col-sm-6">
                 <div className="mb-3">
                   <label htmlFor="number_of_pieces" className="form-label">
-                    number of pieces <span className="star">*</span>
+                    number of pieces
                   </label>
                   <input
                     type="number_of_pieces"
@@ -194,7 +194,7 @@ export default function EditMeal({ visible, visibleToggle, item, updated }) {
               <div className="col-12 col-sm-6">
                 <div className="mb-3">
                   <label htmlFor="size" className="form-label">
-                    size <span className="star">*</span>
+                    size
                   </label>
                   <select
                     className="form-control"
@@ -215,7 +215,7 @@ export default function EditMeal({ visible, visibleToggle, item, updated }) {
               <div className="col-12 col-sm-6">
                 <div className="mb-3">
                   <label htmlFor="cost" className="form-label">
-                    cost <span className="star">*</span>
+                    cost
                   </label>
                   <input
                     type="cost"
@@ -231,7 +231,7 @@ export default function EditMeal({ visible, visibleToggle, item, updated }) {
               <div className="col-12">
                 <div className="mb-3">
                   <label htmlFor="image" className="form-label">
-                    image <span className="star">*</span>
+                    image
                   </label>
                   <input
                     type="file"
@@ -247,7 +247,7 @@ export default function EditMeal({ visible, visibleToggle, item, updated }) {
               <div className="col-12 col-sm-6">
                 <div className="mb-3">
                   <label htmlFor="vegetarian" className="form-label">
-                    type <span className="star">*</span>
+                    type
                   </label>
                   <div className="row">
                     <div className="col d-flex gap-2 align-items-center">
@@ -279,7 +279,7 @@ export default function EditMeal({ visible, visibleToggle, item, updated }) {
               <div className="col-12 col-sm-6">
                 <div className="mb-3">
                   <label htmlFor="active" className="form-label">
-                    status <span className="star">*</span>
+                    status
                   </label>
                   <div className="row">
                     <div className="col d-flex gap-2 align-items-center">

@@ -9,6 +9,7 @@ import EditExtra from "../../Models/Edit/EditExtras";
 import { getData } from "../../../../axiosConfig/API";
 import Filtration from "../../Models/Filtration/Extras";
 import AddRow from "../../Models/AddRow/Extras";
+import UpdateMultiStatus from "../Actions/UpdateMultiStatus";
 
 export default function Extra() {
   const componentRef = useRef();
@@ -62,11 +63,6 @@ export default function Extra() {
       key: "name",
     },
     {
-      title: "COST",
-      dataIndex: "cost",
-      key: "cost",
-    },
-    {
       title: "CATEGORY",
       dataIndex: "category_name",
       key: "category_name",
@@ -84,7 +80,6 @@ export default function Extra() {
         <img
           src={`http://localhost:8000/storage/${record.image}`}
           alt={record.name}
-          style={{ width: "70px" }}
         />
       ),
     },
@@ -92,9 +87,15 @@ export default function Extra() {
       title: "STATUS",
       key: "status",
       render: (text, item) => (
-        <span className={item.status === 1 ? "active" : "inactive"}>
-          {item.status === 1 ? "active" : "inactive"}
-        </span>
+        <UpdateMultiStatus
+          url={`admin/extras/${item.id}`}
+          item={item}
+          updated={fetchExtras}
+          list={[
+            { value: 1, label: "active" },
+            { value: 0, label: "inactive" },
+          ]}
+        />
       ),
     },
     {

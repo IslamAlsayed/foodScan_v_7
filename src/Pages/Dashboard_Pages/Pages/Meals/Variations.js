@@ -1,14 +1,16 @@
 import "../SubModels.css";
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom/cjs/react-router-dom.min";
-import { Row, Col } from "antd";
+import { Table, Row, Col } from "antd";
 import { FaCheckCircle } from "react-icons/fa";
 import { HiXMark } from "react-icons/hi2";
 import Swal from "sweetalert2";
-import { addData } from "../../../../axiosConfig/API";
+import { addData, getData } from "../../../../axiosConfig/API";
 
-export default function Variations() {
-  const id = useParams();
+export default function Variations({ order_id }) {
+  const { id } = useParams();
+  const componentRef = useRef();
+  const [variations, setVariations] = useState();
   const [meal, setMeal] = useState({
     size: "",
     number_of_piece: "",
@@ -47,6 +49,43 @@ export default function Variations() {
       Swal.fire("Error!", error.response.data.message, "error");
     }
   };
+
+  const fetchVariations = useCallback(async (id) => {
+    if (!id) return;
+    try {
+      const result = await getData(`admin/meals/${id}/size-costs`);
+      setVariations(result);
+    } catch (error) {
+      console.error(error.response.data.message);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (order_id) fetchVariations(order_id);
+  }, [order_id, fetchVariations]);
+
+  const columns = [
+    {
+      title: "ID",
+      dataIndex: "id",
+      key: "id",
+    },
+    {
+      title: "PRICE",
+      dataIndex: "cost",
+      key: "price",
+    },
+    {
+      title: "SIZE",
+      dataIndex: "size",
+      key: "size",
+    },
+    {
+      title: "NUMBERS",
+      dataIndex: "number_of_pieces",
+      key: "number_of_pieces",
+    },
+  ];
 
   return (
     <div className="SubModel">
@@ -162,6 +201,12 @@ export default function Variations() {
               </button>
             </div>
           </form>
+        </div>
+      </div>
+
+      <div className="DataTable mt-3">
+        <div className="tableItems" ref={componentRef}>
+          <Table columns={columns} dataSource={variations} pagination={true} />
         </div>
       </div>
     </div>

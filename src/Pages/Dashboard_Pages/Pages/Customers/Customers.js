@@ -9,6 +9,7 @@ import { getData } from "../../../../axiosConfig/API";
 import Filtration from "../../Models/Filtration/Customers";
 import AddRow from "../../Models/AddRow/Customers";
 import EditCustomer from "../../Models/Edit/EditCustomer";
+import UpdateMultiStatus from "../Actions/UpdateMultiStatus";
 
 export default function Customers() {
   const componentRef = useRef();
@@ -75,9 +76,15 @@ export default function Customers() {
       title: "STATUS",
       key: "status",
       render: (text, item) => (
-        <span className={item.status === 1 ? "active" : "inactive"}>
-          {item.status === 1 ? "active" : "inactive"}
-        </span>
+        <UpdateMultiStatus
+          url={`admin/customers/${item.id}`}
+          item={item}
+          updated={fetchCustomers}
+          list={[
+            { value: 1, label: "active" },
+            { value: 0, label: "inactive" },
+          ]}
+        />
       ),
     },
     {

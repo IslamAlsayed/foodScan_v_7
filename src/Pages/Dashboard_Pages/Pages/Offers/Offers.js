@@ -9,6 +9,7 @@ import EditOffer from "../../Models/Edit/EditOffer";
 import Filtration from "../../Models/Filtration/Offers";
 import AddRow from "../../Models/AddRow/Offers";
 import { getData } from "../../../../axiosConfig/API";
+import UpdateMultiStatus from "../Actions/UpdateMultiStatus";
 
 export default function Offers() {
   const componentRef = useRef();
@@ -80,9 +81,15 @@ export default function Offers() {
       title: "STATUS",
       key: "status",
       render: (text, item) => (
-        <span className={item.status === "active" ? "active" : "inactive"}>
-          {item.status}
-        </span>
+        <UpdateMultiStatus
+          url={`admin/offers/${item.id}`}
+          item={item}
+          updated={fetchOffers}
+          list={[
+            { value: 1, label: "active" },
+            { value: 0, label: "inactive" },
+          ]}
+        />
       ),
     },
     {

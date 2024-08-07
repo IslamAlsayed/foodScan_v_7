@@ -10,6 +10,9 @@ import EditDiningTable from "../../Models/Edit/EditDiningTable";
 import { getData } from "../../../../axiosConfig/API";
 import Filtration from "../../Models/Filtration/DiningTables";
 import AddRow from "../../Models/AddRow/DiningTables";
+import UpdateMultiStatus from "../Actions/UpdateMultiStatus";
+
+import ImageTest from "../../../../assets/global/profile.png";
 
 export default function DiningTables() {
   const componentRef = useRef();
@@ -71,9 +74,15 @@ export default function DiningTables() {
       title: "STATUS",
       key: "status",
       render: (text, item) => (
-        <span className={item.status === 1 ? "active" : "inactive"}>
-          {item.status === 1 ? "active" : "inactive"}
-        </span>
+        <UpdateMultiStatus
+          url={`admin/dining-tables/${item.id}`}
+          item={item}
+          updated={fetchDiningTables}
+          list={[
+            { value: 1, label: "active" },
+            { value: 0, label: "inactive" },
+          ]}
+        />
       ),
     },
     {
@@ -84,7 +93,6 @@ export default function DiningTables() {
         <img
           src={`http://127.0.0.1:8000/storage/${record.qr_code}`}
           alt={record.name}
-          style={{ width: "70px" }}
         />
       ),
     },
@@ -93,15 +101,17 @@ export default function DiningTables() {
       key: "action",
       render: (text, item) => (
         <div className="actionResource">
-          <a
-            href={`http://127.0.0.1:8000/storage/${item.qr_code}`}
-            download
-            className="qrCodeIcon"
-            data-tooltip="download"
-            style={{ "--c": "#ecbf1d", "--bg": "#fff6c8" }}
-          >
-            <MdQrCode2 />
-          </a>
+          {item.qr_code && (
+            <a
+              href={`http://127.0.0.1:8000/storage/${item.qr_code}`}
+              download
+              className="qrCodeIcon"
+              data-tooltip="download"
+              style={{ "--c": "#ecbf1d", "--bg": "#fff6c8" }}
+            >
+              <MdQrCode2 />
+            </a>
+          )}
           <Link
             to={`/admin/dashboard/dining-table/show/${item.key}`}
             className="eyeIcon"
