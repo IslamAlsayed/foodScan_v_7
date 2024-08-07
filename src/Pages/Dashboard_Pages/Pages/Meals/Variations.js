@@ -206,7 +206,11 @@ export default function Variations({ order_id }) {
 
       <div className="DataTable mt-3">
         <div className="tableItems" ref={componentRef}>
-          <Table columns={columns} dataSource={variations} pagination={true} />
+          <Table
+            columns={columns}
+            dataSource={variations}
+            pagination={Object(variations).length > 9}
+          />
         </div>
       </div>
     </div>

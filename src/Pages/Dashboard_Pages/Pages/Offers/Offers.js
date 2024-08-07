@@ -143,7 +143,11 @@ export default function Offers() {
       />
 
       <div className="tableItems" ref={componentRef}>
-        <Table columns={columns} dataSource={offers} pagination={true} />
+        <Table
+          columns={columns}
+          dataSource={offers}
+          pagination={offers.length > 10}
+        />
       </div>
     </div>
   );

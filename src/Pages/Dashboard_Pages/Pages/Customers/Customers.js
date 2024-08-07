@@ -138,7 +138,11 @@ export default function Customers() {
       />
 
       <div className="tableItems" ref={componentRef}>
-        <Table columns={columns} dataSource={customers} pagination={true} />
+        <Table
+          columns={columns}
+          dataSource={customers}
+          pagination={customers.length > 10}
+        />
       </div>
     </div>
   );

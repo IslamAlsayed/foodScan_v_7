@@ -178,7 +178,11 @@ export default function SubAddons({ order_id, data }) {
 
       <div className="DataTable mt-3">
         <div className="tableItems" ref={componentRef}>
-          <Table columns={columns} dataSource={addons} pagination={true} />
+          <Table
+            columns={columns}
+            dataSource={addons}
+            pagination={addons.length > 10}
+          />
         </div>
       </div>
     </div>

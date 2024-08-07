@@ -156,7 +156,11 @@ export default function Meals() {
       />
 
       <div className="tableItems" ref={componentRef}>
-        <Table columns={columns} dataSource={meals} pagination={true} />
+        <Table
+          columns={columns}
+          dataSource={meals}
+          pagination={meals.length > 10}
+        />
       </div>
     </div>
   );

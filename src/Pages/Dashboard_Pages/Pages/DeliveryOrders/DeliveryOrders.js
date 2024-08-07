@@ -135,7 +135,7 @@ export default function DeliveryOrders() {
         <Table
           columns={columns}
           dataSource={deliveryOrders}
-          pagination={true}
+          pagination={deliveryOrders.length > 10}
         />
       </div>
     </div>

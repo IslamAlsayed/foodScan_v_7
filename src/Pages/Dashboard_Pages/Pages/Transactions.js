@@ -71,7 +71,11 @@ export default function Transactions() {
       <Filtration />
 
       <div className="tableItems" ref={componentRef}>
-        <Table columns={columns} dataSource={transactions} pagination={true} />
+        <Table
+          columns={columns}
+          dataSource={transactions}
+          pagination={transactions.length > 10}
+        />
       </div>
     </div>
   );

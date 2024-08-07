@@ -178,7 +178,11 @@ export default function SubExtras({ order_id, data }) {
 
       <div className="DataTable mt-3">
         <div className="tableItems" ref={componentRef}>
-          <Table columns={columns} dataSource={extras} pagination={true} />
+          <Table
+            columns={columns}
+            dataSource={extras}
+            pagination={extras.length > 10}
+          />
         </div>
       </div>
     </div>

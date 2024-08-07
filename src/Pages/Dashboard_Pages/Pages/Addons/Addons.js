@@ -148,7 +148,11 @@ export default function Addon() {
       />
 
       <div className="tableItems" ref={componentRef}>
-        <Table columns={columns} dataSource={addons} pagination={true} />
+        <Table
+          columns={columns}
+          dataSource={addons}
+          pagination={addons.length > 10}
+        />
       </div>
     </div>
   );

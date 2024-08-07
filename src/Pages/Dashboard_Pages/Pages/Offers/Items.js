@@ -91,7 +91,11 @@ export default function Address() {
         </div>
 
         <div className="body">
-          <Table columns={columns} dataSource={data} pagination={true} />
+          <Table
+            columns={columns}
+            dataSource={data}
+            pagination={data.length > 10}
+          />
         </div>
       </div>
 

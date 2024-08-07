@@ -101,7 +101,11 @@ export default function TableOrders() {
       <Filtration handleModalToggle={handleModalToggle} />
 
       <div className="tableItems" ref={componentRef}>
-        <Table columns={columns} dataSource={tableOrders} pagination={true} />
+        <Table
+          columns={columns}
+          dataSource={tableOrders}
+          pagination={tableOrders.length > 10}
+        />
       </div>
     </div>
   );

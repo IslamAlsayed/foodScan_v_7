@@ -54,7 +54,11 @@ export default function CreditBalanceReport() {
       <Filtration />
 
       <div className="tableItems" ref={componentRef}>
-        <Table columns={columns} dataSource={data} pagination={false} />
+        <Table
+          columns={columns}
+          dataSource={data}
+          pagination={data.length > 10}
+        />
       </div>
     </div>
   );

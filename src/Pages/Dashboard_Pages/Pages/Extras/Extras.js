@@ -148,7 +148,11 @@ export default function Extra() {
       />
 
       <div className="tableItems" ref={componentRef}>
-        <Table columns={columns} dataSource={extras} pagination={true} />
+        <Table
+          columns={columns}
+          dataSource={extras}
+          pagination={extras.length > 10}
+        />
       </div>
     </div>
   );

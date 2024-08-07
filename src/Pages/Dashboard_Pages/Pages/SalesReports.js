@@ -77,7 +77,11 @@ export default function SalesReports() {
       <Filtration />
 
       <div className="tableItems" ref={componentRef}>
-        <Table columns={columns} dataSource={salesReports} pagination={true} />
+        <Table
+          columns={columns}
+          dataSource={salesReports}
+          pagination={salesReports.length > 10}
+        />
       </div>
     </div>
   );

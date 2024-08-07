@@ -1,7 +1,3 @@
-.DataTable .tableItems {
-    overflow-x: auto;
-}
-
 .DataTable .tableItems img {
     width: 70px !important;
     height: 70px !important;

@@ -139,7 +139,11 @@ export default function Categories() {
       />
 
       <div className="tableItems" ref={componentRef}>
-        <Table columns={columns} dataSource={categories} pagination={true} />
+        <Table
+          columns={columns}
+          dataSource={categories}
+          pagination={categories.length > 10}
+        />
       </div>
     </div>
   );

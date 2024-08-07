@@ -158,7 +158,11 @@ export default function DiningTables() {
       />
 
       <div className="tableItems" ref={componentRef}>
-        <Table columns={columns} dataSource={DiningTables} pagination={true} />
+        <Table
+          columns={columns}
+          dataSource={DiningTables}
+          pagination={DiningTables.length > 10}
+        />
       </div>
     </div>
   );
