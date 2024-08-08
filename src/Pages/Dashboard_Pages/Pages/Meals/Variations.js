@@ -54,9 +54,33 @@ export default function Variations({ order_id }) {
     if (!id) return;
     try {
       const result = await getData(`admin/meals/${id}/size-costs`);
-      setVariations(result);
+      const updatedResult = result.map((record) => {
+        let size;
+        switch (record.size) {
+          case 1:
+            size = "small";
+            break;
+          case 2:
+            size = "medium";
+            break;
+          case 3:
+            size = "big";
+            break;
+          case 4:
+            size = "family";
+            break;
+          default:
+            size = "small";
+        }
+
+        return {
+          ...record,
+          size,
+        };
+      });
+      setVariations(updatedResult);
     } catch (error) {
-      console.error(error.response.data.message);
+      console.error(error.response?.data?.message);
     }
   }, []);
 

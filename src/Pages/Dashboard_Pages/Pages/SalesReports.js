@@ -15,7 +15,7 @@ export default function SalesReports() {
       const result = await getData("admin/transactions");
       setSalesReports(result);
     } catch (error) {
-      console.error(error.response.data.message);
+      console.error(error.response?.data?.message);
     }
   }, []);
 

@@ -33,7 +33,7 @@ export default function ShowItem() {
       setLoading(false);
     } catch (error) {
       setLoading(false);
-      console.error(error.response.data.message);
+      console.error(error.response?.data?.message);
     }
   }, []);
 
@@ -43,7 +43,7 @@ export default function ShowItem() {
       const result = await getData(`admin/meals/${id}/extras`);
       setExtras(result);
     } catch (error) {
-      console.error(error.response.data.message);
+      console.error(error.response?.data?.message);
     }
   }, []);
 
@@ -53,7 +53,7 @@ export default function ShowItem() {
       const result = await getData(`admin/meals/${id}/addons`);
       setAddons(result);
     } catch (error) {
-      console.error(error.response.data.message);
+      console.error(error.response?.data?.message);
     }
   }, []);
 

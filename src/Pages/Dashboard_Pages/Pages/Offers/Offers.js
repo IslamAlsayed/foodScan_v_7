@@ -23,7 +23,7 @@ export default function Offers() {
       const result = await getData("admin/offers");
       setOffers(result);
     } catch (error) {
-      console.error(error.response.data.message);
+      console.error(error.response?.data?.message);
     }
   }, []);
 

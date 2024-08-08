@@ -16,7 +16,8 @@ export const login = async (email, password) => {
 
     return response.data;
   } catch (error) {
-    console.error(error.response.data.message);
+    console.error(error.response?.data?.message);
+
     throw new Error("An error occurred");
   }
 };

@@ -18,7 +18,7 @@ export default function TableOrders() {
       const result = await getData("admin/orders");
       setTableOrders(result);
     } catch (error) {
-      console.error(error.response.data.message);
+      console.error(error.response?.data?.message);
     }
   }, []);
 

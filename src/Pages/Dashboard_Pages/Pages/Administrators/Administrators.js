@@ -23,7 +23,7 @@ export default function Administrators() {
       const result = await getData("admin/employees");
       setAdministrator(result);
     } catch (error) {
-      console.error(error.response.data.message);
+      console.error(error.response?.data?.message);
     }
   }, []);
 

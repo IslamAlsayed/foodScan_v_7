@@ -19,7 +19,7 @@ export default function SubExtras({ order_id, data }) {
       const result = await getData(`admin/meals/${id}/options-extras`);
       setOptionsExtras(result);
     } catch (error) {
-      console.error(error.response.data.message);
+      console.error(error.response?.data?.message);
     }
   }, []);
 
@@ -53,7 +53,7 @@ export default function SubExtras({ order_id, data }) {
       const result = await getData(`admin/meals/${order_id}/extras`);
       setExtras(result);
     } catch (error) {
-      console.error(error.response.data.message);
+      console.error(error.response?.data?.message);
     }
   }, []);
 

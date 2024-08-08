@@ -48,7 +48,7 @@ export default function Security() {
       }
     } catch (error) {
       setErrorMessage(error.response.data.message);
-      console.error(error.response.data.message);
+      console.error(error.response?.data?.message);
     }
   };
 

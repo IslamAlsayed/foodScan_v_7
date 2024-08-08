@@ -26,7 +26,7 @@ export default function DiningTables() {
       const result = await getData("admin/dining-tables");
       setDiningTables(result);
     } catch (error) {
-      console.error(error.response.data.message);
+      console.error(error.response?.data?.message);
     }
   }, []);
 

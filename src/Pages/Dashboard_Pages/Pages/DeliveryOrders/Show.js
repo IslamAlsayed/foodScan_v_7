@@ -22,7 +22,7 @@ export default function Show() {
       setLoading(false);
     } catch (error) {
       setLoading(false);
-      console.error(error.response.data.message);
+      console.error(error.response?.data?.message);
     }
   }, []);
 

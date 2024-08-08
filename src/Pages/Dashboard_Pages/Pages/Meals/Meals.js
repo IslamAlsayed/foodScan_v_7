@@ -24,7 +24,7 @@ export default function Meals() {
       const result = await getData("admin/meals");
       setMeals(result);
     } catch (error) {
-      console.error(error.response.data.message);
+      console.error(error.response?.data?.message);
     }
   }, []);
 

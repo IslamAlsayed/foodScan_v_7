@@ -23,7 +23,7 @@ export default function Addon() {
       const result = await getData("admin/addons");
       setAddons(result);
     } catch (error) {
-      console.error(error.response.data.message);
+      console.error(error.response?.data?.message);
     }
   }, []);
 

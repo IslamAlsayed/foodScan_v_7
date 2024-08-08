@@ -22,7 +22,7 @@ export default function DeliveryOrders() {
       const result = await getData("admin/orders");
       setDeliveryOrders(result);
     } catch (error) {
-      console.error(error.response.data.message);
+      console.error(error.response?.data?.message);
     }
   }, []);
 

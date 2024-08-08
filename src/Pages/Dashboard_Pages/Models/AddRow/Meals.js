@@ -98,7 +98,7 @@ export default function Meals({ visible, visibleToggle, updated }) {
       const result = await getData("categories");
       setCategories(result);
     } catch (error) {
-      console.error(error.response.data.message);
+      console.error(error.response?.data?.message);
     }
   }, []);
 
@@ -163,6 +163,22 @@ export default function Meals({ visible, visibleToggle, updated }) {
 
               <div className="col-12 col-sm-6">
                 <div className="mb-3">
+                  <label htmlFor="cost" className="form-label">
+                    price <span className="star">*</span>
+                  </label>
+                  <input
+                    type="cost"
+                    className="form-control"
+                    name="cost"
+                    id="cost"
+                    value={meal.cost}
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
+
+              <div className="col-12 col-sm-6">
+                <div className="mb-3">
                   <label htmlFor="number_of_pieces" className="form-label">
                     number of pieces <span className="star">*</span>
                   </label>
@@ -198,22 +214,6 @@ export default function Meals({ visible, visibleToggle, updated }) {
                     <option value="3">big</option>
                     <option value="4">family</option>
                   </select>
-                </div>
-              </div>
-
-              <div className="col-12 col-sm-6">
-                <div className="mb-3">
-                  <label htmlFor="cost" className="form-label">
-                    cost <span className="star">*</span>
-                  </label>
-                  <input
-                    type="cost"
-                    className="form-control"
-                    name="cost"
-                    id="cost"
-                    value={meal.cost}
-                    onChange={handleChange}
-                  />
                 </div>
               </div>
 

@@ -23,7 +23,7 @@ export default function Extra() {
       const result = await getData("admin/extras");
       setExtras(result);
     } catch (error) {
-      console.error(error.response.data.message);
+      console.error(error.response?.data?.message);
     }
   }, []);
 

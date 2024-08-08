@@ -14,7 +14,7 @@ export default function Transactions() {
       const result = await getData("admin/transactions");
       setTransaction(result);
     } catch (error) {
-      console.error(error.response.data.message);
+      console.error(error.response?.data?.message);
     }
   }, []);
 

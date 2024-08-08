@@ -16,7 +16,6 @@ export default function EditMeal({ visible, visibleToggle, item, updated }) {
     category_id: "",
     image: null,
     description: "",
-    price: "",
     size: "",
     cost: "",
     number_of_pieces: 1,
@@ -71,7 +70,6 @@ export default function EditMeal({ visible, visibleToggle, item, updated }) {
     formData.append("category_id", meal.category_id);
     if (meal.image) formData.append("image", meal.image);
     formData.append("description", meal.description);
-    formData.append("price", meal.price);
     formData.append("size", meal.size);
     formData.append("cost", meal.cost);
     formData.append("number_of_pieces", meal.number_of_pieces);
@@ -99,7 +97,7 @@ export default function EditMeal({ visible, visibleToggle, item, updated }) {
       const result = await getData("categories");
       setCategories(result);
     } catch (error) {
-      console.error(error.response.data.message);
+      console.error(error.response?.data?.message);
     }
   }, []);
 
@@ -160,15 +158,15 @@ export default function EditMeal({ visible, visibleToggle, item, updated }) {
 
               <div className="col-12 col-sm-6">
                 <div className="mb-3">
-                  <label htmlFor="price" className="form-label">
+                  <label htmlFor="cost" className="form-label">
                     price
                   </label>
                   <input
                     type="text"
                     className="form-control"
-                    name="price"
-                    id="price"
-                    value={meal.price}
+                    name="cost"
+                    id="cost"
+                    value={meal.cost}
                     onChange={handleChange}
                     required
                   />
@@ -209,22 +207,6 @@ export default function EditMeal({ visible, visibleToggle, item, updated }) {
                     <option value="3">big</option>
                     <option value="4">family</option>
                   </select>
-                </div>
-              </div>
-
-              <div className="col-12 col-sm-6">
-                <div className="mb-3">
-                  <label htmlFor="cost" className="form-label">
-                    cost
-                  </label>
-                  <input
-                    type="cost"
-                    className="form-control"
-                    name="cost"
-                    id="cost"
-                    value={meal.cost}
-                    onChange={handleChange}
-                  />
                 </div>
               </div>
 

@@ -83,7 +83,7 @@ export default function Addons({ visible, visibleToggle, updated }) {
       const result = await getData("categories");
       setCategories(result);
     } catch (error) {
-      console.error(error.response.data.message);
+      console.error(error.response?.data?.message);
     }
   }, []);
 

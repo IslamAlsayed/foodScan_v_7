@@ -23,7 +23,7 @@ export default function Customers() {
       const result = await getData("admin/customers");
       setCustomer(result);
     } catch (error) {
-      console.error(error.response.data.message);
+      console.error(error.response?.data?.message);
     }
   }, []);
 

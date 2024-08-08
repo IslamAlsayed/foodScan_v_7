@@ -25,7 +25,7 @@ export default function Show() {
       setLoading(false);
     } catch (error) {
       setLoading(false);
-      console.error(error.response.data.message);
+      console.error(error.response?.data?.message);
     }
   }, []);
 
@@ -35,7 +35,7 @@ export default function Show() {
       const result = await getData(`admin/customers/${id}/orders`);
       setCustomerOrders(result);
     } catch (error) {
-      console.error(error.response.data.message);
+      console.error(error.response?.data?.message);
     }
   }, []);
 

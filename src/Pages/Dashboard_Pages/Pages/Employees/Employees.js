@@ -23,7 +23,7 @@ export default function Employees() {
       const result = await getData("admin/employees");
       setEmployee(result);
     } catch (error) {
-      console.error(error.response.data.message);
+      console.error(error.response?.data?.message);
     }
   }, []);
 
