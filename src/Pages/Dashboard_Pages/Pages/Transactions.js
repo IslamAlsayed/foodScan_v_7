@@ -74,7 +74,7 @@ export default function Transactions() {
         <Table
           columns={columns}
           dataSource={transactions}
-          pagination={transactions.length > 10}
+          pagination={Object(transactions).length > 10}
         />
       </div>
     </div>

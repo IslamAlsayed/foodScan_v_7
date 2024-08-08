@@ -80,7 +80,7 @@ export default function SalesReports() {
         <Table
           columns={columns}
           dataSource={salesReports}
-          pagination={salesReports.length > 10}
+          pagination={Object(salesReports).length > 10}
         />
       </div>
     </div>

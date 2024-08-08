@@ -146,7 +146,7 @@ export default function Offers() {
         <Table
           columns={columns}
           dataSource={offers}
-          pagination={offers.length > 10}
+          pagination={Object(offers).length > 10}
         />
       </div>
     </div>

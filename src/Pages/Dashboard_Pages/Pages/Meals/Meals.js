@@ -159,7 +159,7 @@ export default function Meals() {
         <Table
           columns={columns}
           dataSource={meals}
-          pagination={meals.length > 10}
+          pagination={Object(meals).length > 10}
         />
       </div>
     </div>

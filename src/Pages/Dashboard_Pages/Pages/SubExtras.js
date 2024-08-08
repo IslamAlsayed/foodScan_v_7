@@ -181,7 +181,7 @@ export default function SubExtras({ order_id, data }) {
           <Table
             columns={columns}
             dataSource={extras}
-            pagination={extras.length > 10}
+            pagination={Object(extras).length > 10}
           />
         </div>
       </div>

@@ -181,7 +181,7 @@ export default function SubAddons({ order_id, data }) {
           <Table
             columns={columns}
             dataSource={addons}
-            pagination={addons.length > 10}
+            pagination={Object(addons).length > 10}
           />
         </div>
       </div>

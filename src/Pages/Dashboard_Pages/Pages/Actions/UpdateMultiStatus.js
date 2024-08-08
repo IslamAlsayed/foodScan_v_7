@@ -8,7 +8,6 @@ export default function UpdateMultiStatus({ url, item, updated, list }) {
 
   useEffect(() => {
     if (item) setStaticItem(item);
-    if (item) console.log(item);
   }, [item]);
 
   const handleStatus = (item) => {

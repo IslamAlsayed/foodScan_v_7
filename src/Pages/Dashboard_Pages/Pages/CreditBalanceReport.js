@@ -57,7 +57,7 @@ export default function CreditBalanceReport() {
         <Table
           columns={columns}
           dataSource={data}
-          pagination={data.length > 10}
+          pagination={Object(data).length > 10}
         />
       </div>
     </div>

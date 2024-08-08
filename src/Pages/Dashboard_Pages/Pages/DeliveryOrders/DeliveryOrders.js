@@ -123,19 +123,11 @@ export default function DeliveryOrders() {
       {/* Filtration */}
       <Filtration handleModalToggle={handleModalToggle} />
 
-      {/* Edit Row */}
-      {/* <EditDeliveryOrder
-        visible={modalEditVisibleToggle}
-        visibleToggle={handleModalEditToggle}
-        item={editItem}
-        updated={fetchDeliveryOrders}
-      /> */}
-
       <div className="tableItems" ref={componentRef}>
         <Table
           columns={columns}
           dataSource={deliveryOrders}
-          pagination={deliveryOrders.length > 10}
+          pagination={Object(deliveryOrders).length > 10}
         />
       </div>
     </div>

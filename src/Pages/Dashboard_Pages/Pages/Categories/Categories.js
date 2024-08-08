@@ -142,7 +142,7 @@ export default function Categories() {
         <Table
           columns={columns}
           dataSource={categories}
-          pagination={categories.length > 10}
+          pagination={Object(categories).length > 10}
         />
       </div>
     </div>

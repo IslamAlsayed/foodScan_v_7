@@ -141,7 +141,7 @@ export default function Administrators() {
         <Table
           columns={columns}
           dataSource={administrators}
-          pagination={administrators.length > 10}
+          pagination={Object(administrators).length > 10}
         />
       </div>
     </div>

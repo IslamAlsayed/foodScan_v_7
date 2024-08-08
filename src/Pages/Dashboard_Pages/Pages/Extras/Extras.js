@@ -151,7 +151,7 @@ export default function Extra() {
         <Table
           columns={columns}
           dataSource={extras}
-          pagination={extras.length > 10}
+          pagination={Object(extras).length > 10}
         />
       </div>
     </div>

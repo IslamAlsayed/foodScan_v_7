@@ -104,7 +104,7 @@ export default function TableOrders() {
         <Table
           columns={columns}
           dataSource={tableOrders}
-          pagination={tableOrders.length > 10}
+          pagination={Object(tableOrders).length > 10}
         />
       </div>
     </div>

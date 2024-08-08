@@ -69,7 +69,7 @@ export default function Addon() {
     },
     {
       title: "PRICE",
-      dataIndex: "cost",
+      dataIndex: "$" + "cost",
       key: "cost",
     },
     {
@@ -151,7 +151,7 @@ export default function Addon() {
         <Table
           columns={columns}
           dataSource={addons}
-          pagination={addons.length > 10}
+          pagination={Object(addons).length > 10}
         />
       </div>
     </div>

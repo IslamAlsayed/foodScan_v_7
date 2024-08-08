@@ -141,7 +141,7 @@ export default function Customers() {
         <Table
           columns={columns}
           dataSource={customers}
-          pagination={customers.length > 10}
+          pagination={Object(customers).length > 10}
         />
       </div>
     </div>

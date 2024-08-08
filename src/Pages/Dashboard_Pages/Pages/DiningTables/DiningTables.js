@@ -161,7 +161,7 @@ export default function DiningTables() {
         <Table
           columns={columns}
           dataSource={DiningTables}
-          pagination={DiningTables.length > 10}
+          pagination={Object(DiningTables).length > 10}
         />
       </div>
     </div>
