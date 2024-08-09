@@ -134,6 +134,7 @@ export default function Categories() {
       {/* Edit Row */}
       <EditCategory
         visible={modalEditVisibleToggle}
+        visibleToggle={handleModalEditToggle}
         item={editItem}
         updated={fetchCategories}
       />

@@ -22,32 +22,6 @@ export default function Variations({ order_id }) {
     setMeal({ ...meal, [name]: value });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    const formData = new FormData();
-    formData.append("size", meal.size);
-    formData.append("number_of_piece", meal.number_of_piece);
-    formData.append("cost", meal.cost);
-
-    try {
-      const response = await addData(`admin/meals/${id}/size-cost`, formData);
-
-      if (response.status === "success") {
-        fetchVariations();
-        setMeal({
-          size: "",
-          number_of_piece: "",
-          cost: "",
-        });
-
-        Swal.fire("Saved!", response.message, "success");
-      }
-    } catch (error) {
-      Swal.fire("Error!", error.response?.data?.message, "error");
-    }
-  };
-
   const fetchVariations = useCallback(async (id) => {
     if (!id) return;
     try {
@@ -68,7 +42,7 @@ export default function Variations({ order_id }) {
             size = "family";
             break;
           default:
-            size = "small";
+            size = "none";
         }
 
         return {
@@ -86,6 +60,32 @@ export default function Variations({ order_id }) {
     if (order_id) fetchVariations(order_id);
   }, [order_id, fetchVariations]);
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData();
+    formData.append("size", meal.size);
+    formData.append("number_of_piece", meal.number_of_piece);
+    formData.append("cost", meal.cost);
+
+    try {
+      const response = await addData(`admin/meals/${id}/size-cost`, formData);
+
+      if (response.status === "success") {
+        fetchVariations(order_id);
+        setMeal({
+          size: "",
+          number_of_piece: "",
+          cost: "",
+        });
+
+        Swal.fire("Saved!", response.message, "success");
+      }
+    } catch (error) {
+      Swal.fire("Error!", error.response?.data?.message, "error");
+    }
+  };
+
   const columns = [
     {
       title: "ID",
@@ -95,7 +95,7 @@ export default function Variations({ order_id }) {
     {
       title: "PRICE",
       dataIndex: "cost",
-      key: "price",
+      key: "cost",
     },
     {
       title: "SIZE",

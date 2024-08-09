@@ -5,10 +5,10 @@ import Breadcrumb from "../../../../Components/Dashboard/Features/Breadcrumb";
 import { Table } from "antd";
 import { FiEdit } from "react-icons/fi";
 import { BsEye } from "react-icons/bs";
-import EditExtra from "../../Models/Edit/EditExtras";
 import { getData } from "../../../../axiosConfig/API";
 import Filtration from "../../Models/Filtration/Extras";
 import AddRow from "../../Models/AddRow/Extras";
+import EditExtra from "../../Models/Edit/EditExtras";
 import UpdateMultiStatus from "../Actions/UpdateMultiStatus";
 
 export default function Extra() {

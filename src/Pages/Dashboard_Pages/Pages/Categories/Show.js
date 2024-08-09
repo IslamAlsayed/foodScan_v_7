@@ -54,7 +54,7 @@ export default function ShowItem() {
           }
           key="2"
         >
-          <UploadImage url={`admin/categories/${id}`} data={category} />
+          <UploadImage url={`categories/${id}`} data={category} />
         </Tabs.TabPane>
       </Tabs>
     </div>

@@ -11,14 +11,13 @@ import { getData } from "../../../../axiosConfig/API";
 import Filtration from "../../Models/Filtration/DiningTables";
 import AddRow from "../../Models/AddRow/DiningTables";
 import UpdateMultiStatus from "../Actions/UpdateMultiStatus";
-
-import ImageTest from "../../../../assets/global/profile.png";
-import axios from "axios";
+import QRCode from "react-qr-code";
+import { toPng } from "html-to-image";
 
 export default function DiningTables() {
   const componentRef = useRef();
+  const qrRef = useRef();
   const [diningTables, setDiningTables] = useState([]);
-  const [imageBlobs, setImageBlobs] = useState({});
   const [editItem, setEditItem] = useState(null);
   const [modalVisibleToggle, setModalVisibleToggle] = useState(false);
   const [modalEditVisibleToggle, setModalEditVisibleToggle] = useState(false);
@@ -26,7 +25,31 @@ export default function DiningTables() {
   const fetchDiningTables = useCallback(async () => {
     try {
       const result = await getData("admin/dining-tables");
-      setDiningTables(result);
+      const updatedResult = result.map((record) => {
+        let size;
+        switch (record.size) {
+          case 1:
+            size = "small";
+            break;
+          case 2:
+            size = "medium";
+            break;
+          case 3:
+            size = "big";
+            break;
+          case 4:
+            size = "family";
+            break;
+          default:
+            size = "none";
+        }
+
+        return {
+          ...record,
+          size,
+        };
+      });
+      setDiningTables(updatedResult);
     } catch (error) {
       console.error(error.response?.data?.message);
     }
@@ -54,6 +77,21 @@ export default function DiningTables() {
     document.body.style.overflow = modalEditVisibleToggle
       ? "visible"
       : "hidden";
+  };
+
+  const downloadQRCode = (id) => {
+    if (qrRef.current === null) return;
+
+    toPng(qrRef.current)
+      .then((dataUrl) => {
+        const link = document.createElement("a");
+        link.download = `qr_code_${id}.png`;
+        link.href = dataUrl;
+        link.click();
+      })
+      .catch((err) => {
+        console.error("Error generating PNG: ", err);
+      });
   };
 
   const columns = [
@@ -92,10 +130,14 @@ export default function DiningTables() {
       dataIndex: "image",
       key: "image",
       render: (text, record) => {
-        record.qr_code ? (
-          <img src={record.qr_code} alt={`QR Code for ${record.id}`} />
-        ) : (
-          <span>No QR Code</span>
+        return (
+          <div ref={qrRef} className="customQrCode">
+            {record.qr_code_link ? (
+              <QRCode value={record.qr_code_link} size={128} level="H" />
+            ) : (
+              <span>no qr code</span>
+            )}
+          </div>
         );
       },
     },
@@ -104,17 +146,6 @@ export default function DiningTables() {
       key: "action",
       render: (text, item) => (
         <div className="actionResource">
-          {item.qr_code && (
-            <a
-              href={item.qr_code}
-              download
-              className="qrCodeIcon"
-              data-tooltip="download"
-              style={{ "--c": "#ecbf1d", "--bg": "#fff6c8" }}
-            >
-              <MdQrCode2 />
-            </a>
-          )}
           <Link
             to={`/admin/dashboard/dining-table/show/${item.key}`}
             className="eyeIcon"
@@ -132,6 +163,17 @@ export default function DiningTables() {
           >
             <FiEdit />
           </Link>
+          {item.qr_code_link && (
+            <Link
+              to="#"
+              className="qrCodeIcon"
+              data-tooltip="download"
+              onClick={downloadQRCode(item.id)}
+              style={{ "--c": "#ecbf1d", "--bg": "#fff6c8" }}
+            >
+              <MdQrCode2 />
+            </Link>
+          )}
         </div>
       ),
     },

@@ -36,7 +36,7 @@ export default function EditExtra({ visible, visibleToggle, item, updated }) {
       if (name === "type") {
         return {
           ...prevData,
-          type: id === "veg" ? "vegetarian" : "non-vegetarian",
+          type: id === "vegetarian" ? "vegetarian" : "non-vegetarian",
         };
       }
       if (name === "image" && type === "file") {
