@@ -126,9 +126,9 @@ export default function DiningTables() {
       ),
     },
     {
-      title: "Image",
-      dataIndex: "image",
-      key: "image",
+      title: "QR CODE",
+      dataIndex: "qr_code",
+      key: "qr_code",
       render: (text, record) => {
         return (
           <div ref={qrRef} className="customQrCode">
