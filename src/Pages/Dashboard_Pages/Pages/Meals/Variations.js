@@ -11,6 +11,12 @@ export default function Variations({ order_id }) {
   const { id } = useParams();
   const componentRef = useRef();
   const [variations, setVariations] = useState();
+  const [size, setSize] = useState([
+    { value: 1, label: "small" },
+    { value: 2, label: "medium" },
+    { value: 3, label: "big" },
+    { value: 4, label: "family" },
+  ]);
   const [meal, setMeal] = useState({
     size: "",
     number_of_piece: "",
@@ -26,6 +32,13 @@ export default function Variations({ order_id }) {
     if (!id) return;
     try {
       const result = await getData(`admin/meals/${id}/size-costs`);
+      const sizesInResult = result.map((record) => record.size);
+
+      const updatedSize = size.filter(
+        (item) => !sizesInResult.includes(item.value)
+      );
+      setSize(updatedSize);
+
       const updatedResult = result.map((record) => {
         let size;
         switch (record.size) {
@@ -106,18 +119,22 @@ export default function Variations({ order_id }) {
 
   return (
     <div className="SubModel">
-      <Row gutter={16}>
-        <Col span={16}>
-          <button
-            type="button"
-            className="btn btn-primary"
-            data-bs-toggle="modal"
-            data-bs-target="#addVariations"
-          >
-            add variations
-          </button>
-        </Col>
-      </Row>
+      {Object(size).length > 0 ? (
+        <Row gutter={16}>
+          <Col span={16}>
+            <button
+              type="button"
+              className="btn btn-primary"
+              data-bs-toggle="modal"
+              data-bs-target="#addVariations"
+            >
+              add variations
+            </button>
+          </Col>
+        </Row>
+      ) : (
+        false
+      )}
 
       <div
         className="modal fade"
@@ -159,10 +176,16 @@ export default function Variations({ order_id }) {
                       <option value="" selected disabled>
                         --
                       </option>
-                      <option value="1">small</option>
+                      {size.map((item) => (
+                        <option key={item.value} value={item.value}>
+                          {item.label}
+                        </option>
+                      ))}
+
+                      {/* <option value="1">small</option>
                       <option value="2">medium</option>
                       <option value="3">big</option>
-                      <option value="4">family</option>
+                      <option value="4">family</option> */}
                     </select>
                   </div>
                 </div>
