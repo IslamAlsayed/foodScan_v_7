@@ -19,7 +19,6 @@ export default function EditEmployee({
     phone: "",
     password: "",
     password_confirmation: "",
-    status: 1,
   });
 
   useEffect(() => {
@@ -34,17 +33,10 @@ export default function EditEmployee({
     const { name, value, id } = e.target;
 
     setEmployee((prevData) => {
-      if (name === "status") {
-        return {
-          ...prevData,
-          status: id === "active" ? 1 : 0,
-        };
-      } else {
-        return {
-          ...prevData,
-          [name]: value,
-        };
-      }
+      return {
+        ...prevData,
+        [name]: value,
+      };
     });
   };
 
@@ -73,7 +65,7 @@ export default function EditEmployee({
         Swal.fire("Updated!", response.message, "success");
       }
     } catch (error) {
-      Swal.fire("Error!", error.response.data.message, "error");
+      Swal.fire("Error!", error.response?.data?.message, "error");
     }
   };
 
@@ -193,38 +185,6 @@ export default function EditEmployee({
                     value={employee.password_confirmation}
                     onChange={handleChange}
                   />
-                </div>
-              </div>
-
-              <div className="col-6">
-                <div className="mb-3">
-                  <label htmlFor="active" className="form-label">
-                    status
-                  </label>
-                  <div className="row">
-                    <div className="col d-flex gap-2 align-items-center">
-                      <input
-                        type="radio"
-                        name="status"
-                        id="active"
-                        value={1}
-                        checked={employee.status === 1}
-                        onChange={handleChange}
-                      />
-                      <label htmlFor="active">active</label>
-                    </div>
-                    <div className="col d-flex gap-2 align-items-center">
-                      <input
-                        type="radio"
-                        name="status"
-                        id="inactive"
-                        value={0}
-                        checked={employee.status === 0}
-                        onChange={handleChange}
-                      />
-                      <label htmlFor="inactive">in active</label>
-                    </div>
-                  </div>
                 </div>
               </div>
             </div>

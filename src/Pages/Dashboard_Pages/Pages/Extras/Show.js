@@ -56,7 +56,7 @@ export default function ShowItem() {
           }
           key="2"
         >
-          <UploadImage data={extra} />
+          <UploadImage url={`admin/extras/${id}`} data={extra} />
         </TabPane>
       </Tabs>
     </div>

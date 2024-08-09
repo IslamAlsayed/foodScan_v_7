@@ -94,7 +94,7 @@ export default function ShowItem() {
           }
           key="2"
         >
-          <UploadImage data={meal} />
+          <UploadImage url={`admin/meals/${id}`} data={meal} />
         </Tabs.TabPane>
         <Tabs.TabPane
           tab={

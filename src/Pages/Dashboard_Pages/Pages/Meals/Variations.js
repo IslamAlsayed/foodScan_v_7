@@ -31,12 +31,10 @@ export default function Variations({ order_id }) {
     formData.append("cost", meal.cost);
 
     try {
-      const response = await addData(
-        `admin/meals/${id.id}/size-cost`,
-        formData
-      );
+      const response = await addData(`admin/meals/${id}/size-cost`, formData);
 
       if (response.status === "success") {
+        fetchVariations();
         setMeal({
           size: "",
           number_of_piece: "",
@@ -46,7 +44,7 @@ export default function Variations({ order_id }) {
         Swal.fire("Saved!", response.message, "success");
       }
     } catch (error) {
-      Swal.fire("Error!", error.response.data.message, "error");
+      Swal.fire("Error!", error.response?.data?.message, "error");
     }
   };
 
@@ -103,11 +101,6 @@ export default function Variations({ order_id }) {
       title: "SIZE",
       dataIndex: "size",
       key: "size",
-    },
-    {
-      title: "NUMBERS",
-      dataIndex: "number_of_pieces",
-      key: "number_of_pieces",
     },
   ];
 

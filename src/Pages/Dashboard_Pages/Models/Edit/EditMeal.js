@@ -88,7 +88,7 @@ export default function EditMeal({ visible, visibleToggle, item, updated }) {
         Swal.fire("Updated!", response.message, "success");
       }
     } catch (error) {
-      Swal.fire("Error!", error.response.data.message, "error");
+      Swal.fire("Error!", error.response?.data?.message, "error");
     }
   };
 
@@ -168,7 +168,6 @@ export default function EditMeal({ visible, visibleToggle, item, updated }) {
                     id="cost"
                     value={meal.cost}
                     onChange={handleChange}
-                    required
                   />
                 </div>
               </div>
@@ -200,7 +199,6 @@ export default function EditMeal({ visible, visibleToggle, item, updated }) {
                     id="size"
                     value={meal.size}
                     onChange={handleChange}
-                    required
                   >
                     <option value="1">small</option>
                     <option value="2">medium</option>

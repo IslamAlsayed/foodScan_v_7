@@ -44,7 +44,7 @@ export default function SubExtras({ order_id, data }) {
         Swal.fire("Extra!", response.message, "success");
       }
     } catch (error) {
-      Swal.fire("Error!", error.response.data.message, "error");
+      Swal.fire("Error!", error.response?.data?.message, "error");
     }
   };
 

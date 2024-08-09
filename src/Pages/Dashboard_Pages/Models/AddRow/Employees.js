@@ -65,7 +65,7 @@ function Employees({ visible, visibleToggle, updated }) {
         Swal.fire("Saved!", response.message, "success");
       }
     } catch (error) {
-      Swal.fire("Error!", error.response.data.message, "error");
+      Swal.fire("Error!", error.response?.data?.message, "error");
     }
   };
 

@@ -15,7 +15,6 @@ export default function Meals() {
   const componentRef = useRef();
   const [meals, setMeals] = useState([]);
   const [editItem, setEditItem] = useState(null);
-  const [activeItem, setActiveItem] = useState(null);
   const [modalVisibleToggle, setModalVisibleToggle] = useState(false);
   const [modalEditVisibleToggle, setModalEditVisibleToggle] = useState(false);
 
@@ -52,10 +51,6 @@ export default function Meals() {
       : "hidden";
   };
 
-  const handleStatus = (item) => {
-    setActiveItem(activeItem === item.id ? null : item.id);
-  };
-
   const columns = [
     {
       title: "ID",
@@ -74,8 +69,8 @@ export default function Meals() {
     },
     {
       title: "PRICE",
-      dataIndex: "price",
-      key: "price",
+      dataIndex: "cost",
+      key: "cost",
     },
     {
       title: "Image",

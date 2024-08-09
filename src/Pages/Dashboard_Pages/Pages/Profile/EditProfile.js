@@ -64,7 +64,7 @@ export function EditProfile() {
         Swal.fire("Updated!", response.message, "success");
       }
     } catch (error) {
-      Swal.fire("Error!", error.response.data.message, "error");
+      Swal.fire("Error!", error.response?.data?.message, "error");
     }
   };
 

@@ -13,7 +13,6 @@ export default function EditOffer({ visible, visibleToggle, item, updated }) {
     discount: "",
     startDate: "",
     endDate: "",
-    status: "active",
     image: null,
   });
 
@@ -29,7 +28,7 @@ export default function EditOffer({ visible, visibleToggle, item, updated }) {
   }, [visible]);
 
   const handleChange = (e) => {
-    const { name, value, id, type, files } = e.target;
+    const { name, value, type, files } = e.target;
     setOffer((prevData) => {
       if (name === "image" && type === "file") {
         return {
@@ -52,9 +51,11 @@ export default function EditOffer({ visible, visibleToggle, item, updated }) {
     formData.append("discount", offer.discount);
     formData.append("startDate", offer.startDate);
     formData.append("endDate", offer.endDate);
-    formData.append("status", offer.status);
     if (offer.image) formData.append("image", offer.image);
     formData.append("_method", "put");
+
+    console.log("startDate", offer.startDate);
+    console.log("endDate", offer.endDate);
 
     try {
       const response = await updateData(
@@ -68,7 +69,7 @@ export default function EditOffer({ visible, visibleToggle, item, updated }) {
         Swal.fire("Updated!", response.message, "success");
       }
     } catch (error) {
-      Swal.fire("Error!", error.response.data.message, "error");
+      Swal.fire("Error!", error.response?.data?.message, "error");
     }
   };
 
@@ -99,7 +100,6 @@ export default function EditOffer({ visible, visibleToggle, item, updated }) {
                     id="name"
                     onChange={handleChange}
                     value={offer.name}
-                    required
                   />
                 </div>
               </div>
@@ -116,7 +116,6 @@ export default function EditOffer({ visible, visibleToggle, item, updated }) {
                     id="discount"
                     onChange={handleChange}
                     value={offer.discount}
-                    required
                   />
                 </div>
               </div>
@@ -133,7 +132,6 @@ export default function EditOffer({ visible, visibleToggle, item, updated }) {
                     id="startDate"
                     onChange={handleChange}
                     value={offer.startDate}
-                    required
                   />
                 </div>
               </div>
@@ -144,48 +142,13 @@ export default function EditOffer({ visible, visibleToggle, item, updated }) {
                     end date
                   </label>
                   <input
-                    type="date"
+                    type="datetime-local"
                     className="form-control"
                     name="endDate"
                     id="endDate"
                     onChange={handleChange}
                     value={offer.endDate}
-                    required
                   />
-                </div>
-              </div>
-
-              <div className="col-6">
-                <div className="mb-3">
-                  <label htmlFor="status" className="form-label">
-                    status
-                  </label>
-                  <div className="row">
-                    <div className="col d-flex gap-2 align-items-center">
-                      <input
-                        type="radio"
-                        name="status"
-                        id="active"
-                        value="active"
-                        checked={offer.status === "active"}
-                        onChange={handleChange}
-                        required
-                      />
-                      <label htmlFor="active">active</label>
-                    </div>
-                    <div className="col d-flex gap-2 align-items-center">
-                      <input
-                        type="radio"
-                        name="status"
-                        id="inactive"
-                        value="inactive"
-                        checked={offer.status === "inactive"}
-                        onChange={handleChange}
-                        required
-                      />
-                      <label htmlFor="inactive">inactive</label>
-                    </div>
-                  </div>
                 </div>
               </div>
 
@@ -201,7 +164,6 @@ export default function EditOffer({ visible, visibleToggle, item, updated }) {
                     id="image"
                     ref={imageRef}
                     onChange={handleChange}
-                    required
                   />
                 </div>
               </div>

@@ -5,10 +5,10 @@ import { Link } from "react-router-dom/cjs/react-router-dom.min";
 import Breadcrumb from "../../../../Components/Dashboard/Features/Breadcrumb";
 import { FiEdit } from "react-icons/fi";
 import { BsEye } from "react-icons/bs";
-import EditOffer from "../../Models/Edit/EditOffer";
+import { getData } from "../../../../axiosConfig/API";
 import Filtration from "../../Models/Filtration/Offers";
 import AddRow from "../../Models/AddRow/Offers";
-import { getData } from "../../../../axiosConfig/API";
+import EditOffer from "../../Models/Edit/EditOffer";
 import UpdateMultiStatus from "../Actions/UpdateMultiStatus";
 
 export default function Offers() {
@@ -37,6 +37,7 @@ export default function Offers() {
   };
 
   const handleModalEditToggle = () => {
+    setEditItem(null);
     setModalEditVisibleToggle(!modalEditVisibleToggle);
     document.body.style.overflow = modalEditVisibleToggle
       ? "visible"
@@ -86,8 +87,8 @@ export default function Offers() {
           item={item}
           updated={fetchOffers}
           list={[
-            { value: 1, label: "active" },
-            { value: 0, label: "inactive" },
+            { value: "active", label: "active" },
+            { value: "inactive", label: "inactive" },
           ]}
         />
       ),

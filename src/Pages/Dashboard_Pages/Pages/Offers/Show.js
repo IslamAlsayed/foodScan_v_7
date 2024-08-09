@@ -59,7 +59,7 @@ export default function ShowItem() {
             }
             key="2"
           >
-            <UploadImage data={offer} />
+            <UploadImage url={`admin/offers/${id}`} data={offer} />
           </TabPane>
           <TabPane
             tab={

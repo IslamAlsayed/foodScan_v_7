@@ -44,7 +44,7 @@ export default function SubAddons({ order_id, data }) {
         Swal.fire("Addon!", response.message, "success");
       }
     } catch (error) {
-      Swal.fire("Error!", error.response.data.message, "error");
+      Swal.fire("Error!", error.response?.data?.message, "error");
     }
   };
 

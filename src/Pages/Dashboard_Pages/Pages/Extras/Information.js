@@ -1,4 +1,5 @@
 import { Row, Col } from "antd";
+import UpdateMultiStatus from "../Actions/UpdateMultiStatus";
 
 export default function Information({ data }) {
   if (!data) return <p>loading...</p>;
@@ -39,9 +40,14 @@ export default function Information({ data }) {
         <Col span={12}>
           <div className="d-flex pt-2 pb-2">
             <label>Status</label>
-            <span className={data.status === 1 ? "active" : "inactive"}>
-              {data.status === 1 ? "active" : "inactive"}
-            </span>
+            <UpdateMultiStatus
+              url={`admin/extras/${data.id}`}
+              item={data}
+              list={[
+                { value: 1, label: "active" },
+                { value: 0, label: "inactive" },
+              ]}
+            />
           </div>
         </Col>
       </Row>

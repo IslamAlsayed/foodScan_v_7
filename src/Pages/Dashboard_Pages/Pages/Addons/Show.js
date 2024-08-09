@@ -56,7 +56,7 @@ export default function ShowItem() {
           }
           key="2"
         >
-          <UpdateImage data={addon} />
+          <UpdateImage url={`admin/addons/${id}`} data={addon} />
         </TabPane>
       </Tabs>
     </div>

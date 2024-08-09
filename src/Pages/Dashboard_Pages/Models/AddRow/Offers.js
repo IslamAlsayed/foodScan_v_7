@@ -66,7 +66,7 @@ export default function Offers({ visible, visibleToggle, updated }) {
         Swal.fire("Saved!", response.data.message, "success");
       }
     } catch (error) {
-      Swal.fire("Error!", error.response.data.message, "error");
+      Swal.fire("Error!", error.response?.data?.message, "error");
     }
   };
 

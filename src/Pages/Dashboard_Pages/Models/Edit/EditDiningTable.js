@@ -16,7 +16,6 @@ export default function EditDiningTable({
     num: "",
     size: "",
     floor: "",
-    status: "",
   });
 
   useEffect(() => {
@@ -32,7 +31,7 @@ export default function EditDiningTable({
 
     setDiningTable((prevDiningTable) => ({
       ...prevDiningTable,
-      [name]: name === "status" ? (id === "active" ? 1 : 0) : value,
+      [name]: value,
     }));
   };
 
@@ -43,24 +42,21 @@ export default function EditDiningTable({
     formData.append("num", diningTable.num);
     formData.append("size", diningTable.size);
     formData.append("floor", diningTable.floor);
-    formData.append("status", diningTable.status);
+    formData.append("_method", "put");
 
     try {
       const response = await updateData(
         `admin/dining-tables/${item.id}`,
         formData,
-        false,
-        "put"
+        false
       );
-
-      console.log("diningTable", response);
 
       if (response.status === "success") {
         updated();
         Swal.fire("Updated!", response.message, "success");
       }
     } catch (error) {
-      Swal.fire("Error!", error.response.data.message, "error");
+      Swal.fire("Error!", error.response?.data?.message, "error");
     }
   };
 
@@ -90,7 +86,6 @@ export default function EditDiningTable({
                     id="number"
                     value={diningTable.num}
                     onChange={handleChange}
-                    required
                   />
                 </div>
               </div>
@@ -107,7 +102,6 @@ export default function EditDiningTable({
                     id="size"
                     value={diningTable.size}
                     onChange={handleChange}
-                    required
                   />
                 </div>
               </div>
@@ -124,42 +118,7 @@ export default function EditDiningTable({
                     id="floor"
                     onChange={handleChange}
                     value={diningTable.floor}
-                    required
                   />
-                </div>
-              </div>
-
-              <div className="col-6">
-                <div className="mb-3">
-                  <label htmlFor="status" className="form-label">
-                    status
-                  </label>
-                  <div className="row">
-                    <div className="col d-flex gap-2 align-items-center">
-                      <input
-                        type="radio"
-                        name="status"
-                        id="active"
-                        value={1}
-                        checked={diningTable.status === 1}
-                        onChange={handleChange}
-                        required
-                      />
-                      <span>active</span>
-                    </div>
-                    <div className="col d-flex gap-2 align-items-center">
-                      <input
-                        type="radio"
-                        name="status"
-                        id="inactive"
-                        value={0}
-                        checked={diningTable.status === 0}
-                        onChange={handleChange}
-                        required
-                      />
-                      <span>inactive</span>
-                    </div>
-                  </div>
                 </div>
               </div>
             </div>

@@ -11,6 +11,7 @@ export default function Show() {
   const { id } = useParams();
   const [deliveryOrder, setDeliveryOrder] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [pay, setPay] = useState(null);
   const [status, setStatus] = useState(null);
 
   const fetchOrder = useCallback(async (id) => {
@@ -18,6 +19,7 @@ export default function Show() {
     try {
       const result = await getData(`admin/orders/${id}`);
       setDeliveryOrder(result);
+      setPay(result.pay === 1 ? "Paid" : "Not Paid");
       setStatus(result.status);
       setLoading(false);
     } catch (error) {
@@ -28,11 +30,52 @@ export default function Show() {
 
   useEffect(() => {
     fetchOrder(id);
-  }, []);
+  }, [id, fetchOrder]);
+
+  const handlePayChange = async (e) => {
+    e.preventDefault();
+    let newPay = e.target.value;
+
+    Swal.fire({
+      title: "Are you sure?",
+      text: "Do you want to update the pay order?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, save it!",
+      cancelButtonText: "No, cancel",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        setLoading(true);
+        const formData = new FormData();
+        formData.append("pay", newPay);
+        formData.append("_method", "put");
+
+        try {
+          const response = await updateData(
+            `admin/orders/${id}/checkPayStatus`,
+            formData,
+            false
+          );
+
+          if (response.status === "success") {
+            setLoading(false);
+            setPay(newPay === "1" ? "Paid" : "Not Paid");
+          }
+        } catch (error) {
+          if (error.response && error.response.status === 422) {
+            Swal.fire("Error!", "Validation error occurred.", "error");
+          } else {
+            Swal.fire("Error!", error.response?.data?.message, "error");
+          }
+        }
+      }
+    });
+  };
 
   const handleStatusChange = async (e) => {
     e.preventDefault();
-
     let newStatus = e.target.value;
 
     Swal.fire({
@@ -47,10 +90,9 @@ export default function Show() {
     }).then(async (result) => {
       if (result.isConfirmed) {
         setLoading(true);
-
         const formData = new FormData();
         formData.append("status", newStatus);
-        formData.append("_method", "patch");
+        formData.append("_method", "put");
 
         try {
           const response = await updateData(
@@ -59,7 +101,7 @@ export default function Show() {
             false
           );
 
-          if (response) {
+          if (response.status === "success") {
             setLoading(false);
             setStatus(newStatus);
           }
@@ -67,7 +109,7 @@ export default function Show() {
           if (error.response && error.response.status === 422) {
             Swal.fire("Error!", "Validation error occurred.", "error");
           } else {
-            Swal.fire("Error!", error.response.data.message, "error");
+            Swal.fire("Error!", error.response?.data?.message, "error");
           }
         }
       }
@@ -78,7 +120,7 @@ export default function Show() {
     window.print();
   };
 
-  if (loading) return <p>Loading...</p>;
+  if (loading || !deliveryOrder) return <p>Loading...</p>;
 
   return (
     <div className="Show">
@@ -87,9 +129,7 @@ export default function Show() {
           <h4 className="id">
             <label>order id:</label>
             <b>#{id}</b>
-            <span className={deliveryOrder.PaymentType}>
-              {deliveryOrder.PaymentType}
-            </span>
+            <span className={pay}>{pay}</span>
             <span className={status}>{status}</span>
           </h4>
 
@@ -105,11 +145,6 @@ export default function Show() {
             <b>{deliveryOrder.PaymentType}</b>
           </div>
 
-          <div className="order_type">
-            <label>order type:</label>
-            <b>{"dining table"}</b>
-          </div>
-
           <div className="delivery_time">
             <label>delivery time:</label>
             <b>{deliveryOrder.created_at}</b>
@@ -122,31 +157,37 @@ export default function Show() {
         </div>
 
         <div className="options">
-          <select name="payment_type" id="payment_type">
-            <option
-              value="Paid"
-              selected={deliveryOrder.PaymentType === "Paid"}
-            >
+          <select
+            name="payment_type"
+            id="payment_type"
+            value={pay === "Paid" ? "1" : "0"}
+            onChange={handlePayChange}
+          >
+            <option value="1" disabled={pay === "Paid"}>
               Paid
             </option>
-            <option
-              value="Not Paid"
-              selected={deliveryOrder.PaymentType === "Not Paid"}
-            >
+            <option value="0" disabled={pay === "Not Paid"}>
               Not Paid
             </option>
           </select>
-
           <select
             name="status"
             id="status"
             value={status}
             onChange={handleStatusChange}
           >
-            <option value="Not Started">Not Started</option>
-            <option value="In Progress">In Progress</option>
-            <option value="Cancelled">Cancelled</option>
-            <option value="Accepted">Accepted</option>
+            <option value="Not Started" disabled={status === "Not Started"}>
+              Not Started
+            </option>
+            <option value="In Progress" disabled={status === "In Progress"}>
+              In Progress
+            </option>
+            <option value="Cancelled" disabled={status === "Cancelled"}>
+              Cancelled
+            </option>
+            <option value="Accepted" disabled={status === "Accepted"}>
+              Accepted
+            </option>
           </select>
 
           <button className="btn btn-primary" onClick={handlePrint}>

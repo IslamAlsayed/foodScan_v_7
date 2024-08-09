@@ -38,14 +38,9 @@ export default function TableOrders() {
       key: "id",
     },
     {
-      title: "ORDER TYPE",
-      dataIndex: "PaymentType",
-      key: "PaymentType",
-    },
-    {
       title: "CUSTOMER",
       key: "customer.id",
-      render: (text, record) => record.customer.name,
+      render: (record) => record.customer.name,
     },
     {
       title: "AMOUNT",

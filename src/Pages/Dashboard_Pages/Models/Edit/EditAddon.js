@@ -15,7 +15,6 @@ export default function EditAddon({ visible, visibleToggle, item, updated }) {
     type: "vegetarian",
     category_id: -1,
     image: null,
-    status: 1,
     cost: "",
   });
 
@@ -40,12 +39,7 @@ export default function EditAddon({ visible, visibleToggle, item, updated }) {
           type: id === "veg" ? "vegetarian" : "non-vegetarian",
         };
       }
-      if (name === "status") {
-        return {
-          ...prevData,
-          status: id === "active" ? 1 : 0,
-        };
-      }
+
       if (name === "image" && type === "file") {
         return {
           ...prevData,
@@ -68,7 +62,6 @@ export default function EditAddon({ visible, visibleToggle, item, updated }) {
     formData.append("type", addon.type);
     formData.append("category_id", addon.category_id);
     if (addon.image) formData.append("image", addon.image);
-    formData.append("status", addon.status);
     formData.append("cost", addon.cost);
     formData.append("_method", "put");
 
@@ -85,7 +78,7 @@ export default function EditAddon({ visible, visibleToggle, item, updated }) {
         Swal.fire("Updated!", response.message, "success");
       }
     } catch (error) {
-      Swal.fire("Error!", error.response.data.message, "error");
+      Swal.fire("Error!", error.response?.data?.message, "error");
     }
   };
 
@@ -128,7 +121,6 @@ export default function EditAddon({ visible, visibleToggle, item, updated }) {
                     id="name"
                     value={addon.name}
                     onChange={handleChange}
-                    required
                   />
                 </div>
               </div>
@@ -144,7 +136,6 @@ export default function EditAddon({ visible, visibleToggle, item, updated }) {
                     id="category"
                     value={addon.category_id}
                     onChange={handleChange}
-                    required
                   >
                     {categories.map((category) => (
                       <option value={category.id}>{category.name}</option>
@@ -165,7 +156,6 @@ export default function EditAddon({ visible, visibleToggle, item, updated }) {
                     id="cost"
                     value={addon.cost}
                     onChange={handleChange}
-                    required
                   />
                 </div>
               </div>
@@ -179,7 +169,6 @@ export default function EditAddon({ visible, visibleToggle, item, updated }) {
                         type="radio"
                         name="type"
                         id="vegetarian"
-                        required
                         value="vegetarian"
                         checked={addon.type === "vegetarian"}
                         onChange={handleChange}
@@ -191,44 +180,11 @@ export default function EditAddon({ visible, visibleToggle, item, updated }) {
                         type="radio"
                         name="type"
                         id="non-vegetarian"
-                        required
                         value="non-vegetarian"
                         checked={addon.type === "non-vegetarian"}
                         onChange={handleChange}
                       />
                       <label htmlFor="non-vegetarian">non vegetarian</label>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="col-6">
-                <div className="mb-3">
-                  <label className="form-label">Status</label>
-                  <div className="row">
-                    <div className="col col-4 d-flex gap-2 align-items-center">
-                      <input
-                        type="radio"
-                        name="status"
-                        id="active"
-                        required
-                        value={1}
-                        checked={addon.status === 1}
-                        onChange={handleChange}
-                      />
-                      <label htmlFor="active">active</label>
-                    </div>
-                    <div className="col col-4 d-flex gap-2 align-items-center">
-                      <input
-                        type="radio"
-                        name="status"
-                        id="inactive"
-                        required
-                        value={0}
-                        checked={addon.status === 0}
-                        onChange={handleChange}
-                      />
-                      <label htmlFor="inactive">inactive</label>
                     </div>
                   </div>
                 </div>
@@ -261,7 +217,6 @@ export default function EditAddon({ visible, visibleToggle, item, updated }) {
                     id="description"
                     onChange={handleChange}
                     value={addon.description}
-                    required
                   ></textarea>
                 </div>
               </div>

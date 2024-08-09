@@ -24,7 +24,7 @@ export default function DeleteRecord({ url, refreshed }) {
             Swal.fire("Deleted!", response.message, "success");
           }
         } catch (error) {
-          Swal.fire("Error!", error.response.data.message, "error");
+          Swal.fire("Error!", error.response?.data?.message, "error");
         }
       }
     });

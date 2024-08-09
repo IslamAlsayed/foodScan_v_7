@@ -15,6 +15,7 @@ export default function UpdateMultiStatus({ url, item, updated, list }) {
   };
 
   const handleUpdateMultiStatus = async (value) => {
+    let NewValue = value;
     Swal.fire({
       title: "Update!",
       text: "Are you sure you want to change status?",
@@ -28,19 +29,26 @@ export default function UpdateMultiStatus({ url, item, updated, list }) {
       setActiveItem(null);
       if (result.isConfirmed) {
         const formData = new FormData();
-        formData.append("status", value);
+        formData.append("status", NewValue);
         formData.append("_method", "put");
 
         try {
           const response = await updateData(url, formData, false);
           if (response.status === "success") {
-            updated();
+            if (updated) {
+              updated();
+            } else {
+              setStaticItem({ status: NewValue });
+            }
             Swal.fire("Updated!", response.message, "success");
           }
         } catch (error) {
-          Swal.fire("Error!", error.response.data.message, "error");
+          Swal.fire("Error!", error.response?.data?.message, "error");
         }
       }
+
+      console.log("staticItem.status", staticItem.status);
+      console.log("staticItem", staticItem);
     });
   };
 

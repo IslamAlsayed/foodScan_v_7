@@ -19,7 +19,6 @@ export default function EditAdministrator({
     phone: "",
     password: "",
     password_confirmation: "",
-    status: 1,
   });
 
   useEffect(() => {
@@ -31,20 +30,13 @@ export default function EditAdministrator({
   }, [visible]);
 
   const handleChange = (e) => {
-    const { name, value, id } = e.target;
+    const { name, value } = e.target;
 
     setAdministrator((prevData) => {
-      if (name === "status") {
-        return {
-          ...prevData,
-          status: id === "active" ? 1 : 0,
-        };
-      } else {
-        return {
-          ...prevData,
-          [name]: value,
-        };
-      }
+      return {
+        ...prevData,
+        [name]: value,
+      };
     });
   };
 
@@ -61,7 +53,6 @@ export default function EditAdministrator({
       "password_confirmation",
       administrator.password_confirmation
     );
-    formData.append("status", administrator.status);
     formData.append("_method", "put");
 
     try {
@@ -76,7 +67,7 @@ export default function EditAdministrator({
         Swal.fire("Updated!", response.message, "success");
       }
     } catch (error) {
-      Swal.fire("Error!", error.response.data.message, "error");
+      Swal.fire("Error!", error.response?.data?.message, "error");
     }
   };
 
@@ -199,38 +190,6 @@ export default function EditAdministrator({
                     value={administrator.password_confirmation}
                     onChange={handleChange}
                   />
-                </div>
-              </div>
-
-              <div className="col-6">
-                <div className="mb-3">
-                  <label htmlFor="active" className="form-label">
-                    status
-                  </label>
-                  <div className="row">
-                    <div className="col d-flex gap-2 align-items-center">
-                      <input
-                        type="radio"
-                        name="status"
-                        id="active"
-                        value={1}
-                        checked={administrator.status === 1}
-                        onChange={handleChange}
-                      />
-                      <label htmlFor="active">active</label>
-                    </div>
-                    <div className="col d-flex gap-2 align-items-center">
-                      <input
-                        type="radio"
-                        name="status"
-                        id="inactive"
-                        value={0}
-                        checked={administrator.status === 0}
-                        onChange={handleChange}
-                      />
-                      <label htmlFor="inactive">in active</label>
-                    </div>
-                  </div>
                 </div>
               </div>
             </div>

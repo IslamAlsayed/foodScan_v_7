@@ -67,7 +67,7 @@ export default function Categories() {
       key: "status",
       render: (text, item) => (
         <UpdateMultiStatus
-          url={`admin/categories/${item.id}`}
+          url={`categories/${item.id}`}
           item={item}
           updated={fetchCategories}
           list={[

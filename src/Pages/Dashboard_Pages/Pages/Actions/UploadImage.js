@@ -1,14 +1,12 @@
 import "../SubModels.css";
 import { useRef, useState } from "react";
-import { useParams } from "react-router-dom/cjs/react-router-dom.min";
 import { FaCheckCircle } from "react-icons/fa";
 import { IoMdRefresh } from "react-icons/io";
 import ImageTest from "../../../../assets/global/profile.png";
 import Swal from "sweetalert2";
 import { updateData } from "../../../../axiosConfig/API";
 
-export default function Image({ data }) {
-  const { id } = useParams();
+export default function Image({ url, data }) {
   const imageRef = useRef(null);
   const [actionsVisible, setActionsVisible] = useState(false);
   const [categoryImage, setCategoryImage] = useState({
@@ -41,7 +39,7 @@ export default function Image({ data }) {
     formData.append("_method", "put");
 
     try {
-      const response = await updateData(`admin/meals/${id}`, formData, true);
+      const response = await updateData(url, formData, true);
 
       if (response.status === "success") {
         setActionsVisible(false);
@@ -51,7 +49,7 @@ export default function Image({ data }) {
       if (error.response && error.response.status === 422) {
         Swal.fire("Error!", "Validation error occurred.", "error");
       } else {
-        Swal.fire("Error!", error.response.data.message, "error");
+        Swal.fire("Error!", error.response?.data?.message, "error");
       }
     }
   };

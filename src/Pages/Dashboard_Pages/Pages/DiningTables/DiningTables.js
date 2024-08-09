@@ -13,10 +13,12 @@ import AddRow from "../../Models/AddRow/DiningTables";
 import UpdateMultiStatus from "../Actions/UpdateMultiStatus";
 
 import ImageTest from "../../../../assets/global/profile.png";
+import axios from "axios";
 
 export default function DiningTables() {
   const componentRef = useRef();
-  const [DiningTables, setDiningTables] = useState([]);
+  const [diningTables, setDiningTables] = useState([]);
+  const [imageBlobs, setImageBlobs] = useState({});
   const [editItem, setEditItem] = useState(null);
   const [modalVisibleToggle, setModalVisibleToggle] = useState(false);
   const [modalEditVisibleToggle, setModalEditVisibleToggle] = useState(false);
@@ -89,12 +91,13 @@ export default function DiningTables() {
       title: "Image",
       dataIndex: "image",
       key: "image",
-      render: (text, record) => (
-        <img
-          src={`http://127.0.0.1:8000/storage/${record.qr_code}`}
-          alt={record.name}
-        />
-      ),
+      render: (text, record) => {
+        record.qr_code ? (
+          <img src={record.qr_code} alt={`QR Code for ${record.id}`} />
+        ) : (
+          <span>No QR Code</span>
+        );
+      },
     },
     {
       title: "ACTION",
@@ -103,7 +106,7 @@ export default function DiningTables() {
         <div className="actionResource">
           {item.qr_code && (
             <a
-              href={`http://127.0.0.1:8000/storage/${item.qr_code}`}
+              href={item.qr_code}
               download
               className="qrCodeIcon"
               data-tooltip="download"
@@ -160,8 +163,8 @@ export default function DiningTables() {
       <div className="tableItems" ref={componentRef}>
         <Table
           columns={columns}
-          dataSource={DiningTables}
-          pagination={Object(DiningTables).length > 10}
+          dataSource={diningTables}
+          pagination={Object(diningTables).length > 10}
         />
       </div>
     </div>
